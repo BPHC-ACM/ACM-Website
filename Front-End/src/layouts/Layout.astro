@@ -1,3 +1,6 @@
+---
+import Navbar from '../components/Navbar.astro';
+---
 
 <!doctype html>
 <html lang="en">
@@ -6,10 +9,12 @@
 		<meta name="description" content="The Website for ACM, BPHC chapter" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/logo.svg" />
+		<link rel="stylesheet" href="/styles.css" />
 		<meta name="generator" content={Astro.generator} />
 		<title>ACM BPHC</title>
 	</head>
 	<body>
+		<Navbar />
 		<slot />
 	</body>
 </html>

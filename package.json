@@ -3,7 +3,8 @@
     "body-parser": "^1.20.2",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "mongoose": "^8.5.3"
+    "mongoose": "^8.5.3",
+    "swiper": "^11.1.9"
   },
   "name": "acm-website",
   "version": "1.0.0",

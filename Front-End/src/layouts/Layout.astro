@@ -1,20 +1,59 @@
 ---
-import Navbar from '../components/Navbar.astro';
+import Footer from "../components/Footer.astro"
+import Header from "../components/Header.astro"
+
+interface Props {
+  title: string;
+}
+
+const { title = "ACM BPHC" } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="The Website for ACM, BPHC chapter" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/logo.svg" />
-		<link rel="stylesheet" href="/styles.css" />
-		<meta name="generator" content={Astro.generator} />
-		<title>ACM BPHC</title>
-	</head>
-	<body>
-		<Navbar />
-		<slot />
-	</body>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="The official website for ACM, BITS Pilani Hyderabad Campus chapter" />
+    <meta name="keywords" content="ACM, BITS Pilani, Hyderabad, Computer Science, Technology">
+    <meta name="author" content="ACM BPHC">
+    <link rel="icon" type="image/svg+xml" href="/logo.png" />
+    <!-- Preload Fonts -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
+    <!-- Boxicons -->
+    <link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet'>
+    <title>{title}</title>
+    <script>
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</head>
+<body class="flex flex-col min-h-screen font-body text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900">
+    <Header />
+    <main class="flex-grow">
+        <slot />
+    </main>
+    <Footer />
+</body>
 </html>
+
+<style global>
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
+
+    body {
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+    }
+
+    h1 {
+        @apply text-2xl sm:text-3xl lg:text-4xl;
+    }
+</style>

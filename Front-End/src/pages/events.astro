@@ -1,0 +1,120 @@
+<!-- Change or add event data on /data/events.js to add/update an event. Don't change this unless you know what you are doing or adding carousel ~Shrish -->
+
+---
+import Layout from '../layouts/Layout.astro';
+import EventCard from '../components/EventCard.astro';
+import { events } from '../data/events';
+
+const pageTitle = "Events | ACM BPHC";
+---
+
+<Layout title={pageTitle}>
+  <section class="container mx-auto px-4 py-12">
+    <h1 class="text-4xl font-bold text-center mb-8 text-gray-800 dark:text-white">Upcoming Events</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {events.filter(event => new Date(event.date) >= new Date()).map(event => (
+        <EventCard key={event.id} event={event} />
+      ))}
+    </div>
+
+    <h2 class="text-3xl font-semibold text-center mt-16 mb-8 text-gray-700 dark:text-gray-200">Past Events</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {events.filter(event => new Date(event.date) < new Date()).map(event => (
+        <EventCard key={event.id} event={event} past={true} />
+      ))}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .event-card-transition {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .event-card-transition:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .event-card-transition:hover {
+      box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+    }
+  }
+</style>
+
+
+
+
+
+
+
+
+
+
+<!--
+import Layout from '../layouts/Layout.astro';
+import Carousel from '../components/Carousel.astro';
+import EventCard from '../components/EventCard.astro';
+
+const upcomingEvents = [
+  {
+    title: "Tech Talk: AI in 2023",
+    date: "2023-09-15",
+    time: "18:00",
+    location: "Auditorium",
+    description: "Join us for an insightful discussion on the latest AI trends and their impact on various industries.",
+    image: "/event-images/ai-ethics.jpg"
+  },
+  {
+    title: "Hackathon: Code for Good",
+    date: "2023-10-01",
+    time: "09:00",
+    location: "F105",
+    description: "A 24-hour coding marathon to develop solutions for local non-profit organizations.",
+    image: "/event-images/hackathon.jpg"
+  },
+  // Add more events as needed
+];
+
+const pastEvents = [
+  {
+    title: "Workshop: Introduction to React",
+    date: "2023-08-20",
+    time: "14:00",
+    location: "F107",
+    description: "A hands-on workshop to get started with React development.",
+    image: "/event-images/react-workshop.jpg"
+  },
+  // Add more past events
+];
+
+<Layout title="ACM Events">
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold mb-8 text-acm-blue">ACM Events</h1>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-4">Featured Events</h2>
+      <Carousel images={upcomingEvents.map(event => event.image)} />
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-4">Upcoming Events</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {upcomingEvents.map(event => (
+          <EventCard event={event} />
+        ))}
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">Past Events</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {pastEvents.map(event => (
+          <EventCard event={event} isPast={true} />
+        ))}
+      </div>
+    </section>
+  </main>
+</Layout>
+-->

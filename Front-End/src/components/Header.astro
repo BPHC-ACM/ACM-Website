@@ -1,0 +1,66 @@
+<header class="header flex sticky justify-center w-full h-16 sm:h-24 top-0 z-20 bg-black text-white">
+    <div class="headerContent flex relative items-center justify-between h-full w-[90%] md:w-[80%] font-semibold">
+        <!-- Logo -->
+        <a href="/" class="acm">
+            <span><img class="h-12 sm:h-14" src="/acm_logo_black.jpeg" alt="ACM Logo"></span>
+        </a>
+        
+        <!-- Mobile Menu Icon -->
+        <div class="sm:hidden flex items-center">
+            <button id="mobile-menu-button" class="focus:outline-none">
+                <i class="text-3xl bx bx-menu"></i>
+            </button>
+        </div>
+        
+        <!-- Navigation Links (visible on small screens and above) -->
+        <nav class="hidden sm:flex absolute right-10 top-0 h-full justify-center items-center text-sm lg:text-2xl">
+            <div class="flex navList">
+                <span class="navItem relative ml-5 lg:ml-10"><a href="#home">Home</a></span>
+                <span class="navItem relative ml-5 lg:ml-10"><a href="#about">About</a></span>
+                <span class="navItem relative ml-5 lg:ml-10"><a rel="noopener noreferrer" target="_blank" href="/events">Events</a></span>
+                <span class="navItem relative ml-5 lg:ml-10"><a href="#team">Meet The Team</a></span>
+            </div>
+        </nav>
+    </div>
+    
+    <!-- Mobile Menu (hidden by default) -->
+    <div id="mobile-menu" class="hidden sm:hidden w-full bg-black text-white flex flex-col items-center">
+        <a href="#home" class="py-2">Home</a>
+        <a href="#about" class="py-2">About</a>
+        <a rel="noopener noreferrer" target="_blank" href="/events" class="py-2">Events</a>
+        <a href="#team" class="py-2">Meet The Team</a>
+    </div>
+</header>
+
+<style>
+    .navItem:after {
+        @apply bg-acm-blue;
+        content: ''; 
+        position: absolute;
+        width: 100%; 
+        transform: scaleX(0);
+        height: 4px;
+        bottom: 0;
+        left: 0;
+        transform-origin: bottom right;
+        transition: transform 0.25s ease-out;
+    }
+
+    .navItem:hover:after {
+        transform: scaleX(1);
+        transform-origin: bottom left;
+    }
+
+    /* Mobile Menu Toggle */
+    #mobile-menu-button.active + #mobile-menu {
+        display: flex;
+    }
+</style>
+
+<script>
+    // JavaScript for mobile menu toggle
+    document.getElementById('mobile-menu-button').addEventListener('click', function() {
+        this.classList.toggle('active');
+        document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+</script>

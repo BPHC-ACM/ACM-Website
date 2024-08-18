@@ -14,9 +14,9 @@
     "@astrojs/react": "^3.6.2",
     "@astrojs/tailwind": "^5.1.0",
     "astro": "^4.13.4",
+    "front-end": "file:",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "swiper": "^11.1.9",
     "tailwindcss": "^3.4.7",
     "typescript": "^5.5.4"
   }

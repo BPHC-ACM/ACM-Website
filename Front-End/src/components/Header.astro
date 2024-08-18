@@ -21,14 +21,14 @@
                 <span class="navItem relative ml-5 lg:ml-10"><a href="/#team">Meet The Team</a></span>
             </div>
         </nav>
-    </div>
+    </div>/
     
     <!-- Mobile Menu (hidden by default) -->
-    <div id="mobile-menu" class="hidden sm:hidden w-full bg-black text-white flex flex-col items-center">
-        <a href="#home" class="py-2">Home</a>
-        <a href="#about" class="py-2">About</a>
+    <div id="mobile-menu" class="sm:hidden w-full bg-black text-white flex flex-col items-center">
+        <a href="/#home" class="py-2">Home</a>
+        <a href="/#about" class="py-2">About</a>
         <a rel="noopener noreferrer" target="_blank" href="/events" class="py-2">Events</a>
-        <a href="#team" class="py-2">Meet The Team</a>
+        <a href="/#team" class="py-2">Meet The Team</a>
     </div>
 </header>
 
@@ -59,8 +59,8 @@
 
 <script>
     // JavaScript for mobile menu toggle
-    document.getElementById('mobile-menu-button').addEventListener('click', function() {
+    document.getElementById('mobile-menu-button')!.addEventListener('click', function() {
         this.classList.toggle('active');
-        document.getElementById('mobile-menu').classList.toggle('hidden');
+        document.getElementById('mobile-menu')!.classList.toggle('hidden');
     });
 </script>

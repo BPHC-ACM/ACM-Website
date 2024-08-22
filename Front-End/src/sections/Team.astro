@@ -1,9 +1,36 @@
-<section id="team" class="min-h-screen">
-    <div class="headerSpace w-full h-16 sm:h-24 mb-10"></div>
-    <div class="meetTheTeam flex flex-col items-center w-full h-auto">
-        <span class="text-acm-blue text-4xl md:text-5xl font-bold underline underline-offset-8 mb-16">Meet The Team</span>
-        <div class="teamPanelContainer grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 w-[90%] max-w-6xl">
-            <!-- Team member cards will go here -->
+<section id="team" class="min-h-screen bg-gray-100">
+    <!-- Hero Section with Background Image -->
+    <div class="relative w-full h-64 sm:h-80 lg:h-96 mb-10">
+        <img src="/group.jpg" alt="Team Group Photo" class="absolute inset-0 w-full h-full object-cover custom-object-position opacity-70">
+        <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <h1 class="text-white text-4xl md:text-5xl font-bold">Meet The Team</h1>
         </div>
     </div>
 </section>
+
+<style>
+    /* Custom object position class with CSS variables */
+    .custom-object-position {
+        --x-position: calc(50%);
+        --y-position: calc(50% + 50px);
+        object-position: var(--x-position) var(--y-position);
+    }
+
+    /* Styling for the team section */
+    .teamPanelContainer .teamCard {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .teamPanelContainer .teamCard:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .teamPanelContainer .teamCard img {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+</style>

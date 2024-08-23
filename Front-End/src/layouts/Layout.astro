@@ -3,7 +3,7 @@ import Footer from "../components/Footer.astro"
 import Header from "../components/Header.astro"
 
 interface Props {
-  title: string;
+  title?: string;
 }
 
 const { title = "ACM BPHC" } = Astro.props;
@@ -41,7 +41,7 @@ const { title = "ACM BPHC" } = Astro.props;
 </body>
 </html>
 
-<style global>
+<style is:global>
     @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
 
     body {

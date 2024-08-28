@@ -1,0 +1,22 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { teamHeads } from '../data/teamheads';
+import TeamHeadCard from "../components/TeamHeadCard.astro"
+import EventCard from '../components/EventCard.astro';
+import { events } from '../data/events';
+
+const pageTitle = "Office | ACM BPHC"
+---
+
+<Layout title={pageTitle}>
+    <div class="aboutACM flex flex-col items-center w-full mt-5">
+        <span class="text-acm-blue text-4xl md:text-5xl font-bold underline underline-offset-8 mb-6 sm:mb-8">Our Team</span>
+        <section class="container mx-auto px-4 py-12">
+            <div class="porGrid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {teamHeads.map((teamHeadInfo, idx) => (
+                    <TeamHeadCard teamHeadInfo={teamHeadInfo} />
+                ))}
+            </div>
+        </section>
+    </div>
+</Layout>

@@ -1,0 +1,111 @@
+---
+import { faqItems } from '../data/faq';
+---
+
+<section id="faqSection" class="w-full my-20 scroll-mt-16 sm:scroll-mt-24">
+    <div class="faq-section max-w-4xl mx-auto mt-12 bg-gray-700 p-5 rounded-lg shadow-lg">
+        <h2 id="faq" class="text-center mb-5 relative">Frequently Asked Questions</h2>
+    
+        {faqItems.map((item) => (
+            <div class="faq-item mb-4 overflow-hidden">
+                <div class="question p-4 px-6 bg-black text-white cursor-pointer rounded-md transition-transform transform hover:scale-105 hover:bg-blue-700 relative border-2 border-transparent">
+                    {item.question}
+                    <div class="before:absolute before:inset-0 before:rounded-md before:border-2 before:border-white before:scale-x-0 before:origin-left before:transition-transform before:duration-500 before:z-[-1]"></div>
+                </div>
+                <div class="answer p-4 bg-gray-700 hidden rounded-md mt-2 animate-slideDown">
+                    {item.answer}
+                </div>
+            </div>
+          ))}
+    </div>    
+</section>
+
+<script>
+    document.querySelectorAll('.question').forEach((item) => {
+    item.addEventListener('click', () => {
+        const answer = item.nextElementSibling;
+        const isActive = item.classList.contains('question-active');
+
+        // Close all answers and reset all questions
+        document.querySelectorAll('.answer').forEach((ans) => {
+            ans.classList.add('hidden');
+            ans.classList.remove('block');
+            ans.classList.remove('animate-slideDown');
+            ans.classList.add('animate-slideUp');
+        });
+
+        document.querySelectorAll('.question').forEach((q) => {
+            q.classList.remove('question-active');
+            q.classList.add('question-reset');
+        });
+
+        // If the clicked question is not already active, open it
+        if (!isActive) {
+                item.classList.add('question-active');
+                item.classList.remove('question-reset');
+                answer!.classList.remove('hidden');
+                answer!.classList.add('block');
+                answer!.classList.remove('animate-slideUp');
+                answer!.classList.add('animate-slideDown');
+            }
+        });
+    });
+</script>
+
+<style>
+    @keyframes slideDown {
+    0% {
+        opacity: 0;
+        max-height: 0;
+        transform: translateY(-20px);
+    }
+    50% {
+        max-height: 100px;
+        transform: translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        max-height: 500px;
+        transform: translateY(0);
+    }
+    }
+
+    @keyframes slideUp {
+    0% {
+        opacity: 1;
+        max-height: 500px;
+        transform: translateY(0);
+    }
+    50% {
+        max-height: 100px;
+        transform: translateY(-10px);
+    }
+    100% {
+        opacity: 0;
+        max-height: 0;
+        transform: translateY(-20px);
+    }
+    }
+
+    .animate-slideDown {
+    animation: slideDown 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+    }
+
+    .animate-slideUp {
+    animation: slideUp 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+    }
+
+    .question-active {
+    background-color: #2990ff;
+    transform: scale(1.02);
+    transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .question-reset {
+    @apply bg-black;
+    transform: scale(1);
+    transition: background-color 0.3s, transform 0.3s;
+    }
+</style>
+    
+

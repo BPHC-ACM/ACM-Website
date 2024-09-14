@@ -1,4 +1,4 @@
-<header class="header flex sticky justify-center w-full h-16 sm:h-24 top-0 z-20 bg-black text-white">
+<header class="header flex sticky justify-center w-full h-16 sm:h-24 top-0 z-20 text-white">
     <div class="headerContent flex relative items-center justify-between h-full w-[90%] md:w-[80%] font-semibold">
         <!-- Logo -->
         <a href="/" class="acm">
@@ -13,13 +13,15 @@
         </div>
         
         <!-- Navigation Links (visible on small screens and above) -->
-        <nav class="hidden sm:flex absolute right-10 top-0 h-full justify-center items-center text-sm lg:text-2xl">
+        <nav class="thenavbar hidden sm:flex absolute right-10 top-0 h-full justify-center items-center text-sm lg:text-2xl">
             <div class="flex navList">
                 <span class="navItem relative ml-5 lg:ml-10"><a href="/#home">Home</a></span>
                 <span class="navItem relative ml-5 lg:ml-10"><a href="/#about">About</a></span>
                 <span class="navItem relative ml-5 lg:ml-10"><a rel="noopener noreferrer" target="_blank" href="/events">Events</a></span>
-                <span class="navItem relative ml-5 lg:ml-10"><a href="/#team">Meet The Team</a></span>
+                <span class="navItem relative ml-5 lg:ml-10"><a href="/#team">Team</a></span>
                 <span class="navItem relative ml-5 lg:ml-10"><a href="/#faqSection">FAQs</a></span>
+                                <span class="navItem relative ml-5 lg:ml-10"><a href="/#footerSection">Connect</a></span>
+
             </div>
         </nav>
     </div>
@@ -31,6 +33,8 @@
         <a rel="noopener noreferrer" target="_blank" href="/events" class="py-2">Events</a>
         <a href="/#team" class="py-2">Meet The Team</a>
         <a href="/#faqSection">FAQs</a>
+                <a href="/#footerSection">Connect</a>
+
     </div>
 </header>
 
@@ -46,6 +50,14 @@
         left: 0;
         transform-origin: bottom right;
         transition: transform 0.25s ease-out;
+    }
+    .header{
+    background-color: #031f2140;
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+
+
+
     }
 
     .navItem:hover:after {

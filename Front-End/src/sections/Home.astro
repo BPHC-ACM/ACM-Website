@@ -4,9 +4,9 @@
         <div class="absolute z-10 hidden sm:flex items-center justify-center w-full h-full bg-white bg-opacity-0">
             <div class="flex flex-col justify-center h-[90%] w-[80%]">
                 <div class="flex flex-col justify-center font-bold text-center sm:text-left">
-                    <span class="mb-4 md:mb-8">Association for Computing</span>
-                    <span class="mb-4 md:mb-8">Machinery</span>
-                    <span class="text-acm-blue">BPHC</span>
+                    <span class="mb-4 md:mb-8" data-value="ACM BPHC" id="rollin">ACM BPHC</span>
+                    
+                    <span class="text-acm-blue">Association for Computing Machinery</span>
                 </div>
                 
                 <div class="socials text-2xl lg:text-4xl mt-3 lg:mt-8 flex justify-center sm:justify-start">
@@ -38,10 +38,66 @@
             </div>
         </div>
         <img class="sm:hidden w-full object-cover" src="/mobilebg.jpg" alt="Background Image">
-        <img class="hidden sm:flex w-full object-cover" src="/60278.jpg" alt="Background Image">
+        <img class="hidden sm:flex w-full object-cover" src="/w4.jpg" alt="Background Image">
     </div>
     <div class="hidden sm:flex flex-col items-center mt-10">
         <span class="text-lg md:text-xl lg:text-3xl">Scroll to know more about us</span>
         <i class='bx bx-down-arrow-alt text-3xl md:text-4xl lg:text-7xl mt-6'></i>
     </div>
 </section>
+<script>
+const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+let interval = null;
+
+document.querySelector("#rollin").onmouseover = (event)=> {  
+  let iteration = 0;
+  
+  clearInterval(interval);
+  
+  interval = setInterval(() => {
+    event.target.innerText = event.target.innerText
+      .split("")
+      .map((letter, index) => {
+        if(index < iteration) {
+          return event.target.dataset.value[index];
+        }
+      
+        return letters[Math.floor(Math.random() * 26)]
+      })
+      .join("");
+    
+    if(iteration >= event.target.dataset.value.length){ 
+      clearInterval(interval);
+    }
+    
+    iteration += 1 / 6;
+  }, 30);
+};
+</script>
+<style>
+@font-face {
+  font-family: 'CustomFont';
+  src: url('Sddystopiandemo-GO7xa.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+  
+  #rollin{
+    font-family:  monospace;
+    font-size: clamp(2rem, 10vw, 10rem);
+    color: white;
+    padding: 0rem clamp(1rem, 2vw, 3rem);
+    border-radius: clamp(0.4rem, 0.75vw, 1rem);
+  }
+  
+  
+  
+  
+  
+  
+ 
+
+</style>
+

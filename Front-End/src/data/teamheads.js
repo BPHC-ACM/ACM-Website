@@ -2,46 +2,46 @@ export const teamHeads = [
     {
         name : "Shashwat Sharma",
         designation: "Chairperson",
-        image : "/acm logo png.png"
+        image : "/shaswat.png"
     },
     {
         name : "Dhairya Luthra",
         designation: "Vice Chairperson and App Dev Chair",
-        image : "/acm logo png.png"
+        image : "/dhairya.png"
     },
     {
         name : "Vivan Jain",
         designation: "Quant Chair",
-        image : "/acm logo png.png"
+        image : "/vivan.png"
     },
     {
         name : "Samarth Pawan",
         designation: "ML Chair",
-        image : "/acm logo png.png"
+        image : "/samarth.png"
     },
     {
         name : "Arinjay Jain",
         designation: "Web Dev Chair",
-        image : "/acm logo png.png"
+        image : "/arinjay.png"
     },
     {
         name : "Tushar Anand",
         designation: "Generative AI Chair",
-        image : "/acm logo png.png"
+        image : "/tushar.png"
     },
     {
         name : "Divya Daga",
         designation: "Content Chair",
-        image : "/acm logo png.png"
+        image : "/divya.png"
     },
     {
         name : "Majji Sai Snigdha",
         designation: "Events Chair",
-        image : "/acm logo png.png"
+        image : "/majji.png"
     },
     {
         name : "Lakshita Jain",
         designation: "Design Chair",
-        image : "/acm logo png.png"
+        image : "/lakshita.png"
     }
 ]

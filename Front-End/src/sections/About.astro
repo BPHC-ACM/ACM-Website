@@ -1,9 +1,9 @@
-<section id="about" class="h-fit py-10 scroll-mt-16 sm:scroll-mt-24">
+<section id="about" class="h-fit py-10 scroll-mt-16 sm:scroll-mt-24 gradient-background">
     <div class="aboutACM flex flex-col items-center w-full">
-        <span class="text-acm-blue text-4xl md:text-5xl font-bold underline underline-offset-8 mb-10 sm:mb-16">About</span>
+        <span class="about_acm text-acm-blue text-4xl md:text-5xl font-bold underline underline-offset-8 mb-10 sm:mb-16">About</span>
         <div class="infoPanel flex flex-col sm:grid sm:grid-cols-2 justify-center items-center w-full gap-8">
             <div class="flex justify-center items-center sm:scale-75 lg:scale-100">
-                <img class="scale-75 sm:scale-125" src="/acm_logo_white.jpeg" alt="ACM Logo">
+                <img class="scale-75 sm:scale-125" src="/acm_glassier.png" alt="ACM Logo">
             </div>
             <div class="infoText flex flex-col justify-center items-center p-5 lg:w-[90%]">
                 <span class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-5">Association for Computing Machinery</span>
@@ -12,3 +12,36 @@
         </div>
     </div>
 </section>
+<style>
+.gradient-background {
+    background: linear-gradient(300deg, #142850, #27496D, #0C7B93, #00A8CC);
+    background-size: 120% 100%;
+    animation: gradient-animation 8s ease infinite;
+
+}
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.infoText{
+    background-color: #57d4c71d;
+    border-radius: 15px;
+    backdrop-filter:blur(0px);
+    -webkit-backdrop-filter:blur(0px);
+    padding:25px;
+
+
+}
+.about_acm{
+        color: rgb(255,255,255);
+
+}
+</style>

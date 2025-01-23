@@ -1,4 +1,4 @@
-<header class="header flex sticky justify-center w-full h-16 sm:h-24 top-0 z-20 text-white">
+<header class="header flex sticky justify-center w-full h-20 sm:h-24 top-0 z-20 text-white">
     <div class="headerContent flex relative items-center justify-between h-full w-[90%] md:w-[80%] font-semibold">
         <!-- Logo -->
         <a href="/" class="acm">
@@ -27,7 +27,7 @@
     </div>
     
     <!-- Mobile Menu (hidden by default) -->
-    <div id="mobile-menu" class="sm:hidden hidden w-60 h-fit bg-black text-white flex flex-col items-center">
+    <div id="mobile-menu" class="sm:hidden hidden w-60 h-fit text-white flex flex-col items-center">
         <a href="/#home" class="py-2">Home</a>
         <a href="/#about" class="py-2">About</a>
         <a href="/events" class="py-2">Events</a>
@@ -71,8 +71,10 @@
     }
 
     #mobile-menu {
+        background-color: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(10px);
         position: fixed;
-        top: 5rem; /* Position the menu lower by 5rem */
+        top: 6rem;
         width: 10rem;
         right: 1rem;
     }

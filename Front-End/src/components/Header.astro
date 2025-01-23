@@ -17,7 +17,7 @@
             <div class="flex navList">
                 <span class="navItem relative ml-5 lg:ml-10"><a href="/#home">Home</a></span>
                 <span class="navItem relative ml-5 lg:ml-10"><a href="/#about">About</a></span>
-                <span class="navItem relative ml-5 lg:ml-10"><a rel="noopener noreferrer" target="_blank" href="/events">Events</a></span>
+                <span class="navItem relative ml-5 lg:ml-10"><a href="/events">Events</a></span>
                 <span class="navItem relative ml-5 lg:ml-10"><a href="/#team">Team</a></span>
                 <span class="navItem relative ml-5 lg:ml-10"><a href="/#faqSection">FAQs</a></span>
                                 <span class="navItem relative ml-5 lg:ml-10"><a href="/#footerSection">Connect</a></span>
@@ -27,13 +27,13 @@
     </div>
     
     <!-- Mobile Menu (hidden by default) -->
-    <div id="mobile-menu" class="sm:hidden w-60 h-fit bg-black text-white flex flex-col items-center">
+    <div id="mobile-menu" class="sm:hidden hidden w-60 h-fit bg-black text-white flex flex-col items-center">
         <a href="/#home" class="py-2">Home</a>
         <a href="/#about" class="py-2">About</a>
-        <a rel="noopener noreferrer" target="_blank" href="/events" class="py-2">Events</a>
+        <a href="/events" class="py-2">Events</a>
         <a href="/#team" class="py-2">Meet The Team</a>
-        <a href="/#faqSection">FAQs</a>
-                <a href="/#footerSection">Connect</a>
+        <a href="/#faqSection" class="py-2" >FAQs</a>
+        <a href="/#footerSection" class="py-2" >Connect</a>
 
     </div>
 </header>
@@ -68,6 +68,13 @@
     /* Mobile Menu Toggle */
     #mobile-menu-button.active + #mobile-menu {
         display: flex;
+    }
+
+    #mobile-menu {
+        position: fixed;
+        top: 5rem; /* Position the menu lower by 5rem */
+        width: 10rem;
+        right: 1rem;
     }
 </style>
 

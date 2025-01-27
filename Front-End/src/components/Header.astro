@@ -13,7 +13,7 @@
         </div>
         
         <!-- Navigation Links (visible on small screens and above) -->
-        <nav class="navbar hidden sm:flex absolute right-10 top-0 h-full justify-center items-center text-sm lg:text-2xl">
+        <nav class="thenavbar hidden sm:flex absolute right-10 top-0 h-full justify-center items-center text-sm lg:text-2xl">
             <div class="flex navList">
                 <span class="navItem relative ml-5 lg:ml-10"><a href="/#home">Home</a></span>
                 <span class="navItem relative ml-5 lg:ml-10"><a href="/#about">About</a></span>
@@ -22,7 +22,7 @@
                 <span class="navItem relative ml-5 lg:ml-10"><a href="/team">Office</a></span>
                 <span class="navItem relative ml-5 lg:ml-10"><a href="/blogs">Blogs</a></span>
                 <span class="navItem relative ml-5 lg:ml-10"><a href="/#faqSection">FAQs</a></span>
-                <span class="navItem relative ml-5 lg:ml-10"><a href="/#footerSection">Connect</a></span>
+                                <span class="navItem relative ml-5 lg:ml-10"><a href="/#footerSection">Connect</a></span>
 
             </div>
         </nav>
@@ -78,13 +78,12 @@
     }
 
     #mobile-menu {
-        background-color: #031F38;
+        background-color: rgba(0, 0, 0, 0.85);
         backdrop-filter: blur(10px);
         position: fixed;
         top: 6rem;
         width: 10rem;
         right: 1rem;
-        border-radius: 10px;
     }
 </style>
 
@@ -93,11 +92,5 @@
     document.getElementById('mobile-menu-button')!.addEventListener('click', function() {
         this.classList.toggle('active');
         document.getElementById('mobile-menu')!.classList.toggle('hidden');
-    });
-    document.querySelectorAll('.py-2').forEach((element) => {
-        element.addEventListener('click', function () {
-            this.classList.toggle('active');
-            document.getElementById('mobile-menu')!.classList.toggle('hidden');
-        });
     });
 </script>

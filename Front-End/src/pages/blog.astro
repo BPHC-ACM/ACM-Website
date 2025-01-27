@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const API_BASE_URL = 'http://127.0.0.1:7000';
+const response = await fetch(`${API_BASE_URL}/blogs`);
+
+if (!response.ok) {
+  throw new Error(`Failed to fetch blogs: ${response.statusText}`);
+}
+
+const blogs = await response.json();
+---
+
+<Layout>
+  <h1>Blog Articles</h1>
+  {blogs.length > 0 ? (
+    <ul>
+      {blogs.map(blog => (
+        <li key={blog.id}>
+          <a href={`/blog/${blog.id}`}>
+            <img src={blog.image_url} alt={blog.title} />
+            <h2>{blog.title}</h2>
+          </a>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p>No blogs available.</p>
+  )}
+</Layout>

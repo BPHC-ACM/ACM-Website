@@ -16,7 +16,7 @@ const blogs = await response.json();
   {blogs.length > 0 ? (
     <ul>
       {blogs.map(blog => (
-        <li key={blog.id}>
+        <li>
           <a href={`/blog/${blog.id}`}>
             <img src={blog.image_url} alt={blog.title} />
             <h2>{blog.title}</h2>

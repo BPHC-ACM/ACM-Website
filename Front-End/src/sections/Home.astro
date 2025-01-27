@@ -51,7 +51,7 @@
 
 <script>
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  let interval: number | null = null;
+  let interval: NodeJS.Timeout;
   const rollins = document.querySelectorAll(".rollin") as NodeListOf<HTMLElement>;
   rollins.forEach((rollin) => {
     rollin.onmouseover = (event) => {

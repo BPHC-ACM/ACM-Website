@@ -20,7 +20,7 @@
                 <span class="navItem relative ml-5 lg:ml-10"><a href="/events">Events</a></span>
                 <span class="navItem relative ml-5 lg:ml-10"><a href="/#team">Team</a></span>
                 <span class="navItem relative ml-5 lg:ml-10"><a href="/#faqSection">FAQs</a></span>
-                                <span class="navItem relative ml-5 lg:ml-10"><a href="/#footerSection">Connect</a></span>
+                <span class="navItem relative ml-5 lg:ml-10"><a href="/#footerSection">Connect</a></span>
 
             </div>
         </nav>
@@ -71,12 +71,13 @@
     }
 
     #mobile-menu {
-        background-color: rgba(0, 0, 0, 0.85);
+        background-color: #031F38;
         backdrop-filter: blur(10px);
         position: fixed;
         top: 6rem;
         width: 10rem;
         right: 1rem;
+        border-radius: 10px;
     }
 </style>
 
@@ -85,5 +86,11 @@
     document.getElementById('mobile-menu-button')!.addEventListener('click', function() {
         this.classList.toggle('active');
         document.getElementById('mobile-menu')!.classList.toggle('hidden');
+    });
+    document.querySelectorAll('.py-2').forEach((element) => {
+        element.addEventListener('click', function () {
+            this.classList.toggle('active');
+            document.getElementById('mobile-menu')!.classList.toggle('hidden');
+        });
     });
 </script>

@@ -4,13 +4,13 @@
     <div class="absolute z-10 hidden sm:flex items-center justify-center w-full h-full sm:h-[85vh] bg-white bg-opacity-0">
         <div class="flex flex-col justify-center h-[90%] w-[80%]">
             <div class="flex flex-col justify-center font-bold text-center sm:text-left">
-                <span class="mb-4 md:mb-8" data-value="ACM BPHC" id="rollin">ACM BPHC</span>
+                <span class="mb-4 md:mb-8 rollin" data-value="ACM BPHC">ACM BPHC</span>
                 <span class="text-acm-blue">Association for Computing Machinery</span>
             </div>
 
             <div class="socials text-2xl lg:text-4xl mt-3 lg:mt-8 flex justify-center sm:justify-start">
                 <a rel="noopener noreferrer" target="_blank" href="https://www.linkedin.com/company/acm-bphc-chapter/posts/?feedView=all" class="social-icon mr-4"><i class="bx bxl-linkedin hover:text-blue-700"></i></a>
-                <a rel="noopener noreferrer" target="_blank" href="https://www.facebook.com/profile.php?id=100054318588641" class="social-icon mr-4"><i class="bx bxl-facebook hover:text-blue-700"></i></a>
+                <a rel="noopener noreferrer" target="_blank" href="https://www.facebook.com/profile.ph 00054318588641" class="social-icon mr-4"><i class="bx bxl-facebook hover:text-blue-700"></i></a>
                 <a rel="noopener noreferrer" target="_blank" href="https://twitter.com/AcmBphc" class="social-icon"><i class='bx bxl-twitter hover:text-blue-700'></i></a>
             </div>
         </div>
@@ -47,59 +47,58 @@
         <i class='bx bx-down-arrow-alt text-3xl md:text-4xl lg:text-7xl mt-6'></i>
     </div>
 </section>
+
+
 <script>
-const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let interval: number | null = null;
+  const rollins = document.querySelectorAll(".rollin") as NodeListOf<HTMLElement>;
+  rollins.forEach((rollin) => {
+    rollin.onmouseover = (event) => {
+      let iteration = 0;
 
-let interval = null;
+      const target = event.target as HTMLElement;
+      if (!target) return;
 
-document.querySelector("#rollin").onmouseover = (event)=> {  
-  let iteration = 0;
-  
-  clearInterval(interval);
-  
-  interval = setInterval(() => {
-    event.target.innerText = event.target.innerText
-      .split("")
-      .map((letter, index) => {
-        if(index < iteration) {
-          return event.target.dataset.value[index];
+      if (interval !== null) {
+        clearInterval(interval);
+      }
+
+      interval = setInterval(() => {
+        target.innerText = target.innerText
+          .split("")
+          .map((letter, index) => {
+            if (index < iteration) {
+              return target.dataset.value![index];
+            }
+            return letters[Math.floor(Math.random() * 26)];
+          })
+          .join("");
+
+        if (iteration >= target.dataset.value!.length) {
+          if (interval !== null) {
+            clearInterval(interval);
+          }
         }
-      
-        return letters[Math.floor(Math.random() * 26)]
-      })
-      .join("");
-    
-    if(iteration >= event.target.dataset.value.length){ 
-      clearInterval(interval);
-    }
-    
-    iteration += 1 / 6;
-  }, 30);
-};
+
+        iteration += 1 / 6;
+      }, 30);
+    };
+  });
 </script>
 <style>
-@font-face {
-  font-family: 'CustomFont';
-  src: url('Sddystopiandemo-GO7xa.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-  
-  #rollin{
-    font-family:  monospace;
-    font-size: clamp(2rem, 10vw, 10rem);
-    color: white;
-    padding: 0rem;
-    border-radius: clamp(0.4rem, 0.75vw, 1rem);
+  @font-face {
+    font-family: 'CustomFont';
+    src: url('Sddystopiandemo-GO7xa.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
   }
-  
-  
-  
-  
-  
-  
- 
-
+    .rollin{
+      font-family:  monospace;
+      font-size: clamp(2rem, 10vw, 10rem);
+      color: white;
+      padding: 0rem;
+      border-radius: clamp(0.4rem, 0.75vw, 1rem);
+    }
 </style>
 

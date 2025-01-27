@@ -1,75 +1,31 @@
-<section id="team" class=" h-fit scroll-mt-16 sm:scroll-mt-24">
-    <!-- Hero Section with Background Image -->
-    <div class="relative w-full h-80 sm:h-70 lg:h-96 mb-10">
-    <div class="parallax-container">
-  <section class="parallax-section">
-    <div class="parallax-background"></div>
-    
-  
-  </section>
-</div>
-        
-        <div class="parallax-background absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <h1 class="text-white text-4xl md:text-5xl font-bold">Meet The Team</h1>
-        </div>
-</div>
+<section id="team" class="h-fit scroll-mt-16 sm:scroll-mt-24">
+  <!-- Hero Section with Background Image -->
+  <div class="relative w-full flex items-center justify-center bg-opacity-50 heading">
+      <h1 class="text-white text-4xl m-10 md:text-5xl font-bold">Meet The Team</h1>
+  </div>
+
+  <!-- Team Image Section -->
+  <div class="imageclass">
+      <img src="/group.jpg" alt="Meet the Team" class="h-auto lg:w-[40%] w-[90%] object-cover">
+  </div>
 </section>
 
 <style>
-    /* Custom object position class with CSS variables */
-    .custom-object-position {
-        --x-position: calc(50%);
-        --y-position: calc(50% + 50px);
-        object-position: var(--x-position) var(--y-position);
-    }
+  /* Center the heading */
+  #team {
+      text-align: center;
+  }
 
-    /* Styling for the team section */
-    .teamPanelContainer .teamCard {
-        background-color: white;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+  .imageclass {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-    .teamPanelContainer .teamCard:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    }
-
-    .teamPanelContainer .teamCard img {
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
-    }
-    .parallax-container {
-  height: 100vh; /* Full height */
-  overflow: hidden; /* Hides any extra content */
-  position: absolute;
-}
-
-/* Parallax Section */
-.parallax-section {
-  position: relative;
-  height: 100%; 
-}
-    .parallax-background {
-  background-image: url('/group.jpg'); /* Your background image */
-  background-attachment: fixed; /* Important for parallax effect */
-  background-size: cover;
-  background-position: center;
-  height: 100vh;
-  position: absolute;
-  width: 100%;
-  z-index: -1; /* Make sure the background is behind content */
-}
-
-
+  img {
+      border: 5px solid transparent; /* Transparent border for background effects */
+      border-image: linear-gradient(45deg, #00A8CC, #142850) 1; /* Gradient border */
+      border-radius: 15px; /* Rounded corners for a softer look */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Optional shadow for emphasis */ 
+  }
 </style>
-
-<script>
-  window.addEventListener('scroll', () => {
-    const background = document.querySelector('.parallax-background');
-    let offset = window.pageYOffset;
-    background.style.transform = `translateY(${offset * 0.7}px)`; // Parallax speed factor
-  });
-</script>
-

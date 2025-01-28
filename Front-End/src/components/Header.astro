@@ -33,7 +33,7 @@
         <a href="/#home" class="py-2">Home</a>
         <a href="/#about" class="py-2">About</a>
         <a href="/events" class="py-2">Events</a>
-        <a href="/#team" class="py-2">Meet The Team</a>
+        <a href="/#team" class="py-2">Team</a>
         <a href="/team" class="py-2">Office</a>
         <a href="/blogs" class="py-2">Blogs</a>
         <a href="/#faqSection" class="py-2" >FAQs</a>
@@ -55,13 +55,11 @@
         transform-origin: bottom right;
         transition: transform 0.25s ease-out;
     }
+
     .header{
-    background-color: #031f2140;
-    backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(10px);
-
-
-
+        background-color: #031f2140;
+        backdrop-filter:blur(10px);
+        -webkit-backdrop-filter:blur(10px);
     }
 
     .navItem:hover:after {
@@ -69,17 +67,15 @@
         transform-origin: bottom left;
     }
 
-    /* Mobile Menu Toggle */
     #mobile-menu-button.active + #mobile-menu {
         display: flex;
     }
 
     #mobile-menu {
         background-color: #031F38;
-        backdrop-filter: blur(10px);
         position: fixed;
         top: 6rem;
-        width: 10rem;
+        width: 8rem;
         right: 1rem;
         border-radius: 10px;
     }

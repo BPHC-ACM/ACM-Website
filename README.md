@@ -1,3 +1,13 @@
+#ALWAYS MAKE A NEW BARNCH WHILE WORKING ON THE REPO LOCALLY TO AVOID CONFLICTS WITH OTHER"S WORK ON A LOCAL LEVEL.
+git checkout -b <branch_name>
+git branch
+git checkout <branch_name>
+
+Come back to main branch after you have commited and pushed your work to the ACM repo
+git branch main
+
+#ALWAYS DO GIT PULL BEFORE STARTING YOUR WORK.
+
 # ACM-Website
 The website for Association for Computing Machinery, BITS Pilani Hyderabad Campus Chapter
 

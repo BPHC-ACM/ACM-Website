@@ -2,7 +2,7 @@ export const teamHeads = [
 	{
 		name: 'Shashwat Sharma',
 		designation: 'Chairperson',
-		image: '/shaswat.png',
+		image: '/shaswat.jpg',
 	},
 	{
 		name: 'Dhairya Luthra',
@@ -17,12 +17,12 @@ export const teamHeads = [
 	{
 		name: 'Samarth Pawan',
 		designation: 'ML Chair',
-		image: '/samarth.png',
+		image: '/samarth.jpg',
 	},
 	{
 		name: 'Arinjay Jain',
 		designation: 'Web Dev Chair',
-		image: '/arinjay.png',
+		image: '/arinjay.jpg',
 	},
 	{
 		name: 'Tushar Anand',
@@ -32,16 +32,16 @@ export const teamHeads = [
 	{
 		name: 'Divya Daga',
 		designation: 'Content Chair',
-		image: '/divya.png',
+		image: '/divya.jpg',
 	},
 	{
 		name: 'Majji Sai Snigdha',
 		designation: 'Events Chair',
-		image: '/majji.png',
+		image: '/majji.JPG',
 	},
 	{
 		name: 'Lakshita Jain',
 		designation: 'Design Chair',
-		image: '/lakshita.png',
+		image: '/lakshita.jpg',
 	},
 ];

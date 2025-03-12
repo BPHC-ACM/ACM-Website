@@ -35,8 +35,9 @@ export default function Navbar() {
 								src='/bits-acm-logo.png'
 								alt='BITS Pilani ACM Student Chapter Logo'
 								width={96}
-								height={40}
+								height={96}
 								className='object-contain'
+								style={{ width: 96, height: 96 }}
 							/>
 						</motion.div>
 					</Link>

@@ -1,4 +1,4 @@
-# ACM BITS Pilani Hyderabad Chapter Website
+# ACM BITS Pilani Hyderabad Campus, Student Chapter Website
 
 ![ACM Logo](public/acm-logo.png)
 

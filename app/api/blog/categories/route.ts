@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import type { Database } from '@/lib/database.types';
 
@@ -29,7 +29,19 @@ export async function GET(): Promise<
 	NextResponse<CategoryResponse | { error: string }>
 > {
 	try {
-		const supabase = createRouteHandlerClient<Database>({ cookies });
+		const supabase = createServerClient(
+			process.env.NEXT_PUBLIC_SUPABASE_URL!,
+			process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+			{
+				cookies: {
+					getAll: async () => {
+						const cookiesStore = await cookies();
+						return cookiesStore.getAll();
+					},
+					setAll: () => {}, // No-op in route handlers
+				},
+			}
+		);
 
 		// Use a raw SQL query to get distinct categories
 		const { data, error } = await supabase

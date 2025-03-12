@@ -1,25 +1,13 @@
-import { CardContent } from '@/components/ui/card';
 import { Card } from '@/components/ui/card';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, Calendar, User } from 'lucide-react';
+import { ArrowLeft, Calendar, Share2, Tag, Clock } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { headers } from 'next/headers';
 
 export const revalidate = 3600; // Revalidate every hour
 
 // Define TypeScript interfaces for your data
-interface Author {
-	name: string;
-	avatar_url?: string;
-	bio?: string;
-}
-
-interface Category {
-	name: string;
-}
-
 interface BlogPost {
 	id: string;
 	slug: string;
@@ -28,13 +16,16 @@ interface BlogPost {
 	content: string;
 	created_at: string;
 	featured_image?: string;
-	authors?: Author;
-	categories?: Category;
+	author_name: string;
+	category_name?: string;
+	category_slug?: string;
+	published: boolean;
 }
 
 interface BlogPostData {
 	post: BlogPost;
-	relatedPosts?: BlogPost[];
+	prevPost?: { title: string; slug: string };
+	nextPost?: { title: string; slug: string };
 }
 
 async function getBlogPost(slug: string): Promise<BlogPostData | null> {
@@ -60,154 +51,156 @@ export default async function BlogPostPage({
 }: {
 	params: { slug: string };
 }) {
-	const data = await getBlogPost(params.slug);
+	const { slug } = await params;
+	const data = await getBlogPost(slug);
 
-	if (!data || !data.post) {
+	if (!data || !data.post || !data.post.published) {
 		notFound();
 	}
 
-	const { post, relatedPosts = [] } = data;
+	const { post, prevPost, nextPost } = data;
+
+	// Calculate read time (approx 225 words per minute)
+	const wordCount = post.content.split(/\s+/).length;
+	const readTime = Math.max(1, Math.ceil(wordCount / 225));
+
+	// Format date for display
+	const formattedDate = new Date(post.created_at).toLocaleDateString(
+		'en-US',
+		{
+			day: 'numeric',
+			month: 'long',
+			year: 'numeric',
+		}
+	);
+
+	// Parse content as Markdown for proper rendering
+	const contentHtml = post.content.replace(/\n/g, '<br />');
 
 	return (
-		<div className='flex flex-col'>
-			{/* Hero Section */}
-			<section className='bg-card py-16 md:py-24'>
-				<div className='container'>
-					<div className='mx-auto max-w-3xl text-center'>
+		<div className='flex flex-col min-h-screen bg-background'>
+			{/* Navigation Bar */}
+			<header className='sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b'>
+				<div className='container py-3'>
+					<div className='flex items-center justify-between'>
 						<Link
 							href='/blog'
-							className='mb-6 inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary'
+							className='flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors'
 						>
 							<ArrowLeft className='mr-2 h-4 w-4' />
-							Back to Blog
+							All Articles
 						</Link>
-						<h1 className='mb-6 text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl'>
-							{post.title}
-						</h1>
-						<div className='flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground'>
-							<div className='flex items-center'>
-								<Calendar className='mr-1 h-4 w-4' />
-								{new Date(post.created_at).toLocaleDateString(
-									'en-US',
-									{
-										day: 'numeric',
-										month: 'long',
-										year: 'numeric',
-									}
-								)}
-							</div>
-							<div className='flex items-center'>
-								<User className='mr-1 h-4 w-4' />
-								{post.authors?.name}
-							</div>
-							<div className='rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary'>
-								{post.categories?.name}
-							</div>
+						<div className='flex items-center gap-4'>
+							<button
+								className='p-2 rounded-full text-muted-foreground hover:bg-muted hover:text-primary transition-all'
+								title='Share article'
+							>
+								<Share2 className='h-4 w-4' />
+							</button>
 						</div>
 					</div>
 				</div>
-			</section>
+			</header>
 
-			{/* Featured Image */}
-			<div className='container -mt-12 mb-12'>
-				<div className='mx-auto aspect-video max-w-4xl overflow-hidden rounded-lg shadow-lg'>
-					<Image
-						src={
-							post.featured_image ||
-							'/placeholder.svg?height=400&width=800'
-						}
-						alt={post.title}
-						width={800}
-						height={400}
-						className='h-full w-full object-cover'
-					/>
-				</div>
-			</div>
+			<main className='flex-grow'>
+				{/* Hero Section */}
+				<section className='py-10 md:py-16 bg-gradient-to-b from-muted/50 to-background'>
+					<div className='container max-w-4xl'>
+						<div className='flex flex-col items-center text-center'>
+							{post.category_name && (
+								<Link
+									href={`/blog/category/${
+										post.category_slug || ''
+									}`}
+									className='mb-4 inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary hover:bg-primary/20 transition-colors'
+								>
+									<Tag className='h-3 w-3' />
+									{post.category_name}
+								</Link>
+							)}
+							<h1 className='text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6'>
+								{post.title}
+							</h1>
+							{post.excerpt && (
+								<p className='text-lg text-muted-foreground mb-8 max-w-3xl'>
+									{post.excerpt}
+								</p>
+							)}
 
-			{/* Blog Content */}
-			<section className='section-padding z-10'>
-				<div className='container'>
-					<div className='mx-auto max-w-3xl'>
-						<article className='prose prose-lg dark:prose-invert max-w-none'>
-							<div
-								dangerouslySetInnerHTML={{
-									__html: post.content,
-								}}
-							/>
-						</article>
-
-						{/* Author Bio */}
-						<div className='mt-10 rounded-lg border bg-card p-6'>
-							<div className='flex items-center gap-4'>
-								<div className='h-12 w-12 overflow-hidden rounded-full bg-muted'>
-									<Image
-										src={
-											post.authors?.avatar_url ||
-											'/placeholder.svg?height=48&width=48'
-										}
-										alt={post.authors?.name || 'Author'}
-										width={48}
-										height={48}
-										className='h-full w-full object-cover'
-									/>
+							<div className='flex items-center justify-center gap-6 text-sm'>
+								<div className='flex items-center gap-2'>
+									<div className='flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground'>
+										{post.author_name
+											.split(' ')
+											.map((n) => n[0])
+											.join('')
+											.toUpperCase()}
+									</div>
+									<span className='font-medium'>
+										{post.author_name}
+									</span>
 								</div>
-								<div>
-									<h3 className='text-lg font-semibold'>
-										{post.authors?.name}
-									</h3>
-									<p className='text-sm text-muted-foreground'>
-										{post.authors?.bio || 'ACM Member'}
-									</p>
+								<div className='flex items-center gap-2 text-muted-foreground'>
+									<Calendar className='h-4 w-4' />
+									<span>{formattedDate}</span>
+								</div>
+								<div className='flex items-center gap-2 text-muted-foreground'>
+									<Clock className='h-4 w-4' />
+									<span>{readTime} min read</span>
 								</div>
 							</div>
 						</div>
-
-						{/* Related Posts */}
-						{relatedPosts.length > 0 && (
-							<div className='mt-10'>
-								<h2 className='mb-6 text-2xl font-bold'>
-									Related Posts
-								</h2>
-								<div className='grid gap-6 sm:grid-cols-2'>
-									{relatedPosts.map(
-										(relatedPost: BlogPost) => (
-											<Card
-												key={relatedPost.id}
-												className='overflow-hidden'
-											>
-												<CardContent className='p-6'>
-													<h3 className='mb-2 text-xl font-bold'>
-														<Link
-															href={`/blog/${relatedPost.slug}`}
-															className='hover:text-primary'
-														>
-															{relatedPost.title}
-														</Link>
-													</h3>
-													<p className='mb-4 text-muted-foreground'>
-														{relatedPost.excerpt}
-													</p>
-													<Button
-														asChild
-														variant='ghost'
-														size='sm'
-													>
-														<Link
-															href={`/blog/${relatedPost.slug}`}
-														>
-															Read More
-														</Link>
-													</Button>
-												</CardContent>
-											</Card>
-										)
-									)}
-								</div>
-							</div>
-						)}
 					</div>
-				</div>
-			</section>
+				</section>
+
+				{/* Featured Image */}
+				{post.featured_image && (
+					<div className='container max-w-4xl mb-10'>
+						<div className='rounded-lg overflow-hidden shadow-lg'>
+							<div className='relative aspect-[16/9]'>
+								<Image
+									src={post.featured_image}
+									alt={post.title}
+									fill
+									priority
+									className='object-cover'
+									sizes='(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px'
+								/>
+							</div>
+						</div>
+					</div>
+				)}
+
+				{/* Blog Content */}
+				<section className='container max-w-3xl py-8'>
+					<article className='prose prose-lg dark:prose-invert max-w-none'>
+						<div
+							dangerouslySetInnerHTML={{ __html: contentHtml }}
+						/>
+					</article>
+
+					{/* Author Bio Card */}
+					<div className='mt-16 rounded-xl border bg-card/50 p-6'>
+						<div className='flex flex-col sm:flex-row gap-5'>
+							<div className='flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-primary text-lg font-medium text-primary-foreground'>
+								{post.author_name
+									.split(' ')
+									.map((n) => n[0])
+									.join('')
+									.toUpperCase()}
+							</div>
+							<div>
+								<p className='text-sm text-muted-foreground mb-1'>
+									WRITTEN BY
+								</p>
+								<h3 className='text-xl font-semibold mb-2'>
+									{post.author_name}
+								</h3>
+							</div>
+						</div>
+					</div>
+				</section>
+			</main>
 		</div>
 	);
 }

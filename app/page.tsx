@@ -120,7 +120,7 @@ export default function Home() {
 							variants={staggerContainer}
 						>
 							<motion.div
-								className='relative w-64 flex items-center'
+								className='relative w-48 flex items-center'
 								variants={fadeIn}
 							>
 								<Image
@@ -149,7 +149,7 @@ export default function Home() {
 							variants={slideUp}
 							transition={{ delay: 0.2 }}
 						>
-							BITS Pilani Hyderabad Chapter
+							BITS Pilani Hyderabad Campus
 						</motion.h2>
 						<motion.p
 							className='mb-8 text-lg text-muted-foreground md:text-xl'

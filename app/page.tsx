@@ -181,7 +181,9 @@ export default function Home() {
 								size='lg'
 								className='hover-lift hover-glow'
 							>
-								<Link href='#about'>Learn More</Link>
+								<Link prefetch={true} href='#about'>
+									Learn More
+								</Link>
 							</Button>
 							<Button
 								asChild
@@ -189,7 +191,9 @@ export default function Home() {
 								size='lg'
 								className='hover-lift'
 							>
-								<Link href='/events'>Explore Events</Link>
+								<Link prefetch={true} href='/events'>
+									Explore Events
+								</Link>
 							</Button>
 						</motion.div>
 					</div>
@@ -529,7 +533,9 @@ export default function Home() {
 								variant='outline'
 								className='hover-lift'
 							>
-								<Link href='/team'>View All Team Members</Link>
+								<Link href='/team' prefetch={true}>
+									View All Team Members
+								</Link>
 							</Button>
 						</div>
 					</motion.div>
@@ -632,7 +638,9 @@ export default function Home() {
 								size='lg'
 								className='hover-lift hover-glow'
 							>
-								<Link href='/events'>Upcoming Events</Link>
+								<Link href='/events' prefetch={true}>
+									Upcoming Events
+								</Link>
 							</Button>
 						</motion.div>
 					</div>

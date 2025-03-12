@@ -46,6 +46,7 @@ export default function Footer() {
 						<ul className='space-y-2 text-sm'>
 							<li>
 								<Link
+									prefetch={true}
 									href='/events'
 									className='text-muted-foreground hover:text-primary transition-colors'
 								>
@@ -54,6 +55,7 @@ export default function Footer() {
 							</li>
 							<li>
 								<Link
+									prefetch={true}
 									href='/blogs'
 									className='text-muted-foreground hover:text-primary transition-colors'
 								>
@@ -62,6 +64,7 @@ export default function Footer() {
 							</li>
 							<li>
 								<Link
+									prefetch={true}
 									href='/team'
 									className='text-muted-foreground hover:text-primary transition-colors'
 								>
@@ -70,6 +73,7 @@ export default function Footer() {
 							</li>
 							<li>
 								<Link
+									prefetch={true}
 									href='/#about'
 									className='text-muted-foreground hover:text-primary transition-colors'
 								>

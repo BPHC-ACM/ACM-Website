@@ -5,9 +5,8 @@ import { ArrowLeft, Calendar, Share2, Tag, Clock } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { headers } from 'next/headers';
 
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 3600;
 
-// Define TypeScript interfaces for your data
 interface BlogPost {
 	id: string;
 	slug: string;
@@ -29,13 +28,11 @@ interface BlogPostData {
 }
 
 async function getBlogPost(slug: string): Promise<BlogPostData | null> {
-	// Get the host from headers to build the absolute URL
 	const headersList = await headers();
 	const host = headersList.get('host') || 'localhost:3000';
 	const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
-	// Use absolute URL with protocol and host
-	const response = await fetch(`${protocol}://${host}/api/blog/${slug}`, {
+	const response = await fetch(`${protocol}://${host}/api/blogs/${slug}`, {
 		next: { revalidate },
 	});
 
@@ -60,11 +57,9 @@ export default async function BlogPostPage({
 
 	const { post, prevPost, nextPost } = data;
 
-	// Calculate read time (approx 225 words per minute)
 	const wordCount = post.content.split(/\s+/).length;
 	const readTime = Math.max(1, Math.ceil(wordCount / 225));
 
-	// Format date for display
 	const formattedDate = new Date(post.created_at).toLocaleDateString(
 		'en-US',
 		{
@@ -74,7 +69,6 @@ export default async function BlogPostPage({
 		}
 	);
 
-	// Parse content as Markdown for proper rendering
 	const contentHtml = post.content.replace(/\n/g, '<br />');
 
 	return (
@@ -84,7 +78,7 @@ export default async function BlogPostPage({
 				<div className='container py-3'>
 					<div className='flex items-center justify-between'>
 						<Link
-							href='/blog'
+							href='/blogs'
 							className='flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors'
 						>
 							<ArrowLeft className='mr-2 h-4 w-4' />
@@ -109,7 +103,7 @@ export default async function BlogPostPage({
 						<div className='flex flex-col items-center text-center'>
 							{post.category_name && (
 								<Link
-									href={`/blog/category/${
+									href={`/blogs/category/${
 										post.category_slug || ''
 									}`}
 									className='mb-4 inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary hover:bg-primary/20 transition-colors'

@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import AnimatedTechBackground from '@/components/animated-tech-background';
+import { useSmoothScroll } from '@/hooks/use-smooth-scroll';
 import {
 	Github,
 	ChevronLeft,
@@ -29,7 +30,8 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
 export default function Home() {
-	// Animation variants
+	useSmoothScroll();
+
 	const fadeIn = {
 		hidden: { opacity: 0, y: 30 },
 		visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
@@ -100,7 +102,6 @@ export default function Home() {
 		],
 	};
 
-	// Navigation functions
 	const goToPrev = () => {
 		if (sliderRef.current) {
 			sliderRef.current.slickPrev();
@@ -127,7 +128,7 @@ export default function Home() {
 							variants={staggerContainer}
 						>
 							<motion.div
-								className='relative w-48 flex items-center'
+								className='relative md:w-48 w-40 flex items-center'
 								variants={fadeIn}
 							>
 								<Image
@@ -440,7 +441,7 @@ export default function Home() {
 				</div>
 			</section>
 
-			{/* Team Carousel Section - REPLACED WITH NEW SLIDER */}
+			{/* Team Carousel Section - FIXED HEIGHT CARDS */}
 			<section className='section-padding bg-muted'>
 				<div className='container'>
 					<motion.h2
@@ -471,7 +472,7 @@ export default function Home() {
 											damping: 17,
 										}}
 									>
-										<Card className='overflow-hidden h-full'>
+										<Card className='overflow-hidden h-full flex flex-col'>
 											<div className='aspect-square relative'>
 												<Image
 													src={
@@ -483,13 +484,15 @@ export default function Home() {
 													className='object-cover'
 												/>
 											</div>
-											<CardContent className='p-6 text-center'>
+											<CardContent className='p-6 text-center flex flex-col flex-1'>
 												<h3 className='mb-1 text-xl font-bold'>
 													{member.name}
 												</h3>
-												<p className='text-muted-foreground'>
-													{member.designation}
-												</p>
+												<div className='min-h-12 flex items-center justify-center'>
+													<p className='text-muted-foreground'>
+														{member.designation}
+													</p>
+												</div>
 											</CardContent>
 										</Card>
 									</motion.div>
@@ -532,7 +535,6 @@ export default function Home() {
 					</motion.div>
 				</div>
 			</section>
-
 			{/* FAQ Section */}
 			<section id='faq' className='section-padding'>
 				<div className='container'>

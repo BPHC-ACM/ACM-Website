@@ -12,7 +12,7 @@ import { motion } from 'framer-motion';
 const navItems = [
 	{ name: 'Home', href: '/' },
 	{ name: 'Events', href: '/events' },
-	{ name: 'Blog', href: '/blog' },
+	{ name: 'Blogs', href: '/blogs' },
 	{ name: 'Team', href: '/team' },
 ];
 
@@ -109,6 +109,7 @@ export default function Navbar() {
 					<nav className='flex flex-col space-y-4 py-4'>
 						{navItems.map((item) => (
 							<Link
+								prefetch={true}
 								key={item.name}
 								href={item.href}
 								className={cn(

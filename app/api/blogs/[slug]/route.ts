@@ -56,11 +56,9 @@ export async function GET(
 			);
 		}
 
-		// Handle potential undefined content with type guard
 		const contentString =
 			typeof data.content === 'string' ? data.content : '';
 
-		// Convert markdown content to HTML
 		const htmlContent = marked(contentString);
 
 		return NextResponse.json({

@@ -10,7 +10,7 @@ import AnimatedTechBackground from '@/components/animated-tech-background';
 export const revalidate = 3600; // Revalidate every hour
 
 async function getEvents() {
-	const supabase = createServerSupabaseClient();
+	const supabase = await createServerSupabaseClient();
 	const { data } = await supabase
 		.from('events')
 		.select('*')

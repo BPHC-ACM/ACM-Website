@@ -309,7 +309,7 @@ export const AnimatedTechBackground: React.FC = () => {
 	return (
 		<div className='absolute inset-0 overflow-hidden'>
 			<canvas ref={canvasRef} className='w-full h-full' />
-			<div className='absolute inset-0 bg-gradient-to-b from-background/0 via-background/5 to-background/90 z-10' />
+			<div className='absolute inset-0 bg-gradient-to-b from-background/0 via-background/5 to-background/90' />
 		</div>
 	);
 };

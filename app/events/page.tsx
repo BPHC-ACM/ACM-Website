@@ -63,7 +63,7 @@ export default async function EventsPage() {
 			</section>
 
 			{/* Events Tabs Section */}
-			<section className='section-padding'>
+			<section className='section-padding z-10'>
 				<div className='container'>
 					<Tabs defaultValue='upcoming' className='w-full'>
 						<TabsList className='mb-8 grid w-full grid-cols-2 blue-border animate-fade-in'>
@@ -133,7 +133,7 @@ export default async function EventsPage() {
 			</section>
 
 			{/* CTA Section */}
-			<section className='section-padding bg-muted'>
+			<section className='section-padding z-10 bg-muted'>
 				<div className='container'>
 					<div className='mx-auto max-w-3xl text-center'>
 						<h2 className='mb-6 text-3xl font-bold md:text-4xl animate-slide-up'>
@@ -153,7 +153,9 @@ export default async function EventsPage() {
 							className='hover-lift hover-glow animate-slide-up'
 							style={{ animationDelay: '0.2s' }}
 						>
-							<Link href='/contact'>Get in Touch</Link>
+							<Link href='mailto:acm@hyderabad.bits-pilani.ac.in'>
+								Get in Touch
+							</Link>
 						</Button>
 					</div>
 				</div>

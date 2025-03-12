@@ -28,7 +28,7 @@ export default function TeamPage() {
 			</section>
 
 			{/* Team Members Section */}
-			<section className='section-padding'>
+			<section className='section-padding z-10'>
 				<div className='container'>
 					<div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3 stagger-animation'>
 						{teamHeads.map((member, index) => (
@@ -62,7 +62,7 @@ export default function TeamPage() {
 			</section>
 
 			{/* Get Involved Section */}
-			<section className='section-padding bg-muted'>
+			<section className='section-padding z-10 bg-muted'>
 				<div className='container'>
 					<div className='mx-auto max-w-3xl text-center'>
 						<h2 className='mb-6 text-3xl font-bold md:text-4xl animate-slide-up'>

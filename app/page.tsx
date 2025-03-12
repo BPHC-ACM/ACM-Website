@@ -87,8 +87,8 @@ export default function Home() {
 
 	// Animation variants
 	const fadeIn = {
-		hidden: { opacity: 0 },
-		visible: { opacity: 1, transition: { duration: 0.6 } },
+		hidden: { opacity: 0, y: 30 },
+		visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
 	};
 
 	const slideUp = {
@@ -120,26 +120,14 @@ export default function Home() {
 							variants={staggerContainer}
 						>
 							<motion.div
-								className='relative h-16 w-16'
+								className='relative w-64 flex items-center'
 								variants={fadeIn}
 							>
 								<Image
-									src='/placeholder.svg?height=64&width=64'
+									src='/acm-logo.png'
 									alt='ACM Logo'
-									width={64}
-									height={64}
-									className='object-contain'
-								/>
-							</motion.div>
-							<motion.div
-								className='relative h-16 w-16'
-								variants={fadeIn}
-							>
-								<Image
-									src='/placeholder.svg?height=64&width=64'
-									alt='BITS Pilani Logo'
-									width={64}
-									height={64}
+									width={256}
+									height={256}
 									className='object-contain'
 								/>
 							</motion.div>
@@ -298,10 +286,10 @@ export default function Home() {
 						</motion.h2>
 						<motion.div
 							className='space-y-4 text-muted-foreground'
-							initial={{ opacity: 0 }}
-							whileInView={{ opacity: 1 }}
+							initial='hidden'
+							whileInView='visible'
 							viewport={{ once: true }}
-							transition={{ duration: 0.5, delay: 0.2 }}
+							variants={staggerContainer}
 						>
 							<p>
 								We envision a vibrant community where students
@@ -466,7 +454,7 @@ export default function Home() {
 						>
 							<motion.div
 								ref={carousel}
-								className='flex'
+								className='flex p-3'
 								animate={{
 									x: -currentIndex * (300 + 24),
 								}}

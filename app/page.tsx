@@ -24,67 +24,11 @@ import {
 } from '@/components/ui/accordion';
 import { motion } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 export default function Home() {
-	// Team carousel state
-	const [currentIndex, setCurrentIndex] = useState(0);
-	const [width, setWidth] = useState(0);
-	const carousel = useRef<HTMLDivElement>(null);
-	const [visibleSlides, setVisibleSlides] = useState(4);
-
-	useEffect(() => {
-		if (carousel.current) {
-			setWidth(
-				carousel.current.scrollWidth - carousel.current.offsetWidth
-			);
-		}
-	}, []);
-
-	// Update visible slides based on screen size
-	useEffect(() => {
-		const handleResize = () => {
-			if (window.innerWidth >= 1280) {
-				setVisibleSlides(4); // XL screens: 4 cards
-			} else if (window.innerWidth >= 1024) {
-				setVisibleSlides(3); // Large screens: 3 cards
-			} else if (window.innerWidth >= 768) {
-				setVisibleSlides(2); // Medium screens: 2 cards
-			} else {
-				setVisibleSlides(1); // Small screens: 1 card
-			}
-		};
-
-		// Initial call
-		handleResize();
-
-		// Add event listener
-		window.addEventListener('resize', handleResize);
-
-		// Clean up
-		return () => window.removeEventListener('resize', handleResize);
-	}, []);
-
-	// Smooth navigation with boundary conditions
-	const nextSlide = () => {
-		const maxIndex = teamHeads.length - visibleSlides;
-		if (currentIndex >= maxIndex) {
-			// Smooth transition to first slide
-			setCurrentIndex(0);
-		} else {
-			setCurrentIndex(currentIndex + 1);
-		}
-	};
-
-	const prevSlide = () => {
-		const maxIndex = teamHeads.length - visibleSlides;
-		if (currentIndex <= 0) {
-			// Smooth transition to last slide
-			setCurrentIndex(maxIndex);
-		} else {
-			setCurrentIndex(currentIndex - 1);
-		}
-	};
-
 	// Animation variants
 	const fadeIn = {
 		hidden: { opacity: 0, y: 30 },
@@ -104,6 +48,69 @@ export default function Home() {
 				staggerChildren: 0.1,
 			},
 		},
+	};
+
+	const sliderRef = useRef(null);
+	const [isMobile, setIsMobile] = useState(false);
+
+	useEffect(() => {
+		const checkIfMobile = () => {
+			setIsMobile(window.innerWidth <= 768);
+		};
+
+		checkIfMobile();
+		window.addEventListener('resize', checkIfMobile);
+
+		return () => {
+			window.removeEventListener('resize', checkIfMobile);
+		};
+	}, []);
+
+	const sliderSettings = {
+		dots: false,
+		infinite: true,
+		speed: 500,
+		slidesToShow: isMobile ? 1 : 4,
+		slidesToScroll: 1,
+		autoplay: true,
+		autoplaySpeed: 5000,
+		pauseOnHover: true,
+		arrows: false,
+		responsive: [
+			{
+				breakpoint: 1280,
+				settings: {
+					slidesToShow: 3,
+				},
+			},
+			{
+				breakpoint: 1024,
+				settings: {
+					slidesToShow: 2,
+				},
+			},
+			{
+				breakpoint: 768,
+				settings: {
+					slidesToShow: 1,
+					centerMode: true,
+					centerPadding: '30px',
+				},
+			},
+		],
+	};
+
+	// Navigation functions
+	const goToPrev = () => {
+		if (sliderRef.current) {
+			sliderRef.current.slickPrev();
+		}
+	};
+
+	const goToNext = () => {
+		if (sliderRef.current) {
+			sliderRef.current.slickNext();
+		}
 	};
 
 	return (
@@ -432,7 +439,8 @@ export default function Home() {
 					</motion.div>
 				</div>
 			</section>
-			{/* Team Carousel Section */}
+
+			{/* Team Carousel Section - REPLACED WITH NEW SLIDER */}
 			<section className='section-padding bg-muted'>
 				<div className='container'>
 					<motion.h2
@@ -444,31 +452,19 @@ export default function Home() {
 					>
 						<span className='heading-gradient'>Meet Our Team</span>
 					</motion.h2>
-					<div className='relative'>
-						<motion.div
-							className='overflow-hidden'
-							initial={{ opacity: 0 }}
-							whileInView={{ opacity: 1 }}
-							viewport={{ once: true }}
-							transition={{ duration: 0.5 }}
-						>
-							<motion.div
-								ref={carousel}
-								className='flex p-3'
-								animate={{
-									x: -currentIndex * (300 + 24),
-								}}
-								transition={{
-									type: 'spring',
-									stiffness: 300,
-									damping: 30,
-								}}
-							>
-								{teamHeads.map((member, index) => (
+
+					<motion.div
+						className='relative px-4'
+						initial={{ opacity: 0 }}
+						whileInView={{ opacity: 1 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.5 }}
+					>
+						<Slider ref={sliderRef} {...sliderSettings}>
+							{teamHeads.map((member, index) => (
+								<div key={index} className='px-3'>
 									<motion.div
-										key={index}
-										className='min-w-[300px] mr-6'
-										whileHover={{ scale: 1.05 }}
+										whileHover={{ scale: 1.01 }}
 										transition={{
 											type: 'spring',
 											stiffness: 400,
@@ -497,35 +493,34 @@ export default function Home() {
 											</CardContent>
 										</Card>
 									</motion.div>
-								))}
-							</motion.div>
-						</motion.div>
-						<div className='flex justify-center mt-6 space-x-4'>
-							<Button
-								variant='outline'
-								size='icon'
-								onClick={prevSlide}
-								disabled={currentIndex === 0}
-								className='rounded-full hover:bg-primary/10 hover:text-primary'
-							>
-								<ChevronLeft className='h-5 w-5' />
-								<span className='sr-only'>Previous</span>
-							</Button>
-							<Button
-								variant='outline'
-								size='icon'
-								onClick={nextSlide}
-								disabled={
-									currentIndex ===
-									teamHeads.length - visibleSlides
-								}
-								className='rounded-full hover:bg-primary/10 hover:text-primary'
-							>
-								<ChevronRight className='h-5 w-5' />
-								<span className='sr-only'>Next</span>
-							</Button>
-						</div>
-						<div className='flex justify-center mt-4'>
+								</div>
+							))}
+						</Slider>
+
+						{!isMobile && (
+							<div className='absolute w-[calc(100%+20px)] left-[-10px] flex justify-between top-1/2 mt-[-2rem] transform -translate-y-1/2 z-10'>
+								<Button
+									variant='outline'
+									size='icon'
+									onClick={goToPrev}
+									className='rounded-full hover:bg-primary/10 hover:text-primary -ml-4'
+								>
+									<ChevronLeft className='h-5 w-5' />
+									<span className='sr-only'>Previous</span>
+								</Button>
+								<Button
+									variant='outline'
+									size='icon'
+									onClick={goToNext}
+									className='rounded-full hover:bg-primary/10 hover:text-primary -mr-4'
+								>
+									<ChevronRight className='h-5 w-5' />
+									<span className='sr-only'>Next</span>
+								</Button>
+							</div>
+						)}
+
+						<div className='flex justify-center mt-8'>
 							<Button
 								asChild
 								variant='outline'
@@ -534,7 +529,7 @@ export default function Home() {
 								<Link href='/team'>View All Team Members</Link>
 							</Button>
 						</div>
-					</div>
+					</motion.div>
 				</div>
 			</section>
 

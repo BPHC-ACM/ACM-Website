@@ -12,24 +12,23 @@ import AnimatedTechBackground from '@/components/animated-tech-background';
 import BlogPagination from './blog-pagination';
 
 // Define types for the data
-interface Category {
-	id: number;
-	name: string;
-}
-
 interface Author {
+	id: string;
 	name: string;
+	avatar_url?: string;
 }
 
 interface BlogPost {
-	id: number;
+	id: string;
 	title: string;
 	slug: string;
 	excerpt: string;
 	featured_image: string;
 	created_at: string;
-	categories?: { name: string };
-	authors?: Author;
+	category_name: string;
+	category_slug: string;
+	author_id: string;
+	author?: Author | null;
 }
 
 interface Pagination {
@@ -49,7 +48,9 @@ export default function BlogPage() {
 	const [selectedCategory, setSelectedCategory] =
 		useState<string>(initialCategory);
 	const [posts, setPosts] = useState<BlogPost[]>([]);
-	const [categories, setCategories] = useState<Category[]>([]);
+	const [categories, setCategories] = useState<
+		{ name: string; slug: string }[]
+	>([]);
 	const [pagination, setPagination] = useState<Pagination>({
 		page: initialPage,
 		totalPages: 1,
@@ -81,7 +82,16 @@ export default function BlogPage() {
 	) => {
 		setLoading(true);
 		try {
-			let url = `/api/blog?page=${pageNum}&category=${categoryName}`;
+			let url = `/api/blog?page=${pageNum}`;
+
+			// Use category slug instead of name if not "All"
+			if (categoryName !== 'All') {
+				const categorySlug =
+					categories.find((c) => c.name === categoryName)?.slug ||
+					categoryName.toLowerCase().replace(/\s+/g, '-');
+				url += `&category=${categorySlug}`;
+			}
+
 			if (search) url += `&search=${encodeURIComponent(search)}`;
 
 			const response = await fetch(url);
@@ -158,7 +168,7 @@ export default function BlogPage() {
 			</section>
 
 			{/* Blog Content Section */}
-			<section className='section-padding'>
+			<section className='section-padding z-10'>
 				<div className='container'>
 					<div className='mb-10 flex flex-col gap-6 w-full md:items-center md:justify-between'>
 						{/* Search */}
@@ -187,9 +197,9 @@ export default function BlogPage() {
 							>
 								All
 							</Button>
-							{categories.map((cat) => (
+							{categories.map((cat, index) => (
 								<Button
-									key={cat.id}
+									key={index}
 									variant={
 										selectedCategory === cat.name
 											? 'default'
@@ -235,7 +245,7 @@ export default function BlogPage() {
 									<CardContent className='p-6'>
 										<div className='mb-2 flex items-center gap-2'>
 											<span className='rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary'>
-												{post.categories?.name}
+												{post.category_name}
 											</span>
 											<span className='text-xs text-muted-foreground'>
 												{new Date(
@@ -260,7 +270,9 @@ export default function BlogPage() {
 										</p>
 										<div className='flex items-center justify-between'>
 											<span className='text-sm text-muted-foreground'>
-												By {post.authors?.name}
+												By{' '}
+												{post.author?.name ||
+													'Unknown Author'}
 											</span>
 											<Button
 												asChild

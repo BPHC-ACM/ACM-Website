@@ -18,8 +18,7 @@ export async function GET(request: Request) {
 		.select(
 			`
       *,
-      categories(id, name),
-      authors(name, avatar_url)
+      author_id
     `
 		)
 		.eq('published', true)
@@ -34,17 +33,9 @@ export async function GET(request: Request) {
 
 	// Add category filter if needed
 	if (category && category !== 'All') {
-		// Assuming there's a direct category_id column in blog_posts
-		const { data: categoryData } = await supabase
-			.from('categories')
-			.select('id')
-			.eq('name', category)
-			.single();
-
-		if (categoryData && categoryData.id) {
-			query = query.eq('category_id', categoryData.id);
-			countQuery = countQuery.eq('category_id', categoryData.id);
-		}
+		// Using the category_slug field instead of joining with categories table
+		query = query.eq('category_slug', category.toLowerCase());
+		countQuery = countQuery.eq('category_slug', category.toLowerCase());
 	}
 
 	// Execute both queries in parallel
@@ -65,12 +56,33 @@ export async function GET(request: Request) {
 		console.error('Error counting blog posts:', countError);
 	}
 
+	// If we need to fetch author information separately
+	let postsWithAuthors = posts;
+	if (posts && posts.length > 0) {
+		const authorIds = [...new Set(posts.map((post) => post.author_id))];
+
+		const { data: authors } = await supabase
+			.from('authors')
+			.select('id, name, avatar_url')
+			.in('id', authorIds);
+
+		if (authors) {
+			postsWithAuthors = posts.map((post) => {
+				const author = authors.find((a) => a.id === post.author_id);
+				return {
+					...post,
+					author: author || null,
+				};
+			});
+		}
+	}
+
 	console.log(
 		`Fetched ${posts?.length || 0} posts, total count: ${totalCount || 0}`
 	);
 
 	return NextResponse.json({
-		posts: posts || [],
+		posts: postsWithAuthors || [],
 		pagination: {
 			total: totalCount || 0,
 			page,

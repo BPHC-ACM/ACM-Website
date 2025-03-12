@@ -84,7 +84,6 @@ export default function BlogPage() {
 		try {
 			let url = `/api/blog?page=${pageNum}`;
 
-			// Use category slug instead of name if not "All"
 			if (categoryName !== 'All') {
 				const categorySlug =
 					categories.find((c) => c.name === categoryName)?.slug ||

@@ -49,6 +49,7 @@
     "framer-motion": "latest",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
+    "marked": "^15.0.7",
     "next": "^15.2.2",
     "next-themes": "latest",
     "react": "^18.3.1",
@@ -66,6 +67,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@types/marked": "^5.0.2",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",

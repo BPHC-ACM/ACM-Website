@@ -17,28 +17,33 @@ export async function GET(request: Request) {
 		.from('blog_posts')
 		.select(
 			`
-      *,
-      author_id
-    `
+      id,
+      title,
+      slug,
+      excerpt,
+      content,
+      created_at,
+      featured_image,
+      published,
+      category_name,
+      category_slug,
+      author_name
+      `
 		)
 		.eq('published', true)
 		.order('created_at', { ascending: false })
 		.range(offset, offset + pageSize - 1);
 
-	// Base query for counting total posts
 	let countQuery = supabase
 		.from('blog_posts')
 		.select('id', { count: 'exact', head: true })
 		.eq('published', true);
 
-	// Add category filter if needed
 	if (category && category !== 'All') {
-		// Using the category_slug field instead of joining with categories table
 		query = query.eq('category_slug', category.toLowerCase());
 		countQuery = countQuery.eq('category_slug', category.toLowerCase());
 	}
 
-	// Execute both queries in parallel
 	const [postsResult, countResult] = await Promise.all([query, countQuery]);
 
 	const { data: posts, error: postsError } = postsResult;
@@ -56,33 +61,15 @@ export async function GET(request: Request) {
 		console.error('Error counting blog posts:', countError);
 	}
 
-	// If we need to fetch author information separately
-	let postsWithAuthors = posts;
-	if (posts && posts.length > 0) {
-		const authorIds = [...new Set(posts.map((post) => post.author_id))];
-
-		const { data: authors } = await supabase
-			.from('authors')
-			.select('id, name, avatar_url')
-			.in('id', authorIds);
-
-		if (authors) {
-			postsWithAuthors = posts.map((post) => {
-				const author = authors.find((a) => a.id === post.author_id);
-				return {
-					...post,
-					author: author || null,
-				};
-			});
-		}
-	}
+	// We're not fetching authors separately since author_name is already in blog_posts table
+	// based on the data structure you provided
 
 	console.log(
 		`Fetched ${posts?.length || 0} posts, total count: ${totalCount || 0}`
 	);
 
 	return NextResponse.json({
-		posts: postsWithAuthors || [],
+		posts: posts || [],
 		pagination: {
 			total: totalCount || 0,
 			page,

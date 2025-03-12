@@ -10,7 +10,7 @@ export default function Footer() {
 					{/* Logo & Description Section */}
 					<div className='animate-slide-up'>
 						<div className='flex items-center gap-4 mb-5'>
-							<div className='relative flex items-center justify-center h-14 w-14 overflow-hidden rounded-lg shadow-sm'>
+							<div className='relative flex items-center justify-center h-12 w-12 overflow-hidden rounded-lg shadow-sm'>
 								<Image
 									src='/acm-logo.png'
 									alt='ACM Logo'
@@ -24,7 +24,7 @@ export default function Footer() {
 									ACM BITS Pilani
 								</h3>
 								<p className='text-sm font-medium'>
-									Hyderabad Chapter
+									Hyderabad Campus, Student Chapter
 								</p>
 							</div>
 						</div>
@@ -157,7 +157,7 @@ export default function Footer() {
 				<div className='mt-12 border-t pt-6 text-center'>
 					<p className='text-sm text-muted-foreground'>
 						&copy; {new Date().getFullYear()} ACM BITS Pilani
-						Hyderabad Chapter. All rights reserved.
+						Hyderabad Campus, Student Chapter.
 					</p>
 				</div>
 			</div>

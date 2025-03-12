@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import type { Database } from '@/lib/database.types';
 import { marked } from 'marked';
@@ -8,13 +8,22 @@ export async function GET(
 	request: Request,
 	{ params }: { params: { slug: string } }
 ) {
-	const { slug } = params;
+	const { slug } = await params;
 	console.log('Fetching blog post with slug:', slug);
 
-	// The createRouteHandlerClient expects a function that returns a Promise<ReadonlyRequestCookies>
-	const supabase = createRouteHandlerClient<Database>({
-		cookies: () => cookies(),
-	});
+	const supabase = createServerClient(
+		process.env.NEXT_PUBLIC_SUPABASE_URL!,
+		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+		{
+			cookies: {
+				getAll: async () => {
+					const cookiesStore = await cookies();
+					return cookiesStore.getAll();
+				},
+				setAll: () => {},
+			},
+		}
+	);
 
 	try {
 		const { data, error } = await supabase

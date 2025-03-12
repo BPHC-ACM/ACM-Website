@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import type { Database } from '@/lib/database.types';
 
@@ -10,7 +10,19 @@ export async function GET(request: Request) {
 	const pageSize = 6;
 	const offset = (page - 1) * pageSize;
 
-	const supabase = createRouteHandlerClient<Database>({ cookies });
+	const supabase = createServerClient(
+		process.env.NEXT_PUBLIC_SUPABASE_URL!,
+		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+		{
+			cookies: {
+				getAll: async () => {
+					const cookiesStore = await cookies();
+					return cookiesStore.getAll();
+				},
+				setAll: () => {},
+			},
+		}
+	);
 
 	// Base query for blog posts
 	let query = supabase

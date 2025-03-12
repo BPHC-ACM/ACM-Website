@@ -11,7 +11,6 @@ import { Search } from 'lucide-react';
 import AnimatedTechBackground from '@/components/animated-tech-background';
 import BlogPagination from './blog-pagination';
 
-// Define types for the data
 interface Author {
 	id: string;
 	name: string;
@@ -62,7 +61,7 @@ export default function BlogPage() {
 
 	const fetchCategories = async () => {
 		try {
-			const response = await fetch('/api/blog/categories');
+			const response = await fetch('/api/blogs/categories');
 			if (!response.ok) {
 				throw new Error('Failed to fetch categories');
 			}
@@ -81,7 +80,7 @@ export default function BlogPage() {
 	) => {
 		setLoading(true);
 		try {
-			let url = `/api/blog?page=${pageNum}`;
+			let url = `/api/blogs?page=${pageNum}`;
 
 			if (categoryName !== 'All') {
 				const categorySlug =
@@ -109,16 +108,13 @@ export default function BlogPage() {
 		}
 	};
 
-	// Fetch data on initial load
 	useEffect(() => {
 		const fetchInitialData = async () => {
 			setLoading(true);
 			try {
-				// Fetch categories
 				const categoriesData = await fetchCategories();
 				setCategories(categoriesData);
 
-				// Fetch initial posts
 				await fetchBlogPosts(initialPage, initialCategory);
 			} catch (error) {
 				console.error('Error fetching initial data:', error);
@@ -128,24 +124,21 @@ export default function BlogPage() {
 		fetchInitialData();
 	}, [initialPage, initialCategory]);
 
-	// Handle category selection
 	const handleCategoryChange = (categoryName: string) => {
 		setSelectedCategory(categoryName);
-		setPage(1); // Reset to first page when changing categories
+		setPage(1);
 		fetchBlogPosts(1, categoryName, searchTerm);
 	};
 
-	// Handle page change
 	const handlePageChange = (newPage: number) => {
 		setPage(newPage);
 		fetchBlogPosts(newPage, selectedCategory, searchTerm);
 	};
 
-	// Handle search
 	const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === 'Enter') {
 			fetchBlogPosts(1, selectedCategory, searchTerm);
-			setPage(1); // Reset to first page when searching
+			setPage(1);
 		}
 	};
 
@@ -273,7 +266,7 @@ export default function BlogPage() {
 												</div>
 												<h3 className='mb-2 text-xl font-bold'>
 													<Link
-														href={`/blog/${post.slug}`}
+														href={`/blogs/${post.slug}`}
 														className='hover:text-primary'
 													>
 														{post.title}
@@ -294,7 +287,7 @@ export default function BlogPage() {
 														size='sm'
 													>
 														<Link
-															href={`/blog/${post.slug}`}
+															href={`/blogs/${post.slug}`}
 														>
 															Read More
 														</Link>

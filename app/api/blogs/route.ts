@@ -24,7 +24,6 @@ export async function GET(request: Request) {
 		}
 	);
 
-	// Base query for blog posts
 	let query = supabase
 		.from('blog_posts')
 		.select(
@@ -72,9 +71,6 @@ export async function GET(request: Request) {
 	if (countError) {
 		console.error('Error counting blog posts:', countError);
 	}
-
-	// We're not fetching authors separately since author_name is already in blog_posts table
-	// based on the data structure you provided
 
 	console.log(
 		`Fetched ${posts?.length || 0} posts, total count: ${totalCount || 0}`

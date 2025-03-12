@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
 import AnimatedTechBackground from '@/components/animated-tech-background';
 
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 3600;
 
 async function getEvents() {
 	const supabase = await createServerSupabaseClient();
@@ -22,17 +22,13 @@ async function getEvents() {
 export default async function EventsPage() {
 	const events = await getEvents();
 
-	// Get current date
 	const now = new Date();
 
-	// Get upcoming events (future dates)
 	const upcomingEvents = events
 		.filter((event) => new Date(event.date) > now)
 		.sort(
 			(a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
 		);
-
-	// Get past events (past dates)
 	const pastEvents = events
 		.filter((event) => new Date(event.date) <= now)
 		.sort(

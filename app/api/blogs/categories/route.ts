@@ -3,13 +3,11 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import type { Database } from '@/lib/database.types';
 
-// Define the response type for categories
 type CategoryResponse = {
 	id: string;
 	name: string;
 }[];
 
-// Define the blog post structure after our schema change
 interface BlogPost {
 	id: string;
 	created_at: string;
@@ -38,12 +36,11 @@ export async function GET(): Promise<
 						const cookiesStore = await cookies();
 						return cookiesStore.getAll();
 					},
-					setAll: () => {}, // No-op in route handlers
+					setAll: () => {},
 				},
 			}
 		);
 
-		// Use a raw SQL query to get distinct categories
 		const { data, error } = await supabase
 			.from('blog_posts')
 			.select('category_name, category_slug')
@@ -55,7 +52,6 @@ export async function GET(): Promise<
 			return NextResponse.json({ error: error.message }, { status: 500 });
 		}
 
-		// Manually filter for unique categories
 		const uniqueCategories = new Map<
 			string,
 			{ category_name: string; category_slug: string }
@@ -67,7 +63,6 @@ export async function GET(): Promise<
 			}
 		});
 
-		// Format the response to match the previous structure
 		const formattedData: CategoryResponse = Array.from(
 			uniqueCategories.values()
 		).map((category) => ({

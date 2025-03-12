@@ -7,12 +7,10 @@ import React from 'react';
 export function ModeToggle() {
 	const { theme, setTheme } = useTheme();
 
-	// Toggle between light and dark theme
 	const toggleTheme = () => {
 		setTheme(theme === 'light' ? 'dark' : 'light');
 	};
 
-	// Set to system theme initially (as default)
 	React.useEffect(() => {
 		if (!theme) {
 			setTheme('system');

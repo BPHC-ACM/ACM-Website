@@ -180,10 +180,6 @@ body {
 	animation: pulse 2s infinite;
 }
 
-.animate-glow {
-	animation: glow 2s infinite;
-}
-
 .heading-gradient {
 	@apply bg-gradient-to-r from-primary to-[#66CCFF] bg-clip-text text-transparent;
 }

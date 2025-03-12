@@ -37,7 +37,7 @@ export default function Footer() {
 					</div>
 
 					<div
-						className='animate-slide-up pl-24 md:pl-24'
+						className='animate-slide-up md:pl-24'
 						style={{ animationDelay: '0.1s' }}
 					>
 						<h3 className='mb-4 text-lg font-semibold blue-accent inline-block'>

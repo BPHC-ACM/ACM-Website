@@ -12,9 +12,7 @@ export default function TeamPage() {
 				<div className='container'>
 					<div className='mx-auto max-w-3xl text-center'>
 						<h1 className='mb-6 text-4xl font-bold tracking-tight md:text-5xl animate-slide-up'>
-							<span className='heading-gradient animate-glow'>
-								Our Team
-							</span>
+							<span className='heading-gradient '>Our Team</span>
 						</h1>
 						<p
 							className='mb-0 text-lg text-muted-foreground md:text-xl animate-slide-up'

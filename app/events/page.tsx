@@ -47,7 +47,7 @@ export default async function EventsPage() {
 				<div className='container'>
 					<div className='mx-auto max-w-3xl text-center'>
 						<h1 className='mb-6 text-4xl font-bold tracking-tight md:text-5xl animate-slide-up'>
-							<span className='heading-gradient animate-glow'>
+							<span className='heading-gradient '>
 								Events & Workshops
 							</span>
 						</h1>

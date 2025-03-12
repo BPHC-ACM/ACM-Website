@@ -151,170 +151,184 @@ export default function BlogPage() {
 	};
 
 	return (
-		<div className='flex flex-col'>
-			{/* Hero Section */}
-			<section className='bg-card py-16 md:py-24'>
-				<AnimatedTechBackground />
-				<div className='container'>
-					<div className='mx-auto max-w-3xl text-center'>
-						<h1 className='mb-6 text-4xl font-bold tracking-tight md:text-5xl'>
-							<span className='heading-gradient'>ACM Blog</span>
-						</h1>
-						<p className='mb-0 text-lg text-muted-foreground md:text-xl'>
-							Insights, tutorials, and updates from our community.
-						</p>
-					</div>
-				</div>
-			</section>
+		<div className="relative my-8 py-12 overflow-hidden rounded-lg bg-black">
+  <div className="absolute inset-0 flex items-center justify-center opacity-10">
+    <span className="text-9xl font-extrabold tracking-widest text-white">COMING SOON</span>
+  </div>
+  <div className="relative flex flex-col items-center justify-center p-8 text-center">
+    <h2 className="text-4xl md:text-5xl font-bold tracking-wider text-white">
+      COMING SOON
+    </h2>
+    <div className="h-1 w-24 bg-purple-600 my-6"></div>
+    <p className="text-lg text-gray-300 max-w-md">
+      We're working hard to bring you something amazing. Stay tuned!
+    </p>
+  </div>
+</div>
+	// 	<div className='flex flex-col'>
+	// 		{/* Hero Section */}
+	// 		<section className='bg-card py-16 md:py-24'>
+	// 			<AnimatedTechBackground />
+	// 			<div className='container'>
+	// 				<div className='mx-auto max-w-3xl text-center'>
+	// 					<h1 className='mb-6 text-4xl font-bold tracking-tight md:text-5xl'>
+	// 						<span className='heading-gradient'>ACM Blog</span>
+	// 					</h1>
+	// 					<p className='mb-0 text-lg text-muted-foreground md:text-xl'>
+	// 						Insights, tutorials, and updates from our community.
+	// 					</p>
+	// 				</div>
+	// 			</div>
+	// 		</section>
 
-			{/* Blog Content Section */}
-			<section className='section-padding z-10'>
-				<div className='container'>
-					<div className='mb-10 flex flex-col gap-6 w-full md:items-center md:justify-between'>
-						{/* Search */}
-						<div className='relative w-full'>
-							<Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
-							<Input
-								type='search'
-								placeholder='Search articles...'
-								className='pl-10'
-								value={searchTerm}
-								onChange={(e) => setSearchTerm(e.target.value)}
-								onKeyDown={handleSearch}
-							/>
-						</div>
-						{/* Categories */}
-						<div className='flex flex-wrap center gap-2'>
-							<Button
-								key='all'
-								variant={
-									selectedCategory === 'All'
-										? 'default'
-										: 'outline'
-								}
-								size='sm'
-								onClick={() => handleCategoryChange('All')}
-							>
-								All
-							</Button>
-							{categories.map((cat, index) => (
-								<Button
-									key={index}
-									variant={
-										selectedCategory === cat.name
-											? 'default'
-											: 'outline'
-									}
-									size='sm'
-									onClick={() =>
-										handleCategoryChange(cat.name)
-									}
-								>
-									{cat.name}
-								</Button>
-							))}
-						</div>
-					</div>
+	// 		{/* Blog Content Section */}
+	// 		<section className='section-padding z-10'>
+	// 			<div className='container'>
+	// 				<div className='mb-10 flex flex-col gap-6 w-full md:items-center md:justify-between'>
+	// 					{/* Search */}
+	// 					<div className='relative w-full'>
+	// 						<Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+	// 						<Input
+	// 							type='search'
+	// 							placeholder='Search articles...'
+	// 							className='pl-10'
+	// 							value={searchTerm}
+	// 							onChange={(e) => setSearchTerm(e.target.value)}
+	// 							onKeyDown={handleSearch}
+	// 						/>
+	// 					</div>
+	// 					{/* Categories */}
+	// 					<div className='flex flex-wrap center gap-2'>
+	// 						<Button
+	// 							key='all'
+	// 							variant={
+	// 								selectedCategory === 'All'
+	// 									? 'default'
+	// 									: 'outline'
+	// 							}
+	// 							size='sm'
+	// 							onClick={() => handleCategoryChange('All')}
+	// 						>
+	// 							All
+	// 						</Button>
+	// 						{categories.map((cat, index) => (
+	// 							<Button
+	// 								key={index}
+	// 								variant={
+	// 									selectedCategory === cat.name
+	// 										? 'default'
+	// 										: 'outline'
+	// 								}
+	// 								size='sm'
+	// 								onClick={() =>
+	// 									handleCategoryChange(cat.name)
+	// 								}
+	// 							>
+	// 								{cat.name}
+	// 							</Button>
+	// 						))}
+	// 					</div>
+	// 				</div>
 
-					{/* Loading state */}
-					{loading && (
-						<div className='flex justify-center py-10'>
-							<div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary'></div>
-						</div>
-					)}
+	// 				{/* Loading state */}
+	// 				{loading && (
+	// 					<div className='flex justify-center py-10'>
+	// 						<div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary'></div>
+	// 					</div>
+	// 				)}
 
-					{/* Blog Posts Grid */}
-					{!loading && posts.length > 0 ? (
-						<div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
-							{posts.map((post) => (
-								<Card
-									key={post.id}
-									className='overflow-hidden transition-all hover:shadow-lg'
-								>
-									<div className='aspect-video relative'>
-										<Image
-											src={
-												post.featured_image ||
-												'/placeholder.svg?height=200&width=400'
-											}
-											alt={post.title}
-											fill
-											className='object-cover'
-										/>
-									</div>
-									<CardContent className='p-6'>
-										<div className='mb-2 flex items-center gap-2'>
-											<span className='rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary'>
-												{post.category_name}
-											</span>
-											<span className='text-xs text-muted-foreground'>
-												{new Date(
-													post.created_at
-												).toLocaleDateString('en-US', {
-													day: 'numeric',
-													month: 'short',
-													year: 'numeric',
-												})}
-											</span>
-										</div>
-										<h3 className='mb-2 text-xl font-bold'>
-											<Link
-												href={`/blog/${post.slug}`}
-												className='hover:text-primary'
-											>
-												{post.title}
-											</Link>
-										</h3>
-										<p className='mb-4 line-clamp-2 text-muted-foreground'>
-											{post.excerpt}
-										</p>
-										<div className='flex items-center justify-between'>
-											<span className='text-sm text-muted-foreground'>
-												By{' '}
-												{post.author?.name ||
-													'Unknown Author'}
-											</span>
-											<Button
-												asChild
-												variant='ghost'
-												size='sm'
-											>
-												<Link
-													href={`/blog/${post.slug}`}
-												>
-													Read More
-												</Link>
-											</Button>
-										</div>
-									</CardContent>
-								</Card>
-							))}
-						</div>
-					) : !loading ? (
-						<div className='rounded-lg border border-dashed p-10 text-center'>
-							<h3 className='mb-2 text-xl font-semibold'>
-								No Blog Posts Found
-							</h3>
-							<p className='mb-6 text-muted-foreground'>
-								There are no blog posts in this category yet.
-								Check back soon!
-							</p>
-						</div>
-					) : null}
+	// 				{/* Blog Posts Grid */}
+	// 				{!loading && posts.length > 0 ? (
+	// 					<div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
+	// 						{posts.map((post) => (
+	// 							<Card
+	// 								key={post.id}
+	// 								className='overflow-hidden transition-all hover:shadow-lg'
+	// 							>
+	// 								<div className='aspect-video relative'>
+	// 									<Image
+	// 										src={
+	// 											post.featured_image ||
+	// 											'/placeholder.svg?height=200&width=400'
+	// 										}
+	// 										alt={post.title}
+	// 										fill
+	// 										className='object-cover'
+	// 									/>
+	// 								</div>
+	// 								<CardContent className='p-6'>
+	// 									<div className='mb-2 flex items-center gap-2'>
+	// 										<span className='rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary'>
+	// 											{post.category_name}
+	// 										</span>
+	// 										<span className='text-xs text-muted-foreground'>
+	// 											{new Date(
+	// 												post.created_at
+	// 											).toLocaleDateString('en-US', {
+	// 												day: 'numeric',
+	// 												month: 'short',
+	// 												year: 'numeric',
+	// 											})}
+	// 										</span>
+	// 									</div>
+	// 									<h3 className='mb-2 text-xl font-bold'>
+	// 										<Link
+	// 											href={`/blog/${post.slug}`}
+	// 											className='hover:text-primary'
+	// 										>
+	// 											{post.title}
+	// 										</Link>
+	// 									</h3>
+	// 									<p className='mb-4 line-clamp-2 text-muted-foreground'>
+	// 										{post.excerpt}
+	// 									</p>
+	// 									<div className='flex items-center justify-between'>
+	// 										<span className='text-sm text-muted-foreground'>
+	// 											By{' '}
+	// 											{post.author?.name ||
+	// 												'Unknown Author'}
+	// 										</span>
+	// 										<Button
+	// 											asChild
+	// 											variant='ghost'
+	// 											size='sm'
+	// 										>
+	// 											<Link
+	// 												href={`/blog/${post.slug}`}
+	// 											>
+	// 												Read More
+	// 											</Link>
+	// 										</Button>
+	// 									</div>
+	// 								</CardContent>
+	// 							</Card>
+	// 						))}
+	// 					</div>
+	// 				) : !loading ? (
+	// 					<div className='rounded-lg border border-dashed p-10 text-center'>
+	// 						<h3 className='mb-2 text-xl font-semibold'>
+	// 							No Blog Posts Found
+	// 						</h3>
+	// 						<p className='mb-6 text-muted-foreground'>
+	// 							There are no blog posts in this category yet.
+	// 							Check back soon!
+	// 						</p>
+	// 					</div>
+	// 				) : null}
 
-					{/* Pagination */}
-					{pagination && pagination.totalPages > 1 && !loading && (
-						<div className='mt-10'>
-							<BlogPagination
-								currentPage={pagination.page}
-								totalPages={pagination.totalPages}
-								category={selectedCategory}
-								onPageChange={handlePageChange}
-							/>
-						</div>
-					)}
-				</div>
-			</section>
-		</div>
+	// 				{/* Pagination */}
+	// 				{pagination && pagination.totalPages > 1 && !loading && (
+	// 					<div className='mt-10'>
+	// 						<BlogPagination
+	// 							currentPage={pagination.page}
+	// 							totalPages={pagination.totalPages}
+	// 							category={selectedCategory}
+	// 							onPageChange={handlePageChange}
+	// 						/>
+	// 					</div>
+	// 				)}
+	// 			</div>
+	// 		</section>
+	// 	</div>
 	);
 }

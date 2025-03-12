@@ -24,7 +24,11 @@ export default function Navbar() {
 		<header className='sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md'>
 			<div className='container flex h-16 items-center justify-between'>
 				<div className='flex items-center gap-6'>
-					<Link href='/' className='flex items-center'>
+					<Link
+						href='/'
+						prefetch={true}
+						className='flex items-center'
+					>
 						<motion.div
 							className='relative'
 							initial={{ opacity: 0, scale: 0.8 }}
@@ -46,6 +50,7 @@ export default function Navbar() {
 							<Link
 								key={item.name}
 								href={item.href}
+								prefetch={true}
 								className={cn(
 									'text-sm font-medium transition-colors hover:text-primary relative',
 									pathname === item.href

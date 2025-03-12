@@ -267,6 +267,7 @@ export default function BlogPage() {
 												<h3 className='mb-2 text-xl font-bold'>
 													<Link
 														href={`/blogs/${post.slug}`}
+														prefetch={true}
 														className='hover:text-primary'
 													>
 														{post.title}
@@ -288,6 +289,7 @@ export default function BlogPage() {
 													>
 														<Link
 															href={`/blogs/${post.slug}`}
+															prefetch={true}
 														>
 															Read More
 														</Link>

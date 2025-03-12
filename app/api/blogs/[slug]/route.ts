@@ -9,7 +9,6 @@ export async function GET(
 	{ params }: { params: { slug: string } }
 ) {
 	const { slug } = await params;
-	console.log('Fetching blog post with slug:', slug);
 
 	const supabase = createServerClient(
 		process.env.NEXT_PUBLIC_SUPABASE_URL!,

@@ -78,6 +78,7 @@ export default async function BlogPostPage({
 				<div className='container py-3'>
 					<div className='flex items-center justify-between'>
 						<Link
+							prefetch={true}
 							href='/blogs'
 							className='flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors'
 						>
@@ -106,6 +107,7 @@ export default async function BlogPostPage({
 									href={`/blogs/category/${
 										post.category_slug || ''
 									}`}
+									prefetch={true}
 									className='mb-4 inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary hover:bg-primary/20 transition-colors'
 								>
 									<Tag className='h-3 w-3' />

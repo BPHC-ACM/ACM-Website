@@ -72,10 +72,6 @@ export async function GET(request: Request) {
 		console.error('Error counting blog posts:', countError);
 	}
 
-	console.log(
-		`Fetched ${posts?.length || 0} posts, total count: ${totalCount || 0}`
-	);
-
 	return NextResponse.json({
 		posts: posts || [],
 		pagination: {

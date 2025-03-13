@@ -147,11 +147,11 @@ export default function BlogPage() {
 	return (
 		<div className='flex flex-col'>
 			{/* Hero Section */}
-			<section className='bg-card py-16 md:py-24'>
+			<section className='bg-card py-10 md:py-16 lg:py-24'>
 				<AnimatedTechBackground />
 				<div className='container'>
 					<div className='mx-auto max-w-3xl text-center'>
-						<h1 className='mb-6 text-4xl font-bold tracking-tight md:text-5xl'>
+						<h1 className='mb-6 text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl'>
 							<span className='heading-gradient'>ACM Blog</span>
 						</h1>
 						<p className='mb-0 text-lg text-muted-foreground md:text-xl'>
@@ -165,7 +165,7 @@ export default function BlogPage() {
 			<section className='section-padding z-10'>
 				<div className='container'>
 					{/* Search */}
-					<div className='relative w-full mb-10'>
+					<div className='relative w-full max-w-full mb-6 md:mb-10'>
 						<Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
 						<Input
 							type='search'
@@ -198,7 +198,20 @@ export default function BlogPage() {
 					) : (
 						<>
 							{/* Categories */}
-							<div className='flex flex-wrap center gap-2 mb-10'>
+							<div
+								className='flex overflow-x-auto pb-2 mb-8 -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap md:gap-2 md:mb-10'
+								style={{
+									msOverflowStyle: 'none' /* IE and Edge */,
+									scrollbarWidth: 'none' /* Firefox */,
+								}}
+							>
+								{/* For WebKit browsers (Chrome, Safari) */}
+								<style jsx>{`
+									div::-webkit-scrollbar {
+										display: none;
+									}
+								`}</style>
+
 								<Button
 									key='all'
 									variant={
@@ -208,6 +221,7 @@ export default function BlogPage() {
 									}
 									size='sm'
 									onClick={() => handleCategoryChange('All')}
+									className='flex-shrink-0 mr-2 md:mr-0'
 								>
 									All
 								</Button>
@@ -223,6 +237,7 @@ export default function BlogPage() {
 										onClick={() =>
 											handleCategoryChange(cat.name)
 										}
+										className='flex-shrink-0 mr-2 md:mr-0'
 									>
 										{cat.name}
 									</Button>
@@ -231,11 +246,11 @@ export default function BlogPage() {
 
 							{/* Blog Posts Grid */}
 							{!loading && posts.length > 0 ? (
-								<div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
+								<div className='grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
 									{posts.map((post) => (
 										<Card
 											key={post.id}
-											className='overflow-hidden transition-all hover:shadow-lg'
+											className='overflow-hidden transition-all hover:shadow-lg flex flex-col'
 										>
 											<div className='aspect-video relative'>
 												<Image
@@ -248,38 +263,40 @@ export default function BlogPage() {
 													className='object-cover'
 												/>
 											</div>
-											<CardContent className='p-6'>
-												<div className='mb-2 flex items-center gap-2'>
-													<span className='rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary'>
-														{post.category_name}
-													</span>
-													<span className='text-xs text-muted-foreground'>
-														{new Date(
-															post.created_at
-														).toLocaleDateString(
-															'en-US',
-															{
-																day: 'numeric',
-																month: 'short',
-																year: 'numeric',
-															}
-														)}
-													</span>
+											<CardContent className='p-4 sm:p-6 flex flex-col flex-1'>
+												<div className='flex-1'>
+													<div className='mb-2 flex items-center gap-2'>
+														<span className='rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary'>
+															{post.category_name}
+														</span>
+														<span className='text-xs text-muted-foreground'>
+															{new Date(
+																post.created_at
+															).toLocaleDateString(
+																'en-US',
+																{
+																	day: 'numeric',
+																	month: 'short',
+																	year: 'numeric',
+																}
+															)}
+														</span>
+													</div>
+													<h3 className='mb-2 text-lg sm:text-xl font-bold'>
+														<Link
+															href={`/blogs/${post.slug}`}
+															prefetch={true}
+															className='hover:text-primary'
+														>
+															{post.title}
+														</Link>
+													</h3>
+													<p className='mb-4 line-clamp-2 text-muted-foreground'>
+														{post.excerpt}
+													</p>
 												</div>
-												<h3 className='mb-2 text-xl font-bold'>
-													<Link
-														href={`/blogs/${post.slug}`}
-														prefetch={true}
-														className='hover:text-primary'
-													>
-														{post.title}
-													</Link>
-												</h3>
-												<p className='mb-4 line-clamp-2 text-muted-foreground'>
-													{post.excerpt}
-												</p>
-												<div className='flex items-center justify-between'>
-													<span className='text-sm text-muted-foreground'>
+												<div className='flex flex-wrap items-center justify-between gap-2 h-auto sm:h-10 border-t pt-2'>
+													<span className='text-sm text-muted-foreground truncate max-w-[180px] sm:max-w-none'>
 														By{' '}
 														{post.author_name ||
 															'Unknown Author'}

@@ -10,12 +10,15 @@ import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import AnimatedTechBackground from '@/components/animated-tech-background';
 import BlogPagination from './blog-pagination';
-
-interface Author {
-	id: string;
-	name: string;
-	avatar_url?: string;
-}
+import {
+	ToastProvider,
+	ToastViewport,
+	Toast,
+	ToastTitle,
+	ToastDescription,
+	ToastClose,
+	ToastAction,
+} from '@/components/ui/toast';
 
 interface BlogPost {
 	id: string;
@@ -26,8 +29,7 @@ interface BlogPost {
 	created_at: string;
 	category_name: string;
 	category_slug: string;
-	author_id: string;
-	author?: Author | null;
+	author_name?: string | null;
 }
 
 interface Pagination {
@@ -279,7 +281,7 @@ export default function BlogPage() {
 												<div className='flex items-center justify-between'>
 													<span className='text-sm text-muted-foreground'>
 														By{' '}
-														{post.author?.name ||
+														{post.author_name ||
 															'Unknown Author'}
 													</span>
 													<Button

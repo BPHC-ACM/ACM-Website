@@ -4,6 +4,12 @@ import Link from 'next/link';
 import { ArrowLeft, Calendar, Share2, Tag, Clock } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { headers } from 'next/headers';
+import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { atomDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import remarkGfm from 'remark-gfm';
+import { ComponentProps, ReactNode } from 'react';
+import ShareButton from '@/components/share-button';
 
 export const revalidate = 3600;
 
@@ -27,20 +33,45 @@ interface BlogPostData {
 	nextPost?: { title: string; slug: string };
 }
 
+interface CodeProps extends ComponentProps<'code'> {
+	inline?: boolean;
+	className?: string;
+	children: ReactNode;
+}
+
 async function getBlogPost(slug: string): Promise<BlogPostData | null> {
 	const headersList = await headers();
 	const host = headersList.get('host') || 'localhost:3000';
 	const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
-	const response = await fetch(`${protocol}://${host}/api/blogs/${slug}`, {
-		next: { revalidate },
-	});
+	try {
+		const response = await fetch(
+			`${protocol}://${host}/api/blogs/${slug}`,
+			{
+				next: { revalidate },
+			}
+		);
 
-	if (!response.ok) {
+		if (!response.ok) {
+			return null;
+		}
+
+		// Parse the response data
+		const data = await response.json();
+
+		// If the API returns a posts array (like in the example), extract the first post
+		if (data.posts && Array.isArray(data.posts) && data.posts.length > 0) {
+			return {
+				post: data.posts[0],
+				// You would need to implement prev/next post logic here
+			};
+		}
+
+		return data;
+	} catch (error) {
+		console.error('Error fetching blog post:', error);
 		return null;
 	}
-
-	return response.json();
 }
 
 export default async function BlogPostPage({
@@ -69,8 +100,6 @@ export default async function BlogPostPage({
 		}
 	);
 
-	const contentHtml = post.content.replace(/\n/g, '<br />');
-
 	return (
 		<div className='flex flex-col min-h-screen bg-background'>
 			{/* Navigation Bar */}
@@ -78,7 +107,6 @@ export default async function BlogPostPage({
 				<div className='container py-3'>
 					<div className='flex items-center justify-between'>
 						<Link
-							prefetch={true}
 							href='/blogs'
 							className='flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors'
 						>
@@ -86,12 +114,7 @@ export default async function BlogPostPage({
 							All Articles
 						</Link>
 						<div className='flex items-center gap-4'>
-							<button
-								className='p-2 rounded-full text-muted-foreground hover:bg-muted hover:text-primary transition-all'
-								title='Share article'
-							>
-								<Share2 className='h-4 w-4' />
-							</button>
+							<ShareButton />
 						</div>
 					</div>
 				</div>
@@ -107,7 +130,6 @@ export default async function BlogPostPage({
 									href={`/blogs/category/${
 										post.category_slug || ''
 									}`}
-									prefetch={true}
 									className='mb-4 inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary hover:bg-primary/20 transition-colors'
 								>
 									<Tag className='h-3 w-3' />
@@ -123,7 +145,7 @@ export default async function BlogPostPage({
 								</p>
 							)}
 
-							<div className='flex items-center justify-center gap-6 text-sm'>
+							<div className='flex flex-wrap items-center justify-center gap-6 text-sm'>
 								<div className='flex items-center gap-2'>
 									<div className='flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground'>
 										{post.author_name
@@ -167,12 +189,97 @@ export default async function BlogPostPage({
 					</div>
 				)}
 
-				{/* Blog Content */}
 				<section className='container max-w-3xl py-8'>
-					<article className='prose prose-lg dark:prose-invert max-w-none'>
-						<div
-							dangerouslySetInnerHTML={{ __html: contentHtml }}
-						/>
+					<article className='prose prose-lg prose-headings:scroll-mt-20 dark:prose-invert prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg max-w-none'>
+						{post.content.startsWith('<p>') ||
+						post.content.startsWith('<h') ? (
+							<div
+								dangerouslySetInnerHTML={{
+									__html: post.content,
+								}}
+							/>
+						) : (
+							<ReactMarkdown
+								remarkPlugins={[remarkGfm]}
+								components={{
+									h1: ({ node, ...props }) => (
+										<h1
+											className='mt-8 mb-4 text-3xl font-bold'
+											{...props}
+										/>
+									),
+									h2: ({ node, ...props }) => (
+										<h2
+											className='mt-8 mb-4 text-2xl font-bold'
+											{...props}
+										/>
+									),
+									h3: ({ node, ...props }) => (
+										<h3
+											className='mt-6 mb-3 text-xl font-bold'
+											{...props}
+										/>
+									),
+									p: ({ node, ...props }) => (
+										<p
+											className='mb-4 leading-relaxed'
+											{...props}
+										/>
+									),
+									ul: ({ node, ...props }) => (
+										<ul
+											className='mb-4 ml-6 list-disc'
+											{...props}
+										/>
+									),
+									ol: ({ node, ...props }) => (
+										<ol
+											className='mb-4 ml-6 list-decimal'
+											{...props}
+										/>
+									),
+									blockquote: ({ node, ...props }) => (
+										<blockquote
+											className='border-l-4 border-primary pl-4 italic my-4'
+											{...props}
+										/>
+									),
+									code: ({
+										inline,
+										className,
+										children,
+										...props
+									}: CodeProps) => {
+										const match = /language-(\w+)/.exec(
+											className || ''
+										);
+										return !inline && match ? (
+											<SyntaxHighlighter
+												style={atomDark}
+												language={match[1]}
+												PreTag='div'
+												className='rounded-md my-4'
+												{...props}
+											>
+												{String(children).replace(
+													/\n$/,
+													''
+												)}
+											</SyntaxHighlighter>
+										) : (
+											<code
+												className={`${className} bg-muted px-1.5 py-0.5 rounded text-sm`}
+												{...props}
+											>
+												{children}
+											</code>
+										);
+									},
+								}}
+							>
+								{post.content}
+							</ReactMarkdown>
+						)}
 					</article>
 
 					{/* Author Bio Card */}

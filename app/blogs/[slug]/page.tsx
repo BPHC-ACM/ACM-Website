@@ -190,7 +190,10 @@ export default async function BlogPostPage({
 				)}
 
 				<section className='container max-w-3xl py-8'>
-					<article className='prose prose-lg prose-headings:scroll-mt-20 dark:prose-invert prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg max-w-none'>
+					<article
+						className='prose prose-lg prose-a:break-words prose-a:line-clamp-1
+ prose-headings:scroll-mt-20 dark:prose-invert prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg max-w-none'
+					>
 						{post.content.startsWith('<p>') ||
 						post.content.startsWith('<h') ? (
 							<div
@@ -284,7 +287,7 @@ export default async function BlogPostPage({
 
 					{/* Author Bio Card */}
 					<div className='mt-16 rounded-xl border bg-card/50 p-6'>
-						<div className='flex flex-col sm:flex-row gap-5'>
+						<div className='flex flex-row gap-5'>
 							<div className='flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-primary text-lg font-medium text-primary-foreground'>
 								{post.author_name
 									.split(' ')

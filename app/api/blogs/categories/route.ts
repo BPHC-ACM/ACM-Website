@@ -1,27 +1,11 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import type { Database } from '@/lib/database.types';
 
 type CategoryResponse = {
 	id: string;
 	name: string;
 }[];
-
-interface BlogPost {
-	id: string;
-	created_at: string;
-	updated_at: string;
-	title: string;
-	slug: string;
-	content: string;
-	excerpt: string;
-	featured_image: string;
-	author_id: string;
-	published: boolean;
-	category_name: string;
-	category_slug: string;
-}
 
 export async function GET(): Promise<
 	NextResponse<CategoryResponse | { error: string }>

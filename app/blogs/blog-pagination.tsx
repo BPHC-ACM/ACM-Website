@@ -13,7 +13,6 @@ interface BlogPaginationProps {
 export default function BlogPagination({
 	currentPage,
 	totalPages,
-	category = 'All',
 	onPageChange,
 }: BlogPaginationProps) {
 	const getPageNumbers = () => {

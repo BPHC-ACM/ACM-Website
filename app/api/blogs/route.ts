@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import type { Database } from '@/lib/database.types';
 
 export async function GET(request: Request) {
 	const { searchParams } = new URL(request.url);
@@ -32,7 +31,6 @@ export async function GET(request: Request) {
       title,
       slug,
       excerpt,
-      content,
       created_at,
       featured_image,
       published,

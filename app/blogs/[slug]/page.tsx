@@ -1,7 +1,6 @@
-import { Card } from '@/components/ui/card';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, Calendar, Share2, Tag, Clock } from 'lucide-react';
+import { ArrowLeft, Calendar, Tag, Clock } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { headers } from 'next/headers';
 import ReactMarkdown from 'react-markdown';
@@ -29,8 +28,6 @@ interface BlogPost {
 
 interface BlogPostData {
 	post: BlogPost;
-	prevPost?: { title: string; slug: string };
-	nextPost?: { title: string; slug: string };
 }
 
 interface CodeProps extends ComponentProps<'code'> {
@@ -56,14 +53,11 @@ async function getBlogPost(slug: string): Promise<BlogPostData | null> {
 			return null;
 		}
 
-		// Parse the response data
 		const data = await response.json();
 
-		// If the API returns a posts array (like in the example), extract the first post
 		if (data.posts && Array.isArray(data.posts) && data.posts.length > 0) {
 			return {
 				post: data.posts[0],
-				// You would need to implement prev/next post logic here
 			};
 		}
 
@@ -86,7 +80,7 @@ export default async function BlogPostPage({
 		notFound();
 	}
 
-	const { post, prevPost, nextPost } = data;
+	const { post } = data;
 
 	const wordCount = post.content.split(/\s+/).length;
 	const readTime = Math.max(1, Math.ceil(wordCount / 225));
@@ -126,15 +120,10 @@ export default async function BlogPostPage({
 					<div className='container max-w-4xl'>
 						<div className='flex flex-col items-center text-center'>
 							{post.category_name && (
-								<Link
-									href={`/blogs/category/${
-										post.category_slug || ''
-									}`}
-									className='mb-4 inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary hover:bg-primary/20 transition-colors'
-								>
+								<div className='mb-4 inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary transition-colors'>
 									<Tag className='h-3 w-3' />
 									{post.category_name}
-								</Link>
+								</div>
 							)}
 							<h1 className='text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6'>
 								{post.title}

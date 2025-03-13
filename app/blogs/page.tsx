@@ -10,15 +10,6 @@ import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import AnimatedTechBackground from '@/components/animated-tech-background';
 import BlogPagination from './blog-pagination';
-import {
-	ToastProvider,
-	ToastViewport,
-	Toast,
-	ToastTitle,
-	ToastDescription,
-	ToastClose,
-	ToastAction,
-} from '@/components/ui/toast';
 
 interface BlogPost {
 	id: string;

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -28,10 +28,12 @@ interface Pagination {
 	totalPages: number;
 	totalItems?: number;
 	itemsPerPage?: number;
+	total?: number;
 }
 
 export default function BlogPage() {
 	const searchParams = useSearchParams();
+	const router = useRouter();
 	const initialPage = searchParams.get('page')
 		? Number(searchParams.get('page'))
 		: 1;
@@ -40,6 +42,7 @@ export default function BlogPage() {
 	const [selectedCategory, setSelectedCategory] =
 		useState<string>(initialCategory);
 	const [posts, setPosts] = useState<BlogPost[]>([]);
+	const [allPosts, setAllPosts] = useState<BlogPost[]>([]);
 	const [categories, setCategories] = useState<
 		{ name: string; slug: string }[]
 	>([]);
@@ -76,8 +79,11 @@ export default function BlogPage() {
 			let url = `/api/blogs?page=${pageNum}`;
 
 			if (categoryName !== 'All') {
+				const categoryObj = categories.find(
+					(c) => c.name === categoryName
+				);
 				const categorySlug =
-					categories.find((c) => c.name === categoryName)?.slug ||
+					categoryObj?.slug ||
 					categoryName.toLowerCase().replace(/\s+/g, '-');
 				url += `&category=${categorySlug}`;
 			}
@@ -91,7 +97,9 @@ export default function BlogPage() {
 			}
 
 			const data = await response.json();
-			setPosts(data.posts || []);
+			const fetchedPosts = data.posts || [];
+			setPosts(fetchedPosts);
+			setAllPosts(fetchedPosts);
 			setPagination(data.pagination || { page: 1, totalPages: 1 });
 			setTotalBlogCount(data.pagination?.total || 0);
 		} catch (error) {
@@ -102,37 +110,80 @@ export default function BlogPage() {
 	};
 
 	useEffect(() => {
-		const fetchInitialData = async () => {
+		const fetchData = async () => {
 			setLoading(true);
-			try {
+
+			if (categories.length === 0) {
 				const categoriesData = await fetchCategories();
 				setCategories(categoriesData);
-
-				await fetchBlogPosts(initialPage, initialCategory);
-			} catch (error) {
-				console.error('Error fetching initial data:', error);
 			}
+
+			const currentPage = searchParams.get('page')
+				? Number(searchParams.get('page'))
+				: 1;
+			const currentCategory = searchParams.get('category') || 'All';
+			const currentSearch = searchParams.get('search') || '';
+
+			if (currentPage === 1 && !currentSearch) {
+				const allPostsResponse = await fetch(`/api/blogs?page=1`);
+				if (allPostsResponse.ok) {
+					const allPostsData = await allPostsResponse.json();
+					setAllPosts(allPostsData.posts || []);
+				}
+			}
+
+			setPage(currentPage);
+			setSelectedCategory(currentCategory);
+			if (currentSearch) setSearchTerm(currentSearch);
+
+			await fetchBlogPosts(currentPage, currentCategory, currentSearch);
 		};
 
-		fetchInitialData();
-	}, [initialPage, initialCategory]);
+		fetchData();
+	}, [searchParams]);
 
 	const handleCategoryChange = (categoryName: string) => {
-		setSelectedCategory(categoryName);
-		setPage(1);
-		fetchBlogPosts(1, categoryName, searchTerm);
+		const params = new URLSearchParams(searchParams.toString());
+		params.set('page', '1');
+
+		if (categoryName !== 'All') {
+			params.set('category', categoryName);
+		} else {
+			params.delete('category');
+		}
+
+		router.push(`/blogs?${params.toString()}`);
 	};
 
 	const handlePageChange = (newPage: number) => {
-		setPage(newPage);
-		fetchBlogPosts(newPage, selectedCategory, searchTerm);
+		const params = new URLSearchParams(searchParams.toString());
+		params.set('page', newPage.toString());
+
+		router.push(`/blogs?${params.toString()}`);
 	};
 
-	const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
-		if (e.key === 'Enter') {
-			fetchBlogPosts(1, selectedCategory, searchTerm);
-			setPage(1);
+	const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const newSearchTerm = e.target.value;
+		setSearchTerm(newSearchTerm);
+
+		if (newSearchTerm === '') {
+			setPosts(allPosts);
+			return;
 		}
+
+		const filteredPosts = allPosts.filter(
+			(post) =>
+				post.title
+					.toLowerCase()
+					.includes(newSearchTerm.toLowerCase()) ||
+				post.excerpt
+					.toLowerCase()
+					.includes(newSearchTerm.toLowerCase()) ||
+				post.category_name
+					.toLowerCase()
+					.includes(newSearchTerm.toLowerCase())
+		);
+		setPosts(filteredPosts);
 	};
 
 	return (
@@ -163,8 +214,7 @@ export default function BlogPage() {
 							placeholder='Search articles...'
 							className='pl-10'
 							value={searchTerm}
-							onChange={(e) => setSearchTerm(e.target.value)}
-							onKeyDown={handleSearch}
+							onChange={handleSearch}
 						/>
 					</div>
 
@@ -192,8 +242,8 @@ export default function BlogPage() {
 							<div
 								className='flex overflow-x-auto pb-2 mb-8 -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap md:gap-2 md:mb-10'
 								style={{
-									msOverflowStyle: 'none' /* IE and Edge */,
-									scrollbarWidth: 'none' /* Firefox */,
+									msOverflowStyle: 'none',
+									scrollbarWidth: 'none',
 								}}
 							>
 								{/* For WebKit browsers (Chrome, Safari) */}

@@ -1,6 +1,5 @@
 'use client';
-
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -32,6 +31,20 @@ interface Pagination {
 }
 
 export default function BlogPage() {
+	return (
+		<Suspense
+			fallback={
+				<div className='flex justify-center py-10'>
+					<div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary'></div>
+				</div>
+			}
+		>
+			<BlogPageContent />
+		</Suspense>
+	);
+}
+
+function BlogPageContent() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const initialPage = searchParams.get('page')

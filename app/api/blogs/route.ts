@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { createServerSupabaseClient } from '@/lib/supabase-server';
 
 export async function GET(request: Request) {
 	const { searchParams } = new URL(request.url);
@@ -9,19 +8,7 @@ export async function GET(request: Request) {
 	const pageSize = 6;
 	const offset = (page - 1) * pageSize;
 
-	const supabase = createServerClient(
-		process.env.NEXT_PUBLIC_SUPABASE_URL!,
-		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-		{
-			cookies: {
-				getAll: async () => {
-					const cookiesStore = await cookies();
-					return cookiesStore.getAll();
-				},
-				setAll: () => {},
-			},
-		}
-	);
+	const supabase = await createServerSupabaseClient();
 
 	let query = supabase
 		.from('blog_posts')

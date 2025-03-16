@@ -5,6 +5,7 @@ export async function GET(request: Request) {
 	const { searchParams } = new URL(request.url);
 	const category = searchParams.get('category');
 	const page = Number.parseInt(searchParams.get('page') || '1');
+	const search = searchParams.get('search');
 	const pageSize = 6;
 	const offset = (page - 1) * pageSize;
 
@@ -38,6 +39,16 @@ export async function GET(request: Request) {
 	if (category && category !== 'All') {
 		query = query.eq('category_slug', category.toLowerCase());
 		countQuery = countQuery.eq('category_slug', category.toLowerCase());
+	}
+
+	if (search && search.trim() !== '') {
+		const searchTerm = `%${search.trim()}%`;
+		query = query.or(
+			`title.ilike.${searchTerm},excerpt.ilike.${searchTerm}`
+		);
+		countQuery = countQuery.or(
+			`title.ilike.${searchTerm},excerpt.ilike.${searchTerm}`
+		);
 	}
 
 	const [postsResult, countResult] = await Promise.all([query, countQuery]);

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import Treasure from "../../components/page_treasure";
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar, MapPin } from 'lucide-react';
@@ -126,6 +127,7 @@ export default async function EventsPage() {
 						</TabsContent>
 					</Tabs>
 				</div>
+				<Treasure/>
 			</section>
 
 			{/* CTA Section */}

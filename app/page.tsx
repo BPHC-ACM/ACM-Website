@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import AnimatedTechBackground from '@/components/animated-tech-background';
 import { useSmoothScroll } from '@/hooks/use-smooth-scroll';
+import AnimatedACMLogo from '@/components/animated-acm-logo';
+import RollingText from '@/components/rolling-text';
 import {
 	Github,
 	ChevronLeft,
@@ -127,18 +129,7 @@ export default function Home() {
 							animate='visible'
 							variants={staggerContainer}
 						>
-							<motion.div
-								className='relative md:w-48 w-40 flex items-center'
-								variants={fadeIn}
-							>
-								<Image
-									src='/acm-logo.png'
-									alt='ACM Logo'
-									width={256}
-									height={256}
-									className='object-contain'
-								/>
-							</motion.div>
+							<AnimatedACMLogo />
 						</motion.div>
 						<motion.h1
 							className='mb-6 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl'
@@ -146,9 +137,9 @@ export default function Home() {
 							animate='visible'
 							variants={slideUp}
 						>
-							<span className='heading-gradient'>
+							<RollingText className='heading-gradient'>
 								Association for Computing Machinery
-							</span>
+							</RollingText>
 						</motion.h1>
 						<motion.h2
 							className='mb-8 text-2xl font-medium md:text-3xl'
@@ -214,9 +205,9 @@ export default function Home() {
 							viewport={{ once: true }}
 							transition={{ duration: 0.5 }}
 						>
-							<span className='heading-gradient'>
+							<RollingText className='heading-gradient'>
 								What is ACM?
-							</span>
+							</RollingText>
 						</motion.h2>
 						<motion.div
 							className='space-y-4 text-muted-foreground'
@@ -252,9 +243,9 @@ export default function Home() {
 							viewport={{ once: true }}
 							transition={{ duration: 0.5 }}
 						>
-							<span className='heading-gradient'>
+							<RollingText className='heading-gradient'>
 								Our Chapter
-							</span>
+							</RollingText>
 						</motion.h2>
 						<motion.div
 							className='space-y-4 text-muted-foreground'
@@ -294,7 +285,9 @@ export default function Home() {
 							viewport={{ once: true }}
 							transition={{ duration: 0.5 }}
 						>
-							<span className='heading-gradient'>Our Vision</span>
+							<RollingText className='heading-gradient'>
+								Our Vision
+							</RollingText>
 						</motion.h2>
 						<motion.div
 							className='space-y-4 text-muted-foreground'
@@ -344,9 +337,9 @@ export default function Home() {
 						viewport={{ once: true }}
 						transition={{ duration: 0.5 }}
 					>
-						<span className='heading-gradient'>
+						<RollingText className='heading-gradient'>
 							Why Join Our Community?
-						</span>
+						</RollingText>
 					</motion.h2>
 					<motion.div
 						className='grid gap-6 md:grid-cols-2 lg:grid-cols-4'
@@ -455,7 +448,9 @@ export default function Home() {
 						viewport={{ once: true }}
 						transition={{ duration: 0.5 }}
 					>
-						<span className='heading-gradient'>Meet Our Team</span>
+						<RollingText className='heading-gradient'>
+							Meet Our Team
+						</RollingText>
 					</motion.h2>
 
 					<motion.div
@@ -552,9 +547,9 @@ export default function Home() {
 							viewport={{ once: true }}
 							transition={{ duration: 0.5 }}
 						>
-							<span className='heading-gradient'>
+							<RollingText className='heading-gradient'>
 								Frequently Asked Questions
-							</span>
+							</RollingText>
 						</motion.h2>
 						<motion.div
 							initial={{ opacity: 0 }}
@@ -597,9 +592,9 @@ export default function Home() {
 							viewport={{ once: true }}
 							transition={{ duration: 0.5 }}
 						>
-							<span className='heading-gradient'>
+							<RollingText className='heading-gradient'>
 								Join Our Community
-							</span>
+							</RollingText>
 						</motion.h2>
 						<motion.p
 							className='mb-8 text-muted-foreground'

@@ -160,6 +160,21 @@ body {
 	}
 }
 
+@keyframes fadeInDelayed {
+	0% {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.animate-fade-in-delayed {
+	animation-name: fadeInDelayed;
+}
+
 .animate-fade-in {
 	animation: fadeIn 0.5s ease-in-out;
 }
@@ -250,4 +265,16 @@ body {
 .blue-accent:hover::after {
 	transform: scaleX(1);
 	transform-origin: left;
+}
+
+.heading-gradient {
+	background: linear-gradient(to right, #3b82f6, #66ccff);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	display: inline-block;
+}
+
+.rolling-perspective {
+	perspective: 1000px;
 }

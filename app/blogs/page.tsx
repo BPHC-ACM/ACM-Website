@@ -1,7 +1,6 @@
 'use client';
-
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -26,19 +25,31 @@ interface BlogPost {
 interface Pagination {
 	page: number;
 	totalPages: number;
-	totalItems?: number;
-	itemsPerPage?: number;
+	total?: number;
+	pageSize?: number;
 }
 
 export default function BlogPage() {
-	const searchParams = useSearchParams();
-	const initialPage = searchParams.get('page')
-		? Number(searchParams.get('page'))
-		: 1;
-	const initialCategory = searchParams.get('category') || 'All';
+	return (
+		<Suspense
+			fallback={
+				<div className='flex justify-center py-10'>
+					<div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary'></div>
+				</div>
+			}
+		>
+			<BlogPageContent />
+		</Suspense>
+	);
+}
 
-	const [selectedCategory, setSelectedCategory] =
-		useState<string>(initialCategory);
+function BlogPageContent() {
+	const searchParams = useSearchParams();
+	const router = useRouter();
+	const initialPage = Number(searchParams.get('page') || '1');
+	const initialCategory = searchParams.get('category') || 'All';
+	const initialSearch = searchParams.get('search') || '';
+
 	const [posts, setPosts] = useState<BlogPost[]>([]);
 	const [categories, setCategories] = useState<
 		{ name: string; slug: string }[]
@@ -46,94 +57,135 @@ export default function BlogPage() {
 	const [pagination, setPagination] = useState<Pagination>({
 		page: initialPage,
 		totalPages: 1,
+		total: 0,
 	});
-	const [page, setPage] = useState<number>(initialPage);
-	const [searchTerm, setSearchTerm] = useState<string>('');
+	const [searchTerm, setSearchTerm] = useState<string>(initialSearch);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [totalBlogCount, setTotalBlogCount] = useState<number>(0);
+	const [debounceTimeout, setDebounceTimeout] =
+		useState<NodeJS.Timeout | null>(null);
+	const [hasSearched, setHasSearched] = useState<boolean>(false);
 
-	const fetchCategories = async () => {
-		try {
-			const response = await fetch('/api/blogs/categories');
-			if (!response.ok) {
-				throw new Error('Failed to fetch categories');
-			}
-			const data = await response.json();
-			return data || [];
-		} catch (error) {
-			console.error('Error fetching categories:', error);
-			return [];
-		}
-	};
-
-	const fetchBlogPosts = async (
+	// Combined fetch function for both categories and posts
+	const fetchData = async (
 		pageNum: number,
 		categoryName: string,
 		search: string = ''
 	) => {
 		setLoading(true);
 		try {
-			let url = `/api/blogs?page=${pageNum}`;
+			// Fetch categories if needed
+			if (categories.length === 0) {
+				const categoriesResponse = await fetch('/api/blogs/categories');
+				if (categoriesResponse.ok) {
+					const categoriesData = await categoriesResponse.json();
+					setCategories(categoriesData || []);
+				}
+			}
 
+			// Build URL for posts
+			let url = `/api/blogs?page=${pageNum}`;
 			if (categoryName !== 'All') {
+				const categoryObj = categories.find(
+					(c) => c.name === categoryName
+				);
 				const categorySlug =
-					categories.find((c) => c.name === categoryName)?.slug ||
+					categoryObj?.slug ||
 					categoryName.toLowerCase().replace(/\s+/g, '-');
 				url += `&category=${categorySlug}`;
 			}
-
 			if (search) url += `&search=${encodeURIComponent(search)}`;
 
-			const response = await fetch(url);
+			// Set hasSearched if user is searching or filtering
+			setHasSearched(search !== '' || categoryName !== 'All');
 
-			if (!response.ok) {
-				throw new Error('Failed to fetch blog posts');
+			// Fetch posts
+			const postsResponse = await fetch(url);
+			if (postsResponse.ok) {
+				const data = await postsResponse.json();
+				setPosts(data.posts || []);
+				setPagination({
+					page: data.pagination?.page || 1,
+					totalPages: data.pagination?.totalPages || 1,
+					total: data.pagination?.total || 0,
+				});
 			}
-
-			const data = await response.json();
-			setPosts(data.posts || []);
-			setPagination(data.pagination || { page: 1, totalPages: 1 });
-			setTotalBlogCount(data.pagination?.total || 0);
 		} catch (error) {
-			console.error('Error fetching posts:', error);
+			console.error('Error fetching data:', error);
 		} finally {
 			setLoading(false);
 		}
 	};
 
+	// Effect to fetch data when URL params change
 	useEffect(() => {
-		const fetchInitialData = async () => {
-			setLoading(true);
-			try {
-				const categoriesData = await fetchCategories();
-				setCategories(categoriesData);
+		const pageNum = Number(searchParams.get('page') || '1');
+		const categoryName = searchParams.get('category') || 'All';
+		const search = searchParams.get('search') || '';
 
-				await fetchBlogPosts(initialPage, initialCategory);
-			} catch (error) {
-				console.error('Error fetching initial data:', error);
+		setSearchTerm(search);
+		fetchData(pageNum, categoryName, search);
+	}, [searchParams]);
+
+	// Handle category selection
+	const handleCategoryChange = (categoryName: string) => {
+		const params = new URLSearchParams(searchParams.toString());
+		params.set('page', '1');
+
+		if (categoryName !== 'All') {
+			params.set('category', categoryName);
+		} else {
+			params.delete('category');
+		}
+
+		if (searchTerm) {
+			params.set('search', searchTerm);
+		}
+
+		router.push(`/blogs?${params.toString()}`);
+	};
+
+	// Handle pagination
+	const handlePageChange = (newPage: number) => {
+		const params = new URLSearchParams(searchParams.toString());
+		params.set('page', newPage.toString());
+		router.push(`/blogs?${params.toString()}`);
+	};
+
+	// Handle search with debouncing
+	const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const newSearchTerm = e.target.value;
+		setSearchTerm(newSearchTerm);
+
+		// Clear existing timeout
+		if (debounceTimeout) {
+			clearTimeout(debounceTimeout);
+		}
+
+		// Set new timeout for search
+		const timeout = setTimeout(() => {
+			const params = new URLSearchParams(searchParams.toString());
+			params.set('page', '1');
+
+			if (newSearchTerm) {
+				params.set('search', newSearchTerm);
+			} else {
+				params.delete('search');
+			}
+
+			router.push(`/blogs?${params.toString()}`);
+		}, 500); // 500ms debounce
+
+		setDebounceTimeout(timeout);
+	};
+
+	// Clean up timeout on unmount
+	useEffect(() => {
+		return () => {
+			if (debounceTimeout) {
+				clearTimeout(debounceTimeout);
 			}
 		};
-
-		fetchInitialData();
-	}, [initialPage, initialCategory]);
-
-	const handleCategoryChange = (categoryName: string) => {
-		setSelectedCategory(categoryName);
-		setPage(1);
-		fetchBlogPosts(1, categoryName, searchTerm);
-	};
-
-	const handlePageChange = (newPage: number) => {
-		setPage(newPage);
-		fetchBlogPosts(newPage, selectedCategory, searchTerm);
-	};
-
-	const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
-		if (e.key === 'Enter') {
-			fetchBlogPosts(1, selectedCategory, searchTerm);
-			setPage(1);
-		}
-	};
+	}, [debounceTimeout]);
 
 	return (
 		<div className='flex flex-col'>
@@ -163,24 +215,48 @@ export default function BlogPage() {
 							placeholder='Search articles...'
 							className='pl-10'
 							value={searchTerm}
-							onChange={(e) => setSearchTerm(e.target.value)}
-							onKeyDown={handleSearch}
+							onChange={handleSearch}
 						/>
 					</div>
 
-					{/* If total blog count is 0, show "Coming soon" */}
-					{totalBlogCount === 0 ? (
+					{/* If total blog count is 0, show either "Coming soon" or "No posts found" */}
+					{pagination.total === 0 ? (
 						!loading ? (
-							<div className='flex flex-col items-center justify-center py-20'>
-								<h2 className='text-3xl font-bold mb-4'>
-									Coming Soon
-								</h2>
-								<p className='text-muted-foreground text-center max-w-lg'>
-									We're working on creating amazing blog
-									content for you. Check back soon for
-									insightful articles and updates!
-								</p>
-							</div>
+							hasSearched ? (
+								<div className='rounded-lg border border-dashed p-10 text-center'>
+									<h3 className='mb-2 text-xl font-semibold'>
+										No Blog Posts Found
+									</h3>
+									<p className='mb-6 text-muted-foreground'>
+										{searchTerm
+											? `No results match "${searchTerm}". Try different keywords or browse by category.`
+											: 'There are no blog posts in this category yet. Check back soon!'}
+									</p>
+									{(searchTerm ||
+										searchParams.get('category')) && (
+										<Button
+											variant='outline'
+											onClick={() => {
+												router.push('/blogs');
+												setSearchTerm('');
+											}}
+										>
+											Reset Filters
+										</Button>
+									)}
+								</div>
+							) : (
+								<div className='flex flex-col items-center justify-center py-20'>
+									<h2 className='text-3xl font-bold mb-4'>
+										Coming Soon
+									</h2>
+									<p className='text-muted-foreground text-center max-w-lg'>
+										We're working on creating amazing blog
+										content for you. Check back soon for
+										insightful articles and updates!
+									</p>
+								</div>
+							)
 						) : (
 							<div className='flex justify-center py-10'>
 								<div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary'></div>
@@ -192,8 +268,8 @@ export default function BlogPage() {
 							<div
 								className='flex overflow-x-auto pb-2 mb-8 -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap md:gap-2 md:mb-10'
 								style={{
-									msOverflowStyle: 'none' /* IE and Edge */,
-									scrollbarWidth: 'none' /* Firefox */,
+									msOverflowStyle: 'none',
+									scrollbarWidth: 'none',
 								}}
 							>
 								{/* For WebKit browsers (Chrome, Safari) */}
@@ -206,7 +282,7 @@ export default function BlogPage() {
 								<Button
 									key='all'
 									variant={
-										selectedCategory === 'All'
+										searchParams.get('category') === null
 											? 'default'
 											: 'outline'
 									}
@@ -220,7 +296,8 @@ export default function BlogPage() {
 									<Button
 										key={index}
 										variant={
-											selectedCategory === cat.name
+											searchParams.get('category') ===
+											cat.name
 												? 'default'
 												: 'outline'
 										}
@@ -252,6 +329,7 @@ export default function BlogPage() {
 													alt={post.title}
 													fill
 													className='object-cover'
+													priority={false}
 												/>
 											</div>
 											<CardContent className='p-4 sm:p-6 flex flex-col flex-1'>
@@ -276,7 +354,6 @@ export default function BlogPage() {
 													<h3 className='mb-2 text-lg sm:text-xl font-bold'>
 														<Link
 															href={`/blogs/${post.slug}`}
-															prefetch={true}
 															className='hover:text-primary'
 														>
 															{post.title}
@@ -299,7 +376,6 @@ export default function BlogPage() {
 													>
 														<Link
 															href={`/blogs/${post.slug}`}
-															prefetch={true}
 														>
 															Read More
 														</Link>
@@ -332,7 +408,10 @@ export default function BlogPage() {
 										<BlogPagination
 											currentPage={pagination.page}
 											totalPages={pagination.totalPages}
-											category={selectedCategory}
+											category={
+												searchParams.get('category') ||
+												'All'
+											}
 											onPageChange={handlePageChange}
 										/>
 									</div>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import Treasure from "../../components/page_treasure";
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar, MapPin } from 'lucide-react';
@@ -170,6 +171,7 @@ export default function EventsPage() {
 						</Tabs>
 					)}
 				</div>
+				<Treasure/>
 			</section>
 
 			{/* CTA Section */}

@@ -1,38 +1,59 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import Treasure from "../../components/page_treasure";
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar, MapPin } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { createServerSupabaseClient } from '@/lib/supabase-server';
 import AnimatedTechBackground from '@/components/animated-tech-background';
 
-export const revalidate = 3600; // Revalidate every hour
-
-async function getEvents() {
-	const supabase = createServerSupabaseClient();
-	const { data } = await supabase
-		.from('events')
-		.select('*')
-		.order('date', { ascending: true });
-
-	return data || [];
+interface Event {
+	id: string;
+	title: string;
+	date: string;
+	location: string;
+	description: string;
+	speaker: string;
+	image: string;
+	registration_link: string;
 }
 
-export default async function EventsPage() {
-	const events = await getEvents();
+export default function EventsPage() {
+	const [events, setEvents] = useState<Event[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
 
-	// Get current date
+	useEffect(() => {
+		async function fetchEvents() {
+			try {
+				const response = await fetch('/api/events');
+				if (!response.ok) {
+					throw new Error('Failed to fetch events');
+				}
+				const data = await response.json();
+				setEvents(data);
+			} catch (err) {
+				setError('Failed to load events. Please try again later.');
+				console.error(err);
+			} finally {
+				setLoading(false);
+			}
+		}
+
+		fetchEvents();
+	}, []);
+
 	const now = new Date();
 
-	// Get upcoming events (future dates)
 	const upcomingEvents = events
 		.filter((event) => new Date(event.date) > now)
 		.sort(
 			(a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
 		);
 
-	// Get past events (past dates)
 	const pastEvents = events
 		.filter((event) => new Date(event.date) <= now)
 		.sort(
@@ -47,7 +68,7 @@ export default async function EventsPage() {
 				<div className='container'>
 					<div className='mx-auto max-w-3xl text-center'>
 						<h1 className='mb-6 text-4xl font-bold tracking-tight md:text-5xl animate-slide-up'>
-							<span className='heading-gradient animate-glow'>
+							<span className='heading-gradient'>
 								Events & Workshops
 							</span>
 						</h1>
@@ -65,71 +86,92 @@ export default async function EventsPage() {
 			{/* Events Tabs Section */}
 			<section className='section-padding z-10'>
 				<div className='container'>
-					<Tabs defaultValue='upcoming' className='w-full'>
-						<TabsList className='mb-8 grid w-full grid-cols-2 blue-border animate-fade-in'>
-							<TabsTrigger
+					{loading ? (
+						<div className='flex justify-center py-10'>
+							<div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary'></div>
+						</div>
+					) : error ? (
+						<div className='rounded-lg border border-destructive p-6 text-center'>
+							<p className='text-destructive'>{error}</p>
+							<Button
+								variant='outline'
+								className='mt-4'
+								onClick={() => window.location.reload()}
+							>
+								Try Again
+							</Button>
+						</div>
+					) : (
+						<Tabs defaultValue='upcoming' className='w-full'>
+							<TabsList className='mb-8 grid w-full grid-cols-2 blue-border animate-fade-in'>
+								<TabsTrigger
+									value='upcoming'
+									className='transition-all hover:text-primary'
+								>
+									Upcoming Events
+								</TabsTrigger>
+								<TabsTrigger
+									value='past'
+									className='transition-all hover:text-primary'
+								>
+									Past Events
+								</TabsTrigger>
+							</TabsList>
+							<TabsContent
 								value='upcoming'
-								className='transition-all hover:text-primary'
+								className='animate-fade-in'
 							>
-								Upcoming Events
-							</TabsTrigger>
-							<TabsTrigger
+								{upcomingEvents.length > 0 ? (
+									<div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3 stagger-animation'>
+										{upcomingEvents.map((event) => (
+											<EventCard
+												key={event.id}
+												event={event}
+											/>
+										))}
+									</div>
+								) : (
+									<div className='rounded-lg border border-dashed p-10 text-center animate-fade-in'>
+										<h3 className='mb-2 text-xl font-semibold'>
+											No Upcoming Events
+										</h3>
+										<p className='mb-6 text-muted-foreground'>
+											We're currently planning new events.
+											Check back soon!
+										</p>
+									</div>
+								)}
+							</TabsContent>
+							<TabsContent
 								value='past'
-								className='transition-all hover:text-primary'
+								className='animate-fade-in'
 							>
-								Past Events
-							</TabsTrigger>
-						</TabsList>
-						<TabsContent
-							value='upcoming'
-							className='animate-fade-in'
-						>
-							{upcomingEvents.length > 0 ? (
-								<div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3 stagger-animation'>
-									{upcomingEvents.map((event) => (
-										<EventCard
-											key={event.id}
-											event={event}
-										/>
-									))}
-								</div>
-							) : (
-								<div className='rounded-lg border border-dashed p-10 text-center animate-fade-in'>
-									<h3 className='mb-2 text-xl font-semibold'>
-										No Upcoming Events
-									</h3>
-									<p className='mb-6 text-muted-foreground'>
-										We're currently planning new events.
-										Check back soon!
-									</p>
-								</div>
-							)}
-						</TabsContent>
-						<TabsContent value='past' className='animate-fade-in'>
-							{pastEvents.length > 0 ? (
-								<div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3 stagger-animation'>
-									{pastEvents.map((event) => (
-										<EventCard
-											key={event.id}
-											event={event}
-											isPast
-										/>
-									))}
-								</div>
-							) : (
-								<div className='rounded-lg border border-dashed p-10 text-center animate-fade-in'>
-									<h3 className='mb-2 text-xl font-semibold'>
-										No Past Events
-									</h3>
-									<p className='text-muted-foreground'>
-										Our event history will appear here once
-										events are completed.
-									</p>
-								</div>
-							)}
-						</TabsContent>
-					</Tabs>
+								{pastEvents.length > 0 ? (
+									<div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3 stagger-animation'>
+										{pastEvents.map((event) => (
+											<EventCard
+												key={event.id}
+												event={event}
+												isPast
+											/>
+										))}
+									</div>
+								) : (
+									<div className='rounded-lg border border-dashed p-10 text-center animate-fade-in'>
+										<h3 className='mb-2 text-xl font-semibold'>
+											No Past Events
+										</h3>
+										<p className='text-muted-foreground'>
+											Our event history will appear here
+											once events are completed.
+										</p>
+									</div>
+								)}
+							</TabsContent>
+						</Tabs>
+					)}
 				</div>
+				<Treasure/>
 			</section>
 
 			{/* CTA Section */}
@@ -165,16 +207,7 @@ export default async function EventsPage() {
 }
 
 interface EventCardProps {
-	event: {
-		id: string;
-		title: string;
-		date: string;
-		location: string;
-		description: string;
-		speaker: string;
-		image: string;
-		registration_link: string;
-	};
+	event: Event;
 	isPast?: boolean;
 }
 

@@ -1,37 +1,17 @@
 import { NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import type { Database } from '@/lib/database.types';
+import { createServerSupabaseClient } from '@/lib/supabase-server';
 
-// Define the response type for categories
 type CategoryResponse = {
 	id: string;
 	name: string;
 }[];
 
-// Define the blog post structure after our schema change
-interface BlogPost {
-	id: string;
-	created_at: string;
-	updated_at: string;
-	title: string;
-	slug: string;
-	content: string;
-	excerpt: string;
-	featured_image: string;
-	author_id: string;
-	published: boolean;
-	category_name: string;
-	category_slug: string;
-}
-
 export async function GET(): Promise<
 	NextResponse<CategoryResponse | { error: string }>
 > {
 	try {
-		const supabase = createRouteHandlerClient<Database>({ cookies });
+		const supabase = await createServerSupabaseClient();
 
-		// Use a raw SQL query to get distinct categories
 		const { data, error } = await supabase
 			.from('blog_posts')
 			.select('category_name, category_slug')
@@ -43,7 +23,6 @@ export async function GET(): Promise<
 			return NextResponse.json({ error: error.message }, { status: 500 });
 		}
 
-		// Manually filter for unique categories
 		const uniqueCategories = new Map<
 			string,
 			{ category_name: string; category_slug: string }
@@ -55,7 +34,6 @@ export async function GET(): Promise<
 			}
 		});
 
-		// Format the response to match the previous structure
 		const formattedData: CategoryResponse = Array.from(
 			uniqueCategories.values()
 		).map((category) => ({

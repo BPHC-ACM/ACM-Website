@@ -10,7 +10,7 @@ export default function Footer() {
 					{/* Logo & Description Section */}
 					<div className='animate-slide-up'>
 						<div className='flex items-center gap-4 mb-5'>
-							<div className='relative flex items-center justify-center h-14 w-14 overflow-hidden rounded-lg shadow-sm'>
+							<div className='relative flex items-center justify-center h-12 w-12 overflow-hidden rounded-lg shadow-sm'>
 								<Image
 									src='/acm-logo.png'
 									alt='ACM Logo'
@@ -24,7 +24,7 @@ export default function Footer() {
 									ACM BITS Pilani
 								</h3>
 								<p className='text-sm font-medium'>
-									Hyderabad Chapter
+									Hyderabad Campus, Student Chapter
 								</p>
 							</div>
 						</div>
@@ -37,7 +37,7 @@ export default function Footer() {
 					</div>
 
 					<div
-						className='animate-slide-up pl-24 md:pl-24'
+						className='animate-slide-up md:pl-24'
 						style={{ animationDelay: '0.1s' }}
 					>
 						<h3 className='mb-4 text-lg font-semibold blue-accent inline-block'>
@@ -46,6 +46,7 @@ export default function Footer() {
 						<ul className='space-y-2 text-sm'>
 							<li>
 								<Link
+									prefetch={true}
 									href='/events'
 									className='text-muted-foreground hover:text-primary transition-colors'
 								>
@@ -54,14 +55,16 @@ export default function Footer() {
 							</li>
 							<li>
 								<Link
-									href='/blog'
+									prefetch={true}
+									href='/blogs'
 									className='text-muted-foreground hover:text-primary transition-colors'
 								>
-									Blog
+									Blogs
 								</Link>
 							</li>
 							<li>
 								<Link
+									prefetch={true}
 									href='/team'
 									className='text-muted-foreground hover:text-primary transition-colors'
 								>
@@ -70,6 +73,7 @@ export default function Footer() {
 							</li>
 							<li>
 								<Link
+									prefetch={true}
 									href='/#about'
 									className='text-muted-foreground hover:text-primary transition-colors'
 								>
@@ -157,7 +161,7 @@ export default function Footer() {
 				<div className='mt-12 border-t pt-6 text-center'>
 					<p className='text-sm text-muted-foreground'>
 						&copy; {new Date().getFullYear()} ACM BITS Pilani
-						Hyderabad Chapter. All rights reserved.
+						Hyderabad Campus, Student Chapter.
 					</p>
 				</div>
 			</div>

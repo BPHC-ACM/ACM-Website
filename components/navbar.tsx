@@ -12,7 +12,7 @@ import { motion } from 'framer-motion';
 const navItems = [
 	{ name: 'Home', href: '/' },
 	{ name: 'Events', href: '/events' },
-	{ name: 'Blog', href: '/blog' },
+	{ name: 'Blogs', href: '/blogs' },
 	{ name: 'Team', href: '/team' },
 ];
 
@@ -24,7 +24,11 @@ export default function Navbar() {
 		<header className='sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md'>
 			<div className='container flex h-16 items-center justify-between'>
 				<div className='flex items-center gap-6'>
-					<Link href='/' className='flex items-center'>
+					<Link
+						href='/'
+						prefetch={true}
+						className='flex items-center'
+					>
 						<motion.div
 							className='relative'
 							initial={{ opacity: 0, scale: 0.8 }}
@@ -35,8 +39,9 @@ export default function Navbar() {
 								src='/bits-acm-logo.png'
 								alt='BITS Pilani ACM Student Chapter Logo'
 								width={96}
-								height={40}
+								height={96}
 								className='object-contain'
+								style={{ width: 96, height: 96 }}
 							/>
 						</motion.div>
 					</Link>
@@ -45,6 +50,7 @@ export default function Navbar() {
 							<Link
 								key={item.name}
 								href={item.href}
+								prefetch={true}
 								className={cn(
 									'text-sm font-medium transition-colors hover:text-primary relative',
 									pathname === item.href
@@ -108,6 +114,7 @@ export default function Navbar() {
 					<nav className='flex flex-col space-y-4 py-4'>
 						{navItems.map((item) => (
 							<Link
+								prefetch={true}
 								key={item.name}
 								href={item.href}
 								className={cn(

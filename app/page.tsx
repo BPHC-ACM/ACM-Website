@@ -5,6 +5,9 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import AnimatedTechBackground from '@/components/animated-tech-background';
+import { useSmoothScroll } from '@/hooks/use-smooth-scroll';
+import AnimatedACMLogo from '@/components/animated-acm-logo';
+import RollingText from '@/components/rolling-text';
 import {
 	Github,
 	ChevronLeft,
@@ -24,68 +27,13 @@ import {
 } from '@/components/ui/accordion';
 import { motion } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 export default function Home() {
-	// Team carousel state
-	const [currentIndex, setCurrentIndex] = useState(0);
-	const [width, setWidth] = useState(0);
-	const carousel = useRef<HTMLDivElement>(null);
-	const [visibleSlides, setVisibleSlides] = useState(4);
+	useSmoothScroll();
 
-	useEffect(() => {
-		if (carousel.current) {
-			setWidth(
-				carousel.current.scrollWidth - carousel.current.offsetWidth
-			);
-		}
-	}, []);
-
-	// Update visible slides based on screen size
-	useEffect(() => {
-		const handleResize = () => {
-			if (window.innerWidth >= 1280) {
-				setVisibleSlides(4); // XL screens: 4 cards
-			} else if (window.innerWidth >= 1024) {
-				setVisibleSlides(3); // Large screens: 3 cards
-			} else if (window.innerWidth >= 768) {
-				setVisibleSlides(2); // Medium screens: 2 cards
-			} else {
-				setVisibleSlides(1); // Small screens: 1 card
-			}
-		};
-
-		// Initial call
-		handleResize();
-
-		// Add event listener
-		window.addEventListener('resize', handleResize);
-
-		// Clean up
-		return () => window.removeEventListener('resize', handleResize);
-	}, []);
-
-	// Smooth navigation with boundary conditions
-	const nextSlide = () => {
-		const maxIndex = teamHeads.length - visibleSlides;
-		if (currentIndex >= maxIndex) {
-			// Smooth transition to first slide
-			setCurrentIndex(0);
-		} else {
-			setCurrentIndex(currentIndex + 1);
-		}
-	};
-
-	const prevSlide = () => {
-		const maxIndex = teamHeads.length - visibleSlides;
-		if (currentIndex <= 0) {
-			// Smooth transition to last slide
-			setCurrentIndex(maxIndex);
-		} else {
-			setCurrentIndex(currentIndex - 1);
-		}
-	};
-
-	// Animation variants
 	const fadeIn = {
 		hidden: { opacity: 0, y: 30 },
 		visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
@@ -106,6 +54,68 @@ export default function Home() {
 		},
 	};
 
+	const sliderRef = useRef(null);
+	const [isMobile, setIsMobile] = useState(false);
+
+	useEffect(() => {
+		const checkIfMobile = () => {
+			setIsMobile(window.innerWidth <= 768);
+		};
+
+		checkIfMobile();
+		window.addEventListener('resize', checkIfMobile);
+
+		return () => {
+			window.removeEventListener('resize', checkIfMobile);
+		};
+	}, []);
+
+	const sliderSettings = {
+		dots: false,
+		infinite: true,
+		speed: 500,
+		slidesToShow: isMobile ? 1 : 4,
+		slidesToScroll: 1,
+		autoplay: true,
+		autoplaySpeed: 5000,
+		pauseOnHover: true,
+		arrows: false,
+		responsive: [
+			{
+				breakpoint: 1280,
+				settings: {
+					slidesToShow: 3,
+				},
+			},
+			{
+				breakpoint: 1024,
+				settings: {
+					slidesToShow: 2,
+				},
+			},
+			{
+				breakpoint: 768,
+				settings: {
+					slidesToShow: 1,
+					centerMode: true,
+					centerPadding: '30px',
+				},
+			},
+		],
+	};
+
+	const goToPrev = () => {
+		if (sliderRef.current) {
+			sliderRef.current.slickPrev();
+		}
+	};
+
+	const goToNext = () => {
+		if (sliderRef.current) {
+			sliderRef.current.slickNext();
+		}
+	};
+
 	return (
 		<div className='flex flex-col'>
 			{/* Hero Section */}
@@ -119,18 +129,7 @@ export default function Home() {
 							animate='visible'
 							variants={staggerContainer}
 						>
-							<motion.div
-								className='relative w-64 flex items-center'
-								variants={fadeIn}
-							>
-								<Image
-									src='/acm-logo.png'
-									alt='ACM Logo'
-									width={256}
-									height={256}
-									className='object-contain'
-								/>
-							</motion.div>
+							<AnimatedACMLogo />
 						</motion.div>
 						<motion.h1
 							className='mb-6 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl'
@@ -138,9 +137,9 @@ export default function Home() {
 							animate='visible'
 							variants={slideUp}
 						>
-							<span className='heading-gradient'>
+							<RollingText className='heading-gradient'>
 								Association for Computing Machinery
-							</span>
+							</RollingText>
 						</motion.h1>
 						<motion.h2
 							className='mb-8 text-2xl font-medium md:text-3xl'
@@ -149,7 +148,7 @@ export default function Home() {
 							variants={slideUp}
 							transition={{ delay: 0.2 }}
 						>
-							BITS Pilani Hyderabad Chapter
+							BITS Pilani Hyderabad Campus
 						</motion.h2>
 						<motion.p
 							className='mb-8 text-lg text-muted-foreground md:text-xl'
@@ -173,7 +172,9 @@ export default function Home() {
 								size='lg'
 								className='hover-lift hover-glow'
 							>
-								<Link href='#about'>Learn More</Link>
+								<Link prefetch={true} href='#about'>
+									Learn More
+								</Link>
 							</Button>
 							<Button
 								asChild
@@ -181,7 +182,9 @@ export default function Home() {
 								size='lg'
 								className='hover-lift'
 							>
-								<Link href='/events'>Explore Events</Link>
+								<Link prefetch={true} href='/events'>
+									Explore Events
+								</Link>
 							</Button>
 						</motion.div>
 					</div>
@@ -202,9 +205,9 @@ export default function Home() {
 							viewport={{ once: true }}
 							transition={{ duration: 0.5 }}
 						>
-							<span className='heading-gradient'>
+							<RollingText className='heading-gradient'>
 								What is ACM?
-							</span>
+							</RollingText>
 						</motion.h2>
 						<motion.div
 							className='space-y-4 text-muted-foreground'
@@ -240,9 +243,9 @@ export default function Home() {
 							viewport={{ once: true }}
 							transition={{ duration: 0.5 }}
 						>
-							<span className='heading-gradient'>
+							<RollingText className='heading-gradient'>
 								Our Chapter
-							</span>
+							</RollingText>
 						</motion.h2>
 						<motion.div
 							className='space-y-4 text-muted-foreground'
@@ -282,7 +285,9 @@ export default function Home() {
 							viewport={{ once: true }}
 							transition={{ duration: 0.5 }}
 						>
-							<span className='heading-gradient'>Our Vision</span>
+							<RollingText className='heading-gradient'>
+								Our Vision
+							</RollingText>
 						</motion.h2>
 						<motion.div
 							className='space-y-4 text-muted-foreground'
@@ -332,9 +337,9 @@ export default function Home() {
 						viewport={{ once: true }}
 						transition={{ duration: 0.5 }}
 					>
-						<span className='heading-gradient'>
+						<RollingText className='heading-gradient'>
 							Why Join Our Community?
-						</span>
+						</RollingText>
 					</motion.h2>
 					<motion.div
 						className='grid gap-6 md:grid-cols-2 lg:grid-cols-4'
@@ -432,7 +437,8 @@ export default function Home() {
 					</motion.div>
 				</div>
 			</section>
-			{/* Team Carousel Section */}
+
+			{/* Team Carousel Section - FIXED HEIGHT CARDS */}
 			<section className='section-padding bg-muted'>
 				<div className='container'>
 					<motion.h2
@@ -442,40 +448,30 @@ export default function Home() {
 						viewport={{ once: true }}
 						transition={{ duration: 0.5 }}
 					>
-						<span className='heading-gradient'>Meet Our Team</span>
+						<RollingText className='heading-gradient'>
+							Meet Our Team
+						</RollingText>
 					</motion.h2>
-					<div className='relative'>
-						<motion.div
-							className='overflow-hidden'
-							initial={{ opacity: 0 }}
-							whileInView={{ opacity: 1 }}
-							viewport={{ once: true }}
-							transition={{ duration: 0.5 }}
-						>
-							<motion.div
-								ref={carousel}
-								className='flex p-3'
-								animate={{
-									x: -currentIndex * (300 + 24),
-								}}
-								transition={{
-									type: 'spring',
-									stiffness: 300,
-									damping: 30,
-								}}
-							>
-								{teamHeads.map((member, index) => (
+
+					<motion.div
+						className='relative px-4'
+						initial={{ opacity: 0 }}
+						whileInView={{ opacity: 1 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.5 }}
+					>
+						<Slider ref={sliderRef} {...sliderSettings}>
+							{teamHeads.map((member, index) => (
+								<div key={index} className='px-3'>
 									<motion.div
-										key={index}
-										className='min-w-[300px] mr-6'
-										whileHover={{ scale: 1.05 }}
+										whileHover={{ scale: 1.01 }}
 										transition={{
 											type: 'spring',
 											stiffness: 400,
 											damping: 17,
 										}}
 									>
-										<Card className='overflow-hidden h-full'>
+										<Card className='overflow-hidden h-full flex flex-col'>
 											<div className='aspect-square relative'>
 												<Image
 													src={
@@ -487,57 +483,59 @@ export default function Home() {
 													className='object-cover'
 												/>
 											</div>
-											<CardContent className='p-6 text-center'>
+											<CardContent className='p-6 text-center flex flex-col flex-1'>
 												<h3 className='mb-1 text-xl font-bold'>
 													{member.name}
 												</h3>
-												<p className='text-muted-foreground'>
-													{member.designation}
-												</p>
+												<div className='min-h-12 flex items-center justify-center'>
+													<p className='text-muted-foreground'>
+														{member.designation}
+													</p>
+												</div>
 											</CardContent>
 										</Card>
 									</motion.div>
-								))}
-							</motion.div>
-						</motion.div>
-						<div className='flex justify-center mt-6 space-x-4'>
-							<Button
-								variant='outline'
-								size='icon'
-								onClick={prevSlide}
-								disabled={currentIndex === 0}
-								className='rounded-full hover:bg-primary/10 hover:text-primary'
-							>
-								<ChevronLeft className='h-5 w-5' />
-								<span className='sr-only'>Previous</span>
-							</Button>
-							<Button
-								variant='outline'
-								size='icon'
-								onClick={nextSlide}
-								disabled={
-									currentIndex ===
-									teamHeads.length - visibleSlides
-								}
-								className='rounded-full hover:bg-primary/10 hover:text-primary'
-							>
-								<ChevronRight className='h-5 w-5' />
-								<span className='sr-only'>Next</span>
-							</Button>
-						</div>
-						<div className='flex justify-center mt-4'>
+								</div>
+							))}
+						</Slider>
+
+						{!isMobile && (
+							<div className='absolute w-[calc(100%+20px)] left-[-10px] flex justify-between top-1/2 mt-[-2rem] transform -translate-y-1/2 z-10'>
+								<Button
+									variant='outline'
+									size='icon'
+									onClick={goToPrev}
+									className='rounded-full hover:bg-primary/10 hover:text-primary -ml-4'
+								>
+									<ChevronLeft className='h-5 w-5' />
+									<span className='sr-only'>Previous</span>
+								</Button>
+								<Button
+									variant='outline'
+									size='icon'
+									onClick={goToNext}
+									className='rounded-full hover:bg-primary/10 hover:text-primary -mr-4'
+								>
+									<ChevronRight className='h-5 w-5' />
+									<span className='sr-only'>Next</span>
+								</Button>
+							</div>
+						)}
+
+						<div className='flex justify-center mt-8'>
 							<Button
 								asChild
 								variant='outline'
 								className='hover-lift'
 							>
-								<Link href='/team'>View All Team Members</Link>
+								<Link href='/team' prefetch={true}>
+									View All Team Members
+								</Link>
 							</Button>
 						</div>
-					</div>
+					</motion.div>
 				</div>
 			</section>
-
 			{/* FAQ Section */}
 			<section id='faq' className='section-padding'>
 				<div className='container'>
@@ -549,9 +547,9 @@ export default function Home() {
 							viewport={{ once: true }}
 							transition={{ duration: 0.5 }}
 						>
-							<span className='heading-gradient'>
+							<RollingText className='heading-gradient'>
 								Frequently Asked Questions
-							</span>
+							</RollingText>
 						</motion.h2>
 						<motion.div
 							initial={{ opacity: 0 }}
@@ -594,9 +592,9 @@ export default function Home() {
 							viewport={{ once: true }}
 							transition={{ duration: 0.5 }}
 						>
-							<span className='heading-gradient'>
+							<RollingText className='heading-gradient'>
 								Join Our Community
-							</span>
+							</RollingText>
 						</motion.h2>
 						<motion.p
 							className='mb-8 text-muted-foreground'
@@ -635,7 +633,9 @@ export default function Home() {
 								size='lg'
 								className='hover-lift hover-glow'
 							>
-								<Link href='/events'>Upcoming Events</Link>
+								<Link href='/events' prefetch={true}>
+									Upcoming Events
+								</Link>
 							</Button>
 						</motion.div>
 					</div>

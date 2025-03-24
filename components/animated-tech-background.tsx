@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useEffect, useRef } from 'react';
 
 export const AnimatedTechBackground: React.FC = () => {
@@ -8,14 +7,26 @@ export const AnimatedTechBackground: React.FC = () => {
 	useEffect(() => {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
-
-		const ctx = canvas.getContext('2d');
+		const ctx = canvas.getContext('2d', { alpha: true });
 		if (!ctx) return;
 
-		canvas.width = window.innerWidth;
-		canvas.height = 500;
+		const pixelRatio = window.devicePixelRatio || 1;
 
-		// Create points with motion and connection properties
+		const resizeCanvas = () => {
+			const displayWidth = window.innerWidth;
+			const displayHeight = 500;
+
+			canvas.style.width = `${displayWidth}px`;
+			canvas.style.height = `${displayHeight}px`;
+
+			canvas.width = Math.floor(displayWidth * pixelRatio);
+			canvas.height = Math.floor(displayHeight * pixelRatio);
+
+			ctx.scale(pixelRatio, pixelRatio);
+		};
+
+		resizeCanvas();
+
 		interface Point {
 			x: number;
 			y: number;
@@ -28,47 +39,46 @@ export const AnimatedTechBackground: React.FC = () => {
 			connections: number[];
 		}
 
-		const points: Point[] = [];
-		// Increased density factor to create more points
-		const numPoints = Math.floor((canvas.width * canvas.height) / 15000); // Increased density from 20000 to 15000
+		const displayWidth = window.innerWidth;
+		const displayHeight = 500;
+		const pointDensity = displayWidth < 768 ? 18000 : 12000;
+		const numPoints = Math.max(
+			15,
+			Math.floor((displayWidth * displayHeight) / pointDensity)
+		);
 
-		// Create randomly positioned points
+		const points: Point[] = [];
+		const connectionDistance =
+			Math.min(displayWidth, displayHeight) *
+			(displayWidth < 768 ? 0.25 : 0.28);
+		const maxConnections = displayWidth < 768 ? 3 : 5;
+
 		for (let i = 0; i < numPoints; i++) {
-			// Assign node types with probability
 			let type: 'node' | 'relay' | 'endpoint' = 'node';
 			const typeRoll = Math.random();
 			if (typeRoll > 0.92) type = 'endpoint';
 			else if (typeRoll > 0.75) type = 'relay';
 
 			points.push({
-				x: Math.random() * canvas.width,
-				y: Math.random() * canvas.height,
-				vx: (Math.random() - 0.5) * 0.3, // Gentle random movement
+				x: Math.random() * displayWidth,
+				y: Math.random() * displayHeight,
+				vx: (Math.random() - 0.5) * 0.3,
 				vy: (Math.random() - 0.5) * 0.3,
-				active: Math.random() > 0.7,
+				active: Math.random() > 0.6,
 				activeTime: Math.floor(Math.random() * 100),
-				pulseFactor: Math.random() * 0.5,
+				pulseFactor: Math.random() * 0.7,
 				type,
 				connections: [],
 			});
 		}
 
-		// Establish initial connections between points
-		// Increased maximum connections per point
-		const maxConnections = 4; // Increased from 3 to 4
-		// Increased connection distance to create more connections
-		const connectionDistance = Math.min(canvas.width, canvas.height) * 0.25; // Increased from 0.2 to 0.25
-
-		// Create connections based on proximity
 		points.forEach((point, i) => {
 			const potentialConnections = [];
-
 			for (let j = 0; j < points.length; j++) {
 				if (i !== j) {
 					const dx = points[j].x - point.x;
 					const dy = points[j].y - point.y;
 					const distance = Math.sqrt(dx * dx + dy * dy);
-
 					if (distance < connectionDistance) {
 						potentialConnections.push({
 							index: j,
@@ -78,7 +88,6 @@ export const AnimatedTechBackground: React.FC = () => {
 				}
 			}
 
-			// Sort by distance and take closest ones
 			potentialConnections.sort((a, b) => a.distance - b.distance);
 			const numConnections = Math.min(
 				Math.floor(Math.random() * (maxConnections + 1)),
@@ -90,60 +99,60 @@ export const AnimatedTechBackground: React.FC = () => {
 			}
 		});
 
-		// Animation loop
 		let animationId: number;
 		let globalTime = 0;
 
-		const animate = () => {
-			ctx.clearRect(0, 0, canvas.width, canvas.height);
+		let lastTime = 0;
+
+		const animate = (timestamp: number) => {
+			const deltaTime = timestamp - lastTime;
+			lastTime = timestamp;
+
+			if (deltaTime > 100) {
+				animationId = requestAnimationFrame(animate);
+				return;
+			}
+
+			ctx.clearRect(0, 0, displayWidth, displayHeight);
 			globalTime++;
 
-			// Update point positions and states
 			points.forEach((point, index) => {
-				// Move points with gentle random motion
 				point.x += point.vx;
 				point.y += point.vy;
 
-				// Occasional direction changes
 				if (Math.random() > 0.99) {
 					point.vx = (Math.random() - 0.5) * 0.3;
 					point.vy = (Math.random() - 0.5) * 0.3;
 				}
 
-				// Keep points within canvas bounds
-				if (point.x < 0 || point.x > canvas.width) {
+				if (point.x < 0 || point.x > displayWidth) {
 					point.vx *= -1;
-					point.x = Math.max(0, Math.min(canvas.width, point.x));
+					point.x = Math.max(0, Math.min(displayWidth, point.x));
 				}
-				if (point.y < 0 || point.y > canvas.height) {
+				if (point.y < 0 || point.y > displayHeight) {
 					point.vy *= -1;
-					point.y = Math.max(0, Math.min(canvas.height, point.y));
+					point.y = Math.max(0, Math.min(displayHeight, point.y));
 				}
 
-				// Update active state with random pulses
-				if (Math.random() > 0.995) {
+				if (Math.random() > 0.99) {
 					point.active = !point.active;
 				}
 
-				// Update pulse factor
 				if (point.active) {
 					point.activeTime++;
-					point.pulseFactor = Math.min(0.7, point.pulseFactor + 0.02);
+					point.pulseFactor = Math.min(0.9, point.pulseFactor + 0.03);
 				} else {
-					point.pulseFactor = Math.max(0, point.pulseFactor - 0.01);
+					point.pulseFactor = Math.max(0.2, point.pulseFactor - 0.01);
 				}
 
-				// Occasionally update connections based on new proximities
-				if (globalTime % 200 === index % 200) {
+				if (globalTime % 300 === index % 300) {
 					point.connections = [];
 					const potentialConnections = [];
-
 					for (let j = 0; j < points.length; j++) {
 						if (index !== j) {
 							const dx = points[j].x - point.x;
 							const dy = points[j].y - point.y;
 							const distance = Math.sqrt(dx * dx + dy * dy);
-
 							if (distance < connectionDistance) {
 								potentialConnections.push({
 									index: j,
@@ -167,13 +176,12 @@ export const AnimatedTechBackground: React.FC = () => {
 				}
 			});
 
-			// Draw connections first (rays of light)
+			ctx.lineCap = 'round';
 			points.forEach((point, index) => {
 				if (point.pulseFactor > 0.1) {
 					point.connections.forEach((connectionIndex) => {
 						const connectedPoint = points[connectionIndex];
 
-						// Only draw connection if both points are somewhat active
 						if (connectedPoint.pulseFactor > 0.1) {
 							const gradient = ctx.createLinearGradient(
 								point.x,
@@ -193,32 +201,41 @@ export const AnimatedTechBackground: React.FC = () => {
 
 							gradient.addColorStop(
 								0,
-								`rgba(30, 180, 230, ${startOpacity})`
+								`rgba(60, 200, 255, ${startOpacity})`
 							);
 							gradient.addColorStop(
 								0.5,
-								`rgba(40, 190, 240, ${
-									(startOpacity + endOpacity) / 4
+								`rgba(80, 220, 255, ${
+									(startOpacity + endOpacity) / 3
 								})`
 							);
 							gradient.addColorStop(
 								1,
-								`rgba(30, 180, 230, ${endOpacity})`
+								`rgba(60, 200, 255, ${endOpacity})`
 							);
 
 							ctx.beginPath();
 							ctx.strokeStyle = gradient;
-							ctx.lineWidth =
-								0.5 *
-								((point.pulseFactor +
+
+							const lineWidth =
+								(point.pulseFactor +
 									connectedPoint.pulseFactor) /
-									2);
-							ctx.moveTo(point.x, point.y);
-							ctx.lineTo(connectedPoint.x, connectedPoint.y);
+								2;
+							ctx.lineWidth = Math.max(0.5, lineWidth);
+
+							ctx.moveTo(
+								Math.round(point.x * 2) / 2,
+								Math.round(point.y * 2) / 2
+							);
+							ctx.lineTo(
+								Math.round(connectedPoint.x * 2) / 2,
+								Math.round(connectedPoint.y * 2) / 2
+							);
 							ctx.stroke();
 
-							// Add data transfer effect along the line
-							if (Math.random() > 0.95) {
+							const packetFrequency =
+								displayWidth < 768 ? 0.997 : 0.995;
+							if (Math.random() > packetFrequency) {
 								const progress = (globalTime % 100) / 100;
 								const dataX =
 									point.x +
@@ -228,10 +245,10 @@ export const AnimatedTechBackground: React.FC = () => {
 									(connectedPoint.y - point.y) * progress;
 
 								ctx.beginPath();
-								ctx.fillStyle = `rgba(100, 220, 255, ${
-									(startOpacity + endOpacity) * 0.8
+								ctx.fillStyle = `rgba(150, 240, 255, ${
+									(startOpacity + endOpacity) * 0.9
 								})`;
-								ctx.arc(dataX, dataY, 1, 0, Math.PI * 2);
+								ctx.arc(dataX, dataY, 1.5, 0, Math.PI * 2);
 								ctx.fill();
 							}
 						}
@@ -239,50 +256,53 @@ export const AnimatedTechBackground: React.FC = () => {
 				}
 			});
 
-			// Draw the points
 			points.forEach((point) => {
 				if (point.pulseFactor > 0) {
 					const intensity = point.pulseFactor;
 
-					// Size based on node type
 					let size = 0;
-					if (point.type === 'endpoint') size = 0.8 + intensity * 1.2;
-					else if (point.type === 'relay')
-						size = 0.7 + intensity * 0.9;
-					else size = 0.5 + intensity * 0.8;
+					if (point.type === 'endpoint') size = 1 + intensity * 1.5;
+					else if (point.type === 'relay') size = 0.8 + intensity * 1;
+					else size = 0.6 + intensity * 0.8;
 
-					// Draw main node
 					let nodeColor = '';
 					if (point.type === 'endpoint') {
-						nodeColor = `rgba(20, 200, 255, ${
-							0.2 + 0.5 * intensity
+						nodeColor = `rgba(50, 230, 255, ${
+							0.4 + 0.6 * intensity
 						})`;
 					} else if (point.type === 'relay') {
-						nodeColor = `rgba(10, 180, 240, ${
-							0.15 + 0.45 * intensity
+						nodeColor = `rgba(40, 210, 250, ${
+							0.35 + 0.55 * intensity
 						})`;
 					} else {
-						nodeColor = `rgba(0, 160, 230, ${
-							0.1 + 0.4 * intensity
+						nodeColor = `rgba(30, 190, 245, ${
+							0.3 + 0.5 * intensity
 						})`;
 					}
 
+					const x = Math.round(point.x * 2) / 2;
+					const y = Math.round(point.y * 2) / 2;
+
 					ctx.beginPath();
 					ctx.fillStyle = nodeColor;
-					ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
+					ctx.arc(x, y, size, 0, Math.PI * 2);
 					ctx.fill();
 
-					// Glow effect
-					if (intensity > 0.2) {
-						const glowSize = 2 + intensity * 2;
-						ctx.shadowBlur = glowSize;
-						ctx.shadowColor = `rgba(30, 200, 255, ${
-							0.2 * intensity
-						})`;
-						ctx.beginPath();
-						ctx.arc(point.x, point.y, size * 0.7, 0, Math.PI * 2);
-						ctx.fill();
-						ctx.shadowBlur = 0;
+					if (intensity > 0.1) {
+						const useGlow =
+							displayWidth >= 768 || point.type === 'endpoint';
+
+						if (useGlow) {
+							const glowSize = 2 + intensity * 3;
+							ctx.shadowBlur = glowSize;
+							ctx.shadowColor = `rgba(80, 220, 255, ${
+								0.3 * intensity
+							})`;
+							ctx.beginPath();
+							ctx.arc(x, y, size * 0.8, 0, Math.PI * 2);
+							ctx.fill();
+							ctx.shadowBlur = 0;
+						}
 					}
 				}
 			});
@@ -292,10 +312,8 @@ export const AnimatedTechBackground: React.FC = () => {
 
 		animationId = requestAnimationFrame(animate);
 
-		// Handle resize
 		const handleResize = () => {
-			canvas.width = window.innerWidth;
-			canvas.height = 500;
+			resizeCanvas();
 		};
 
 		window.addEventListener('resize', handleResize);
@@ -309,7 +327,7 @@ export const AnimatedTechBackground: React.FC = () => {
 	return (
 		<div className='absolute inset-0 overflow-hidden'>
 			<canvas ref={canvasRef} className='w-full h-full' />
-			<div className='absolute inset-0 bg-gradient-to-b from-background/0 via-background/5 to-background/90' />
+			<div className='absolute inset-0 bg-gradient-to-b from-background/0 via-background/5 to-background/70' />
 		</div>
 	);
 };

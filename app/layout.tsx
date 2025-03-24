@@ -1,39 +1,46 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
-import Navbar from "@/components/navbar"
-import Footer from "@/components/footer"
+import type React from 'react';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { ThemeProvider } from '@/components/theme-provider';
+import Navbar from '@/components/navbar';
+import Footer from '@/components/footer';
+import PageTitle from '@/components/page-title';
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ['latin'] });
 
-export const metadata: Metadata = {
-  title: "ACM BITS Pilani Hyderabad",
-  description: "Association for Computing Machinery - BITS Pilani Hyderabad Chapter",
-  generator: "v0.dev",
-}
+export const metadata = {
+	description:
+		'Association for Computing Machinery - BITS Pilani Hyderabad Campus, Student Chapter',
+	icons: {
+		icon: '/acm-logo.ico',
+		apple: '/acm-logo.png',
+	},
+};
 
 export default function RootLayout({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode
+	children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <div className="flex min-h-screen flex-col bg-background">
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
-        </ThemeProvider>
-      </body>
-    </html>
-  )
+	return (
+		<html lang='en' suppressHydrationWarning>
+			<body className={inter.className}>
+				<PageTitle />
+				<ThemeProvider
+					attribute='class'
+					defaultTheme='dark'
+					enableSystem
+					disableTransitionOnChange
+				>
+					<div className='flex min-h-screen flex-col bg-background'>
+						<Navbar />
+						<main className='flex-1'>{children}</main>
+						<Footer />
+					</div>
+				</ThemeProvider>
+			</body>
+		</html>
+	);
 }
 
-
-
-import './globals.css'
+import './globals.css';

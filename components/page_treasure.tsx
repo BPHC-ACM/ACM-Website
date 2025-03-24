@@ -270,7 +270,6 @@ const AnimatedPlayButton = () => {
         return
       }
 
-      // Calculate days, hours, minutes, seconds
       const days = Math.floor(difference / (1000 * 60 * 60 * 24))
       const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
       const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))
@@ -289,7 +288,7 @@ const AnimatedPlayButton = () => {
   }, [])
 
   const handleRedirect = () => {
-    // Redirect to treasurehunt.tsx in the app/events folder
+
     window.location.href = "../../events/treasurehunt"
   }
 

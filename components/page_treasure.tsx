@@ -48,7 +48,7 @@ const AnimatedPlayButton = () => {
 	return (
 		<div className='flex justify-center items-center w-full m-auto'>
 			{!timerComplete ? (
-				<div className='w-[40rem] max-w-full p-4'>
+				<div className='w-[40rem] max-w-full p-4 -mt-16 mb-8'>
 					<div
 						className='flex flex-col items-center justify-center p-6 rounded-lg 
 						bg-white/90 backdrop-blur-sm 

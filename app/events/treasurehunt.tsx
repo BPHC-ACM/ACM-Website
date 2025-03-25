@@ -3,6 +3,7 @@
 import type React from 'react';
 import { useState, useEffect } from 'react';
 import { CircleX } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const TreasureHunt: React.FC = () => {
 	const [answer, setAnswer] = useState('');
@@ -10,8 +11,16 @@ const TreasureHunt: React.FC = () => {
 	const [showError, setShowError] = useState(false);
 	const [bgPosition, setBgPosition] = useState({ x: 0, y: 0 });
 
+	const rules = [
+		'Only use capital letters without any other punctuation.',
+		'Do not use spaces, write the answer as a continuous string.',
+		'Do not use abbreviations, specify the full form of the phrase in accordance with the above rule.',
+		'If the common phrasing of the answer is used in plural form, follow the same, in accordance with above rules.',
+		"E.g. 'Dorm' is 'DORMITORIES', 'atm' is 'AUTOMATEDTELLINGMACHINE'",
+	];
+
 	// The correct answer to the riddle
-	const correctAnswer = 'shadow';
+	const correctAnswer = 'newfootballground';
 
 	// Enhanced background animation
 	useEffect(() => {
@@ -39,7 +48,7 @@ const TreasureHunt: React.FC = () => {
 
 	return (
 		<div
-			className='md:w-[28rem] w-[20rem] md:-mt-32 -mt-16 mb-12 rounded-2xl h-[28rem] mx-auto flex flex-col items-center justify-center md:p-6 p-4 font-sans relative overflow-hidden'
+			className='md:w-[28rem] w-[20rem] md:-mt-32 -mt-16 mb-12 rounded-2xl h-[29rem] mx-auto flex flex-col items-center justify-center md:p-6 p-4 font-sans relative overflow-hidden'
 			style={{
 				background: `linear-gradient(120deg, oklch(0.905 0.093 164.15) 0%, oklch(0.845 0.143 164.978) 100%)`,
 				backgroundSize: '400% 400%',
@@ -66,11 +75,20 @@ const TreasureHunt: React.FC = () => {
 					/>
 				))}
 			</div>
-
 			{/* Main Content Container */}
-			<div className='w-full max-w-md bg-white bg-opacity-90 backdrop-filter backdrop-blur-sm rounded-xl shadow-2xl p-4 z-10 border border-pink-200'>
+			<motion.div
+				className='w-full max-w-md bg-white bg-opacity-90 backdrop-filter backdrop-blur-sm rounded-xl shadow-2xl p-4 z-10 border border-pink-200'
+				initial={{ opacity: 0, y: 20 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+			>
 				{/* Logo */}
-				<div className='flex justify-center mb-4'>
+				<motion.div
+					className='flex justify-center mb-4'
+					initial={{ scale: 0.8, opacity: 0 }}
+					animate={{ scale: 1, opacity: 1 }}
+					transition={{ delay: 0.2 }}
+				>
 					<div className='w-16 h-16 bg-yellow-400 rounded-full shadow-xl overflow-hidden border-4 border-pink-300'>
 						<img
 							src='/pearl-logo.png?height=64&width=64'
@@ -78,102 +96,166 @@ const TreasureHunt: React.FC = () => {
 							className='w-full h-full object-cover rounded-full'
 						/>
 					</div>
-				</div>
+				</motion.div>
 
 				{/* Title */}
-				<div className='text-center mb-4'>
-					<h1 className='text-2xl font-bold text-gray-800 tracking-wider'>
-						TREASURE HUNT
+				<motion.div
+					className='text-center mb-4'
+					initial={{ opacity: 0, y: -20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ delay: 0.3 }}
+				>
+					<h1 className='text-2xl font-bold text-gray-800 uppercase tracking-wider'>
+						Hunt for the Sun
 					</h1>
 					<div className='h-1 w-20 bg-yellow-400 mx-auto mt-2 rounded-full'></div>
-				</div>
+				</motion.div>
 
 				{/* Riddle Section */}
-				<div className='mb-4 text-center'>
+				<motion.div
+					className='mb-4 text-center'
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ delay: 0.4 }}
+				>
 					<div className='inline-block bg-pink-600 text-white px-3 py-1 rounded-full font-bold mb-2 text-xs'>
 						Riddle #1
 					</div>
 					<p className='text-gray-700 italic text-sm leading-relaxed'>
-						I follow you all the time and copy your every move, but
-						you can't touch me or catch me. What am I?
+						Multipurpose is my use, on me people kick, run, and
+						catch; I provide many goals, year round do they love to
+						match!
 					</p>
-				</div>
+				</motion.div>
 
 				{/* Answer Form */}
-				<form onSubmit={handleSubmit} className='mb-4'>
-					<input
+				<motion.form
+					onSubmit={handleSubmit}
+					className='mb-4'
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ delay: 0.5 }}
+				>
+					<motion.input
 						type='text'
 						value={answer}
 						onChange={(e) => setAnswer(e.target.value)}
 						placeholder='Enter your answer...'
 						className='w-full px-3 py-2 rounded-full border-2 border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm mb-3'
 						required
+						whileFocus={{ scale: 1.02 }}
+						transition={{ type: 'spring', stiffness: 300 }}
 					/>
-					<button
+					<motion.button
 						type='submit'
 						className='w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white py-2 rounded-full text-sm font-bold hover:from-pink-600 hover:to-pink-700 transition-colors'
+						whileHover={{ scale: 1.05 }}
+						whileTap={{ scale: 0.95 }}
 					>
 						Unlock Treasure
-					</button>
-				</form>
+					</motion.button>
+				</motion.form>
 
 				{/* Rules Button */}
-				<div className='text-center'>
-					<button
+				<motion.div
+					className='text-center'
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ delay: 0.6 }}
+				>
+					<motion.button
 						onClick={() => setShowModal(true)}
 						className='text-pink-600 hover:text-pink-700 font-medium text-sm flex items-center justify-center mx-auto'
+						whileHover={{ scale: 1.1 }}
+						whileTap={{ scale: 0.9 }}
 					>
 						<span className='mr-2'>📜</span> View Rules
-					</button>
-				</div>
-			</div>
-
+					</motion.button>
+				</motion.div>
+			</motion.div>
 			{/* Rules Modal */}
 			{showModal && (
-				<div className='fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[100]'>
-					<div className='bg-white rounded-2xl p-4 w-full max-w-md'>
-						<div className='flex justify-between items-center mb-4'>
-							<h3 className='text-lg font-bold text-pink-600'>
-								Treasure Hunter's Guide
-							</h3>
-							<button
-								onClick={() => setShowModal(false)}
-								className='text-gray-500 hover:text-gray-700'
-							>
-								✕
-							</button>
-						</div>
-						<ol className='space-y-2 text-sm mb-4'>
-							{[1, 2, 3, 4, 5].map((num) => (
-								<li key={num} className='flex items-start'>
-									<span className='bg-pink-100 text-pink-600 rounded-full w-5 h-5 flex items-center justify-center mr-2 font-bold text-xs'>
-										{num}
-									</span>
-									<span className='text-pink-900'>
-										{num === 1 &&
-											'Read the riddle carefully and ponder its meaning.'}
-										{num === 2 &&
-											'Type your answer in the treasure chest.'}
-										{num === 3 &&
-											'Each treasure hunt challenge must be solved to proceed.'}
-										{num === 4 &&
-											'Correct answers will unlock the next clue in your journey.'}
-										{num === 5 &&
-											'The true treasure lies at the end of your quest!'}
-									</span>
-								</li>
-							))}
-						</ol>
-						<button
-							onClick={() => setShowModal(false)}
-							className='w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white py-2 rounded-full text-sm font-bold'
+				<AnimatePresence>
+					<motion.div
+						className='fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[100]'
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+					>
+						<motion.div
+							className='bg-white rounded-2xl p-4 w-full max-w-md'
+							initial={{ opacity: 0, scale: 0.9 }}
+							animate={{ opacity: 1, scale: 1 }}
+							exit={{ opacity: 0, scale: 0.9 }}
+							transition={{
+								type: 'spring',
+								stiffness: 300,
+								damping: 20,
+							}}
 						>
-							Continue Adventure
-						</button>
-					</div>
-				</div>
+							<div className='flex justify-between items-center mb-4'>
+								<h3 className='text-lg font-bold text-pink-600'>
+									Treasure Hunter's Guide
+								</h3>
+								<motion.button
+									onClick={() => setShowModal(false)}
+									className='text-gray-500 hover:text-gray-700'
+									whileHover={{ scale: 1.1 }}
+									whileTap={{ scale: 0.9 }}
+								>
+									✕
+								</motion.button>
+							</div>
+							<motion.ol
+								className='space-y-2 mb-4'
+								initial='hidden'
+								animate='visible'
+								variants={{
+									visible: {
+										transition: {
+											staggerChildren: 0.1,
+										},
+									},
+								}}
+							>
+								{rules.map((rule, index) => (
+									<motion.li
+										key={index}
+										className='flex items-start'
+										variants={{
+											hidden: { opacity: 0, x: -20 },
+											visible: {
+												opacity: 1,
+												x: 0,
+												transition: {
+													type: 'spring',
+													stiffness: 300,
+													damping: 20,
+												},
+											},
+										}}
+									>
+										<span className='bg-pink-100 text-pink-600 rounded-full w-6 h-6 flex items-center justify-center mr-4 font-bold text-xs'>
+											{index + 1}
+										</span>
+										<span className='text-pink-900 flex-1'>
+											{rule}
+										</span>
+									</motion.li>
+								))}
+							</motion.ol>
+							<motion.button
+								onClick={() => setShowModal(false)}
+								className='w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white py-2 rounded-full text-sm font-bold'
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
+							>
+								Continue Adventure
+							</motion.button>
+						</motion.div>
+					</motion.div>
+				</AnimatePresence>
 			)}
-
 			{/* Error Popup */}
 			{showError && (
 				<div className='fixed bottom-6 right-6 shadow-lg animate-slide-in'>
@@ -203,7 +285,6 @@ const TreasureHunt: React.FC = () => {
 					</div>
 				</div>
 			)}
-
 			{/* CSS Animations */}
 			<style jsx>{`
 				@keyframes gradientAnimation {

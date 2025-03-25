@@ -258,7 +258,7 @@ const TreasureHunt: React.FC = () => {
 			)}
 			{/* Error Popup */}
 			{showError && (
-				<div className='fixed bottom-6 right-6 shadow-lg animate-slide-in'>
+				<div className='fixed bottom-6 z-[20] right-6 shadow-lg animate-slide-in'>
 					<div className='flex items-center bg-white border-l-4 border-red-500 p-4 rounded-lg max-w-xs space-x-3 transform transition-all duration-300 hover:scale-105'>
 						<CircleX color='red' />
 						<div>

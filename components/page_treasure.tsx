@@ -13,7 +13,7 @@ const AnimatedPlayButton = () => {
 	const [timerComplete, setTimerComplete] = useState(false);
 
 	useEffect(() => {
-		const targetDate = new Date('March 27, 2025 00:00:00').getTime();
+		const targetDate = new Date('March 28, 2025 00:00:00').getTime();
 
 		const updateCountdown = () => {
 			const now = new Date().getTime();

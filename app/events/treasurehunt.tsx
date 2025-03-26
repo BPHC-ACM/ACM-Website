@@ -38,7 +38,7 @@ const TreasureHunt: React.FC = () => {
 		e.preventDefault();
 		if (answer.toLowerCase().trim() === correctAnswer) {
 			// Open Google in a new tab
-			window.open('https://www.google.com', '_blank');
+			window.open('https://drive.google.com/drive/folders/1CMaJ-eqdVmbEL02V7BZTt3CZYFmSXPKK', '_blank');
 		} else {
 			// Show error popup
 			setShowError(true);
@@ -123,8 +123,11 @@ const TreasureHunt: React.FC = () => {
 					</div>
 					<p className='text-gray-700 italic text-sm leading-relaxed'>
 						Multipurpose is my use, on me people kick, run, and
-						catch; I provide many goals, year round do they love to
-						match!
+						catch; 
+					</p>
+					<p className='text-gray-700 italic text-sm leading-relaxed'>
+					I provide many goals, year round do they love to
+					match!
 					</p>
 				</motion.div>
 

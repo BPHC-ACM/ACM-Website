@@ -12,11 +12,11 @@ const TreasureHunt: React.FC = () => {
 	const [bgPosition, setBgPosition] = useState({ x: 0, y: 0 });
 
 	const rules = [
-		'Only use capital letters without any other punctuation.',
-		'Do not use spaces, write the answer as a continuous string.',
-		'Do not use abbreviations, specify the full form of the phrase in accordance with the above rule.',
-		'If the common phrasing of the answer is used in plural form, follow the same, in accordance with above rules.',
-		"E.g. 'Dorm' is 'DORMITORIES', 'atm' is 'AUTOMATEDTELLINGMACHINE'",
+		" The answer you get from one riddle will unlock both the files in the next folder",
+		'Only use capital letters without any other punctuation.\n Do not use spaces, write the answer as a continuous string.\n E.g. \'Abc\'s def\' is \'ABCSDEF\'',
+		'Do not use abbreviations, specify the full form of the phrase in accordance with the above rule.\n E.g. \'ATM\' is \'AUTOMATEDTELLINGMACHINE\'',
+		"If the common phrasing of the answer is used in plural form, follow the same, in accordance with above rules. \n E.g. 'Dorm' is 'DORMITORIES', 'atm' is 'AUTOMATEDTELLINGMACHINE'",
+		"Numbers in the answer should be represented numerically \n E.g. 1 is 1",
 	];
 
 	// The correct answer to the riddle

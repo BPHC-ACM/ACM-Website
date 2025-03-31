@@ -138,7 +138,10 @@ export default function Home() {
 							variants={slideUp}
 						>
 							<RollingText className='heading-gradient'>
-								Association for Computing Machinery
+								Association for
+							</RollingText>
+							<RollingText className='heading-gradient w-[120%] md:w-auto -ml-8 md:m-auto md:-mt-4'>
+								Computing Machinery
 							</RollingText>
 						</motion.h1>
 						<motion.h2

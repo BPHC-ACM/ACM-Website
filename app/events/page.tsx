@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import Treasure from '../../components/page_treasure';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar, MapPin } from 'lucide-react';
@@ -85,7 +84,6 @@ export default function EventsPage() {
 
 			{/* Events Tabs Section */}
 			<section className='section-padding z-10'>
-				<Treasure />
 				<div className='container'>
 					{loading ? (
 						<div className='flex justify-center py-10'>
@@ -175,10 +173,10 @@ export default function EventsPage() {
 			</section>
 
 			{/* CTA Section */}
-			<section className='section-padding bg-muted'>
+			<section className='section-padding bg-muted z-10'>
 				<div className='container'>
 					<div className='mx-auto max-w-3xl text-center'>
-						<h2 className='mb-6 text-3xl font-bold md:text-4xl animate-slide-up'>
+						<h2 className='heading-gradient mb-6 text-3xl font-bold md:text-4xl animate-slide-up'>
 							Want to Collaborate?
 						</h2>
 						<p

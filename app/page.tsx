@@ -33,7 +33,6 @@ import 'slick-carousel/slick/slick-theme.css';
 
 export default function Home() {
 	useSmoothScroll();
-
 	const fadeIn = {
 		hidden: { opacity: 0, y: 30 },
 		visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
@@ -151,7 +150,7 @@ export default function Home() {
 							variants={slideUp}
 							transition={{ delay: 0.2 }}
 						>
-							BITS Pilani Hyderabad Campus
+							BITS Pilani, Hyderabad Campus
 						</motion.h2>
 						<motion.p
 							className='mb-8 text-lg text-muted-foreground md:text-xl'
@@ -258,10 +257,10 @@ export default function Home() {
 							transition={{ duration: 0.5, delay: 0.2 }}
 						>
 							<p>
-								The ACM Student Chapter at BITS Pilani Hyderabad
-								Campus was established to create a community of
-								students passionate about computing and
-								technology. Our chapter serves as a hub for
+								The ACM Student Chapter at BITS Pilani,
+								Hyderabad Campus was established to create a
+								community of students passionate about computing
+								and technology. Our chapter serves as a hub for
 								technical activities, knowledge sharing, and
 								professional development.
 							</p>
@@ -340,9 +339,18 @@ export default function Home() {
 						viewport={{ once: true }}
 						transition={{ duration: 0.5 }}
 					>
-						<RollingText className='heading-gradient'>
-							Why Join Our Community?
-						</RollingText>
+						{isMobile ? (
+							<>
+								<RollingText className='heading-gradient'>
+									Why Join our
+								</RollingText>
+								<RollingText>Community?</RollingText>
+							</>
+						) : (
+							<RollingText className='heading-gradient'>
+								Why Join Our Community?
+							</RollingText>
+						)}
 					</motion.h2>
 					<motion.div
 						className='grid gap-6 md:grid-cols-2 lg:grid-cols-4'
@@ -550,9 +558,18 @@ export default function Home() {
 							viewport={{ once: true }}
 							transition={{ duration: 0.5 }}
 						>
-							<RollingText className='heading-gradient'>
-								Frequently Asked Questions
-							</RollingText>
+							{isMobile ? (
+								<>
+									<RollingText className='heading-gradient'>
+										Frequently Asked
+									</RollingText>
+									<RollingText>Questions</RollingText>
+								</>
+							) : (
+								<RollingText className='heading-gradient'>
+									Frequently Asked Questions
+								</RollingText>
+							)}
 						</motion.h2>
 						<motion.div
 							initial={{ opacity: 0 }}

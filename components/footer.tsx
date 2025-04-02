@@ -160,8 +160,8 @@ export default function Footer() {
 				</div>
 				<div className='mt-12 border-t pt-6 text-center'>
 					<p className='text-sm text-muted-foreground'>
-						&copy; {new Date().getFullYear()} ACM BITS Pilani
-						Hyderabad Campus, Student Chapter.
+						&copy; {new Date().getFullYear()} ACM BITS Pilani,
+						Hyderabad Campus.
 					</p>
 				</div>
 			</div>

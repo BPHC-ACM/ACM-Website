@@ -1,10 +1,8 @@
-# ACM BITS Pilani Hyderabad Campus, Student Chapter Website
-
-![ACM Logo](public/acm-logo.png)
+# ACM BITS Pilani, Hyderabad Campus, Student Chapter Website
 
 ## Overview
 
-This is the official website for the Association for Computing Machinery (ACM) student chapter at BITS Pilani Hyderabad Campus. The website serves as a hub for our chapter's activities, events, and resources, providing information about our mission, team, and initiatives.
+This is the official website for the Association for Computing Machinery (ACM) student chapter at BITS Pilani, Hyderabad Campus. The website serves as a hub for our chapter's activities, events, and resources, providing information about our mission, team, and initiatives.
 
 ## Features
 
@@ -98,6 +96,7 @@ For inquiries, please reach out to us via:
 
 ## Acknowledgements
 
+-   ACM BPHC Web Development Team
 -   ACM Global for their continued support
--   BITS Pilani Hyderabad Campus administration
+-   BITS Pilani, Hyderabad Campus administration
 -   All our members and contributors

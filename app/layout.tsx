@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
 	description:
-		'Association for Computing Machinery - BITS Pilani Hyderabad Campus, Student Chapter',
+		'Association for Computing Machinery - BITS Pilani, Hyderabad Campus, Student Chapter',
 	icons: {
 		icon: '/acm-logo.ico',
 		apple: '/acm-logo.png',

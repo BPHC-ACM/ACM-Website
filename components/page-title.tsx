@@ -14,7 +14,7 @@ export default function PageTitle() {
 				? 'Home'
 				: segment.charAt(0).toUpperCase() + segment.slice(1);
 
-		const fullTitle = `${title} | ACM BITS Pilani Hyderabad Campus`;
+		const fullTitle = `${title} | ACM BPHC`;
 
 		document.title = fullTitle;
 	}, [pathname]);

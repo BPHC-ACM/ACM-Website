@@ -4,11 +4,11 @@ export const faqItems = [
 		answer: "ACM, or the Association for Computing Machinery, is the world's largest computing society that connects professionals, educators, and students to share resources and knowledge in the field of computing.",
 	},
 	{
-		question: 'How can I join ACM BITS Pilani Hyderabad?',
+		question: 'How can I join ACM BPHC?',
 		answer: 'You can join our ACM chapter by attending our orientation session at the beginning of the semester or by reaching out to any of our team members. Membership provides access to all our events, workshops, and a network of computing enthusiasts.',
 	},
 	{
-		question: 'What kind of events does ACM host?',
+		question: 'What kind of events does ACM BPHC host?',
 		answer: 'We host a variety of events, including coding competitions, technical workshops, guest lectures, and collaborative projects. Our events cater to different skill levels, ensuring that everyone can participate and benefit.',
 	},
 	{

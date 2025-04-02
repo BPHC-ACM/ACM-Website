@@ -19,7 +19,7 @@ export default function TeamPage() {
 							style={{ animationDelay: '0.2s' }}
 						>
 							Meet the dedicated individuals who make ACM BITS
-							Pilani Hyderabad Campus, Student Chapter possible.
+							Pilani, Hyderabad Campus possible.
 						</p>
 					</div>
 				</div>
@@ -70,9 +70,9 @@ export default function TeamPage() {
 							className='mb-8 text-muted-foreground animate-slide-up'
 							style={{ animationDelay: '0.1s' }}
 						>
-							Interested in collaborating with the ACM BITS Pilani
-							Hyderabad Campus, Student Chapter? We're always
-							looking for passionate individuals to work with us.
+							Interested in collaborating with ACM BPHC? We're
+							always looking for passionate individuals to work
+							with us.
 						</p>
 						<div
 							className='rounded-lg bg-card p-8 animate-slide-up'

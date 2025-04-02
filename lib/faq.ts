@@ -8,11 +8,11 @@ export const faqItems = [
 		answer: 'You can join our ACM chapter by attending our orientation session at the beginning of the semester or by reaching out to any of our team members. Membership provides access to all our events, workshops, and a network of computing enthusiasts.',
 	},
 	{
-		question: 'What kind of events does ACM BPHC host?',
+		question: 'What kind of events do we?',
 		answer: 'We host a variety of events, including coding competitions, technical workshops, guest lectures, and collaborative projects. Our events cater to different skill levels, ensuring that everyone can participate and benefit.',
 	},
 	{
-		question: 'Do I need to have prior experience to join?',
+		question: 'Do I need prior experience to join?',
 		answer: "No prior experience is necessary! Our chapter welcomes students from all backgrounds. Whether you're just starting or you're an advanced coder, there's something for everyone in our events and activities.",
 	},
 ];

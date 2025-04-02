@@ -344,7 +344,9 @@ export default function Home() {
 								<RollingText className='heading-gradient'>
 									Why Join our
 								</RollingText>
-								<RollingText>Community?</RollingText>
+								<RollingText className='heading-gradient'>
+									Community?
+								</RollingText>
 							</>
 						) : (
 							<RollingText className='heading-gradient'>
@@ -563,7 +565,9 @@ export default function Home() {
 									<RollingText className='heading-gradient'>
 										Frequently Asked
 									</RollingText>
-									<RollingText>Questions</RollingText>
+									<RollingText className='heading-gradient'>
+										Questions
+									</RollingText>
 								</>
 							) : (
 								<RollingText className='heading-gradient'>

@@ -8,7 +8,7 @@ export const faqItems = [
 		answer: 'You can join our ACM chapter by attending our orientation session at the beginning of the semester or by reaching out to any of our team members. Membership provides access to all our events, workshops, and a network of computing enthusiasts.',
 	},
 	{
-		question: 'What kind of events do we?',
+		question: 'What kind of events do we host?',
 		answer: 'We host a variety of events, including coding competitions, technical workshops, guest lectures, and collaborative projects. Our events cater to different skill levels, ensuring that everyone can participate and benefit.',
 	},
 	{

@@ -131,16 +131,16 @@ export default function Home() {
 							<AnimatedACMLogo />
 						</motion.div>
 						<motion.h1
-							className='mb-6 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl'
+							className='mb-6 text-[2rem] font-bold tracking-tight md:text-5xl lg:text-6xl'
 							initial='hidden'
 							animate='visible'
 							variants={slideUp}
 						>
 							<RollingText className='heading-gradient'>
-								Association for
+								{'Association for '}
 							</RollingText>
 							<RollingText className='heading-gradient w-[120%] md:w-auto -ml-8 md:m-auto md:-mt-4'>
-								Computing Machinery
+								{'Computing Machinery'}
 							</RollingText>
 						</motion.h1>
 						<motion.h2
@@ -610,7 +610,7 @@ export default function Home() {
 				<div className='container'>
 					<div className='mx-auto max-w-3xl text-center'>
 						<motion.h2
-							className='mb-6 text-3xl font-bold md:text-4xl'
+							className='mb-6 text-[1.75rem] font-bold md:text-4xl'
 							initial={{ opacity: 0, y: 20 }}
 							whileInView={{ opacity: 1, y: 0 }}
 							viewport={{ once: true }}

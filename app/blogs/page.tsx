@@ -22,6 +22,11 @@ interface BlogPost {
 	author_name?: string | null;
 }
 
+interface Category {
+	name: string;
+	slug: string;
+}
+
 interface Pagination {
 	page: number;
 	totalPages: number;
@@ -31,75 +36,83 @@ interface Pagination {
 
 export default function BlogPage() {
 	return (
-		<Suspense
-			fallback={
-				<div className='flex justify-center py-10'>
-					<div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary'></div>
-				</div>
-			}
-		>
+		<Suspense fallback={<BlogLoadingSkeleton />}>
 			<BlogPageContent />
 		</Suspense>
+	);
+}
+
+function BlogLoadingSkeleton() {
+	return (
+		<div className='flex justify-center py-10'>
+			<div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary'></div>
+		</div>
 	);
 }
 
 function BlogPageContent() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
-	const initialPage = Number(searchParams.get('page') || '1');
-	const initialCategory = searchParams.get('category') || 'All';
-	const initialSearch = searchParams.get('search') || '';
 
 	const [posts, setPosts] = useState<BlogPost[]>([]);
-	const [categories, setCategories] = useState<
-		{ name: string; slug: string }[]
-	>([]);
+	const [categories, setCategories] = useState<Category[]>([]);
 	const [pagination, setPagination] = useState<Pagination>({
-		page: initialPage,
+		page: 1,
 		totalPages: 1,
 		total: 0,
 	});
-	const [searchTerm, setSearchTerm] = useState<string>(initialSearch);
+	const [searchTerm, setSearchTerm] = useState<string>('');
 	const [loading, setLoading] = useState<boolean>(true);
+	const [categoriesLoading, setCategoriesLoading] = useState<boolean>(true);
 	const [debounceTimeout, setDebounceTimeout] =
 		useState<NodeJS.Timeout | null>(null);
-	const [hasSearched, setHasSearched] = useState<boolean>(false);
 
-	// Combined fetch function for both categories and posts
-	const fetchData = async (
-		pageNum: number,
-		categoryName: string,
-		search: string = ''
-	) => {
-		setLoading(true);
-		try {
-			// Fetch categories if needed
-			if (categories.length === 0) {
+	useEffect(() => {
+		const fetchCategories = async () => {
+			setCategoriesLoading(true);
+			try {
 				const categoriesResponse = await fetch('/api/blogs/categories');
 				if (categoriesResponse.ok) {
-					const categoriesData = await categoriesResponse.json();
+					const categoriesData: Category[] =
+						await categoriesResponse.json();
 					setCategories(categoriesData || []);
+				} else {
+					console.error(
+						'Failed to fetch categories:',
+						categoriesResponse.statusText
+					);
+					setCategories([]);
 				}
+			} catch (error) {
+				console.error('Error fetching categories:', error);
+				setCategories([]);
+			} finally {
+				setCategoriesLoading(false);
+			}
+		};
+		fetchCategories();
+	}, []);
+
+	const fetchPosts = async (
+		pageNum: number,
+		categorySlug: string | null,
+		search: string
+	) => {
+		setLoading(true);
+
+		try {
+			const queryParams = new URLSearchParams();
+			queryParams.set('page', pageNum.toString());
+			if (categorySlug) {
+				queryParams.set('category', categorySlug);
+			}
+			if (search) {
+				queryParams.set('search', search);
 			}
 
-			// Build URL for posts
-			let url = `/api/blogs?page=${pageNum}`;
-			if (categoryName !== 'All') {
-				const categoryObj = categories.find(
-					(c) => c.name === categoryName
-				);
-				const categorySlug =
-					categoryObj?.slug ||
-					categoryName.toLowerCase().replace(/\s+/g, '-');
-				url += `&category=${categorySlug}`;
-			}
-			if (search) url += `&search=${encodeURIComponent(search)}`;
-
-			// Set hasSearched if user is searching or filtering
-			setHasSearched(search !== '' || categoryName !== 'All');
-
-			// Fetch posts
+			const url = `/api/blogs?${queryParams.toString()}`;
 			const postsResponse = await fetch(url);
+
 			if (postsResponse.ok) {
 				const data = await postsResponse.json();
 				setPosts(data.posts || []);
@@ -108,77 +121,76 @@ function BlogPageContent() {
 					totalPages: data.pagination?.totalPages || 1,
 					total: data.pagination?.total || 0,
 				});
+			} else {
+				console.error(
+					'Failed to fetch posts:',
+					postsResponse.statusText
+				);
+				setPosts([]);
+				setPagination({ page: 1, totalPages: 1, total: 0 });
 			}
 		} catch (error) {
-			console.error('Error fetching data:', error);
+			console.error('Error fetching posts data:', error);
+			setPosts([]);
+			setPagination({ page: 1, totalPages: 1, total: 0 });
 		} finally {
 			setLoading(false);
 		}
 	};
 
-	// Effect to fetch data when URL params change
 	useEffect(() => {
-		const pageNum = Number(searchParams.get('page') || '1');
-		const categoryName = searchParams.get('category') || 'All';
-		const search = searchParams.get('search') || '';
+		const currentPage = Number(searchParams.get('page') || '1');
+		const currentCategorySlug = searchParams.get('category');
+		const currentSearch = searchParams.get('search') || '';
 
-		setSearchTerm(search);
-		fetchData(pageNum, categoryName, search);
+		setSearchTerm(currentSearch);
+		fetchPosts(currentPage, currentCategorySlug, currentSearch);
+
+		return () => {
+			if (debounceTimeout) {
+				clearTimeout(debounceTimeout);
+			}
+		};
 	}, [searchParams]);
 
-	// Handle category selection
-	const handleCategoryChange = (categoryName: string) => {
+	const updateUrlParams = (newParams: Record<string, string | null>) => {
 		const params = new URLSearchParams(searchParams.toString());
-		params.set('page', '1');
-
-		if (categoryName !== 'All') {
-			params.set('category', categoryName);
-		} else {
-			params.delete('category');
-		}
-
-		if (searchTerm) {
-			params.set('search', searchTerm);
-		}
-
-		router.push(`/blogs?${params.toString()}`);
+		Object.entries(newParams).forEach(([key, value]) => {
+			if (value === null || value === undefined || value === '') {
+				params.delete(key);
+			} else {
+				params.set(key, value);
+			}
+		});
+		router.push(`/blogs?${params.toString()}`, { scroll: false });
 	};
 
-	// Handle pagination
+	const handleCategoryChange = (categorySlug: string | null) => {
+		updateUrlParams({ page: '1', category: categorySlug });
+	};
+
 	const handlePageChange = (newPage: number) => {
-		const params = new URLSearchParams(searchParams.toString());
-		params.set('page', newPage.toString());
-		router.push(`/blogs?${params.toString()}`);
+		updateUrlParams({ page: newPage.toString() });
 	};
 
-	// Handle search with debouncing
-	const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const newSearchTerm = e.target.value;
 		setSearchTerm(newSearchTerm);
 
-		// Clear existing timeout
 		if (debounceTimeout) {
 			clearTimeout(debounceTimeout);
 		}
 
-		// Set new timeout for search
 		const timeout = setTimeout(() => {
-			const params = new URLSearchParams(searchParams.toString());
-			params.set('page', '1');
-
-			if (newSearchTerm) {
-				params.set('search', newSearchTerm);
-			} else {
-				params.delete('search');
-			}
-
-			router.push(`/blogs?${params.toString()}`);
-		}, 500); // 500ms debounce
+			updateUrlParams({
+				page: '1',
+				search: newSearchTerm.trim() || null,
+			});
+		}, 500);
 
 		setDebounceTimeout(timeout);
 	};
 
-	// Clean up timeout on unmount
 	useEffect(() => {
 		return () => {
 			if (debounceTimeout) {
@@ -187,9 +199,21 @@ function BlogPageContent() {
 		};
 	}, [debounceTimeout]);
 
+	const currentCategorySlug = searchParams.get('category');
+	const currentSearchTerm = searchParams.get('search');
+	const showLoadingSpinner = loading || categoriesLoading;
+	const isCurrentlyFiltered = !!currentCategorySlug || !!currentSearchTerm;
+
+	const showComingSoon =
+		!showLoadingSpinner && pagination.total === 0 && !isCurrentlyFiltered;
+	const showNoResults =
+		!showLoadingSpinner && pagination.total === 0 && isCurrentlyFiltered;
+	const showContent =
+		!showLoadingSpinner &&
+		(pagination.total === undefined || pagination.total > 0);
+
 	return (
 		<div className='flex flex-col'>
-			{/* Hero Section */}
 			<section className='bg-card py-10 md:py-16 lg:py-24'>
 				<AnimatedTechBackground />
 				<div className='container'>
@@ -204,10 +228,8 @@ function BlogPageContent() {
 				</div>
 			</section>
 
-			{/* Blog Content Section */}
 			<section className='section-padding z-10'>
 				<div className='container'>
-					{/* Search */}
 					<div className='relative w-full max-w-full mb-6 md:mb-10'>
 						<Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
 						<Input
@@ -215,56 +237,48 @@ function BlogPageContent() {
 							placeholder='Search articles...'
 							className='pl-10'
 							value={searchTerm}
-							onChange={handleSearch}
+							onChange={handleSearchChange}
 						/>
 					</div>
 
-					{/* If total blog count is 0, show either "Coming soon" or "No posts found" */}
-					{pagination.total === 0 ? (
-						!loading ? (
-							hasSearched ? (
-								<div className='rounded-lg border border-dashed p-10 text-center'>
-									<h3 className='mb-2 text-xl font-semibold'>
-										No Blog Posts Found
-									</h3>
-									<p className='mb-6 text-muted-foreground'>
-										{searchTerm
-											? `No results match "${searchTerm}". Try different keywords or browse by category.`
-											: 'There are no blog posts in this category yet. Check back soon!'}
-									</p>
-									{(searchTerm ||
-										searchParams.get('category')) && (
-										<Button
-											variant='outline'
-											onClick={() => {
-												router.push('/blogs');
-												setSearchTerm('');
-											}}
-										>
-											Reset Filters
-										</Button>
-									)}
-								</div>
-							) : (
-								<div className='flex flex-col items-center justify-center py-20'>
-									<h2 className='text-3xl font-bold mb-4'>
-										Coming Soon
-									</h2>
-									<p className='text-muted-foreground text-center max-w-lg'>
-										We're working on creating amazing blog
-										content for you. Check back soon for
-										insightful articles and updates!
-									</p>
-								</div>
-							)
-						) : (
-							<div className='flex justify-center py-10'>
-								<div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary'></div>
-							</div>
-						)
-					) : (
+					{showLoadingSpinner && <BlogLoadingSkeleton />}
+
+					{showComingSoon && (
+						<div className='flex flex-col items-center justify-center py-20'>
+							<h2 className='text-3xl font-bold mb-4'>
+								Coming Soon
+							</h2>
+							<p className='text-muted-foreground text-center max-w-lg'>
+								We're working on creating amazing blog content
+								for you. Check back soon for insightful articles
+								and updates!
+							</p>
+						</div>
+					)}
+
+					{showNoResults && (
+						<div className='rounded-lg border border-dashed p-10 text-center'>
+							<h3 className='mb-2 text-xl font-semibold'>
+								No Blog Posts Found
+							</h3>
+							<p className='mb-6 text-muted-foreground'>
+								{currentSearchTerm
+									? `No results match "${currentSearchTerm}". Try different keywords or browse categories.`
+									: 'There are no blog posts in this category yet. Check back soon!'}
+							</p>
+							<Button
+								variant='outline'
+								onClick={() => {
+									router.push('/blogs');
+								}}
+							>
+								Reset Filters
+							</Button>
+						</div>
+					)}
+
+					{showContent && (
 						<>
-							{/* Categories */}
 							<div
 								className='flex overflow-x-auto pb-2 mb-8 -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap md:gap-2 md:mb-10'
 								style={{
@@ -272,7 +286,6 @@ function BlogPageContent() {
 									scrollbarWidth: 'none',
 								}}
 							>
-								{/* For WebKit browsers (Chrome, Safari) */}
 								<style jsx>{`
 									div::-webkit-scrollbar {
 										display: none;
@@ -280,40 +293,70 @@ function BlogPageContent() {
 								`}</style>
 
 								<Button
-									key='all'
+									key='all-category-button'
 									variant={
-										searchParams.get('category') === null
+										currentCategorySlug === null
 											? 'default'
 											: 'outline'
 									}
 									size='sm'
-									onClick={() => handleCategoryChange('All')}
+									onClick={() => handleCategoryChange(null)}
 									className='flex-shrink-0 mr-2 md:mr-0'
 								>
 									All
 								</Button>
-								{categories.map((cat, index) => (
-									<Button
-										key={index}
-										variant={
-											searchParams.get('category') ===
-											cat.name
-												? 'default'
-												: 'outline'
-										}
-										size='sm'
-										onClick={() =>
-											handleCategoryChange(cat.name)
-										}
-										className='flex-shrink-0 mr-2 md:mr-0'
-									>
-										{cat.name}
-									</Button>
-								))}
+
+								{!categoriesLoading &&
+									categories.map((cat) => {
+										// Defensive check: Ensure slug exists before rendering button
+										if (!cat.slug) return null;
+										return (
+											<Button
+												key={cat.slug}
+												variant={
+													currentCategorySlug ===
+													cat.slug
+														? 'default'
+														: 'outline'
+												}
+												size='sm'
+												onClick={() =>
+													handleCategoryChange(
+														cat.slug
+													)
+												}
+												className='flex-shrink-0 mr-2 md:mr-0'
+											>
+												{cat.name}
+											</Button>
+										);
+									})}
 							</div>
 
-							{/* Blog Posts Grid */}
-							{!loading && posts.length > 0 ? (
+							{!loading &&
+								posts.length === 0 &&
+								isCurrentlyFiltered &&
+								!showNoResults && (
+									<div className='rounded-lg border border-dashed p-10 text-center'>
+										<h3 className='mb-2 text-xl font-semibold'>
+											No Blog Posts Found
+										</h3>
+										<p className='mb-6 text-muted-foreground'>
+											Your search or filter criteria did
+											not match any posts.
+										</p>
+										<Button
+											variant='outline'
+											onClick={() => {
+												router.push('/blogs');
+											}}
+										>
+											Reset Filters
+										</Button>
+									</div>
+								)}
+
+							{!loading && posts.length > 0 && (
 								<div className='grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
 									{posts.map((post) => (
 										<Card
@@ -329,16 +372,17 @@ function BlogPageContent() {
 													alt={post.title}
 													fill
 													className='object-cover'
+													sizes='(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw'
 													priority={false}
 												/>
 											</div>
 											<CardContent className='p-4 sm:p-6 flex flex-col flex-1'>
 												<div className='flex-1'>
-													<div className='mb-2 flex items-center gap-2'>
-														<span className='rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary'>
+													<div className='mb-2 flex items-center gap-2 flex-wrap'>
+														<span className='rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary whitespace-nowrap'>
 															{post.category_name}
 														</span>
-														<span className='text-xs text-muted-foreground'>
+														<span className='text-xs text-muted-foreground whitespace-nowrap'>
 															{new Date(
 																post.created_at
 															).toLocaleDateString(
@@ -359,11 +403,11 @@ function BlogPageContent() {
 															{post.title}
 														</Link>
 													</h3>
-													<p className='mb-4 line-clamp-2 text-muted-foreground'>
+													<p className='mb-4 line-clamp-2 text-sm text-muted-foreground'>
 														{post.excerpt}
 													</p>
 												</div>
-												<div className='flex flex-wrap items-center justify-between gap-2 h-auto sm:h-10 border-t pt-2'>
+												<div className='flex flex-wrap items-center justify-between gap-2 h-auto sm:h-10 border-t pt-4 sm:pt-2'>
 													<span className='text-sm text-muted-foreground truncate max-w-[180px] sm:max-w-none'>
 														By{' '}
 														{post.author_name ||
@@ -385,37 +429,17 @@ function BlogPageContent() {
 										</Card>
 									))}
 								</div>
-							) : !loading ? (
-								<div className='rounded-lg border border-dashed p-10 text-center'>
-									<h3 className='mb-2 text-xl font-semibold'>
-										No Blog Posts Found
-									</h3>
-									<p className='mb-6 text-muted-foreground'>
-										There are no blog posts in this category
-										yet. Check back soon!
-									</p>
-								</div>
-							) : (
-								<div className='flex justify-center py-10'>
-									<div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary'></div>
-								</div>
 							)}
 
-							{pagination &&
-								pagination.totalPages > 1 &&
-								!loading && (
-									<div className='mt-10'>
-										<BlogPagination
-											currentPage={pagination.page}
-											totalPages={pagination.totalPages}
-											category={
-												searchParams.get('category') ||
-												'All'
-											}
-											onPageChange={handlePageChange}
-										/>
-									</div>
-								)}
+							{!loading && pagination.totalPages > 1 && (
+								<div className='mt-10'>
+									<BlogPagination
+										currentPage={pagination.page}
+										totalPages={pagination.totalPages}
+										onPageChange={handlePageChange}
+									/>
+								</div>
+							)}
 						</>
 					)}
 				</div>

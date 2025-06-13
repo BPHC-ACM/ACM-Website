@@ -2,13 +2,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, Calendar, Tag, Clock } from 'lucide-react';
 import { notFound } from 'next/navigation';
-import { headers } from 'next/headers';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import remarkGfm from 'remark-gfm';
 import { ComponentProps, ReactNode } from 'react';
 import ShareButton from '@/components/share-button';
+import { createServerSupabaseClient } from '@/lib/supabase-server';
 
 export const revalidate = 3600;
 
@@ -36,51 +36,25 @@ interface CodeProps extends ComponentProps<'code'> {
 	children: ReactNode;
 }
 
-async function getBlogPost(slug: string): Promise<BlogPostData | null> {
-	const headersList = await headers();
-	const host = headersList.get('host') || 'localhost:3000';
-	const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
-
-	try {
-		const response = await fetch(
-			`${protocol}://${host}/api/blogs/${slug}`,
-			{
-				next: { revalidate },
-			}
-		);
-
-		if (!response.ok) {
-			return null;
-		}
-
-		const data = await response.json();
-
-		if (data.posts && Array.isArray(data.posts) && data.posts.length > 0) {
-			return {
-				post: data.posts[0],
-			};
-		}
-
-		return data;
-	} catch (error) {
-		console.error('Error fetching blog post:', error);
-		return null;
-	}
-}
-
 export default async function BlogPostPage({
 	params,
 }: {
 	params: { slug: string };
 }) {
-	const { slug } = await params;
-	const data = await getBlogPost(slug);
+	const { slug } = params;
 
-	if (!data || !data.post || !data.post.published) {
+	const supabase = await createServerSupabaseClient();
+	const { data: post, error } = await supabase
+		.from('blog_posts')
+		.select('*') // Select all fields for simplicity
+		.eq('slug', slug)
+		.eq('published', true)
+		.maybeSingle();
+
+	if (error || !post) {
+		console.error('Error fetching post or post not found:', error);
 		notFound();
 	}
-
-	const { post } = data;
 
 	const wordCount = post.content.split(/\s+/).length;
 	const readTime = Math.max(1, Math.ceil(wordCount / 225));

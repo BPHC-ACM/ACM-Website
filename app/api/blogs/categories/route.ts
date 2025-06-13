@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
 
+export const dynamic = 'force-dynamic';
+
 interface CategoryResponseItem {
 	slug: string;
 	name: string;

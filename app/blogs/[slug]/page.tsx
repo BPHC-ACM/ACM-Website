@@ -56,6 +56,12 @@ export default async function BlogPostPage({
 		notFound();
 	}
 
+	const initials = post.author_name
+		.split(' ')
+		.map((n) => n[0])
+		.join('')
+		.toUpperCase();
+
 	const wordCount = post.content.split(/\s+/).length;
 	const readTime = Math.max(1, Math.ceil(wordCount / 225));
 
@@ -111,11 +117,17 @@ export default async function BlogPostPage({
 							<div className='flex flex-wrap items-center justify-center gap-6 text-sm'>
 								<div className='flex items-center gap-2'>
 									<div className='flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground'>
-										{post.author_name
-											.split(' ')
-											.map((n) => n[0])
-											.join('')
-											.toUpperCase()}
+										{initials.length > 2 ? (
+											<img
+												src='/person.svg'
+												alt='Author'
+												className='w-8 h-8 rounded-full'
+											/>
+										) : (
+											<div className='w-8 h-8 rounded-full  flex items-center justify-center text-sm font-medium'>
+												{initials}
+											</div>
+										)}
 									</div>
 									<span className='font-medium'>
 										{post.author_name}
@@ -252,11 +264,17 @@ export default async function BlogPostPage({
 					<div className='mt-16 rounded-xl border bg-card/50 p-6'>
 						<div className='flex flex-row gap-5'>
 							<div className='flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-primary text-lg font-medium text-primary-foreground'>
-								{post.author_name
-									.split(' ')
-									.map((n) => n[0])
-									.join('')
-									.toUpperCase()}
+								{initials.length > 2 ? (
+									<img
+										src='/person.svg'
+										alt='Author'
+										className='w-8 h-8 rounded-full'
+									/>
+								) : (
+									<div className='w-8 h-8 rounded-full  flex items-center justify-center text-sm font-medium'>
+										{initials}
+									</div>
+								)}
 							</div>
 							<div>
 								<p className='text-sm text-muted-foreground mb-1'>

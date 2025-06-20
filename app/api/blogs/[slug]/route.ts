@@ -35,7 +35,8 @@ export async function GET(
                 published`
 			)
 			.eq('slug', slug)
-			.eq('published', true) // Ensure boolean comparison
+			.eq('published', true)
+			.order('created_at', { ascending: false })
 			.maybeSingle(); // Use maybeSingle() to handle null case gracefully
 
 		// Handle potential Supabase errors

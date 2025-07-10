@@ -1,47 +1,47 @@
 export const teamHeads = [
 	{
-		name: 'Shashwat Sharma',
+		name: 'Divyajot Singh',
 		designation: 'Chairperson',
-		image: '/teamMembers/shaswat.jpg',
+		image: '/teamMembers/divyajot.jpeg',
 	},
 	{
-		name: 'Dhairya Luthra',
+		name: 'Ritesh Udgata',
 		designation: 'Vice Chairperson, App Dev Chair',
-		image: '/teamMembers/dhairya.png',
+		image: '/teamMembers/ritesh.jpeg',
 	},
 	{
-		name: 'Vivan Jain',
-		designation: 'Quant Chair',
-		image: '/teamMembers/vivan.png',
-	},
-	{
-		name: 'Samarth Pawan',
-		designation: 'ML Chair',
-		image: '/teamMembers/samarth.jpg',
-	},
-	{
-		name: 'Arinjay Jain',
+		name: 'Aravind Sathesh',
 		designation: 'Web Development Chair',
-		image: '/teamMembers/arinjay.jpg',
+		image: '/teamMembers/aravind.jpeg',
 	},
 	{
-		name: 'Tushar Anand',
+		name: 'Bhavika Baburaj',
+		designation: 'Machine Learning Chair',
+		image: '/teamMembers/bhavika.jpeg',
+	},
+	{
+		name: 'Bharghavaram Boddapati',
 		designation: 'Generative AI Chair',
-		image: '/teamMembers/tushar.png',
+		image: '/teamMembers/bharghavaram.jpeg',
 	},
 	{
-		name: 'Divya Daga',
-		designation: 'Content Chair',
-		image: '/teamMembers/divya.jpg',
+		name: 'Aarav Dhaduk',
+		designation: 'Quant Chair',
+		image: '/teamMembers/aarav.jpeg',
 	},
 	{
-		name: 'Majji Sai Snigdha',
-		designation: 'Events Chair',
-		image: '/teamMembers/majji.jpeg',
-	},
-	{
-		name: 'Lakshita Jain',
+		name: 'Yash Raj',
 		designation: 'Design Chair',
-		image: '/teamMembers/lakshita.jpg',
+		image: '/teamMembers/yash.jpeg',
+	},
+	{
+		name: 'Vansh Seth',
+		designation: 'Events Chair',
+		image: '/teamMembers/vansh.jpeg',
+	},
+	{
+		name: 'Rakshita Vijay',
+		designation: 'Content Chair',
+		image: '/teamMembers/rakshita.jpeg',
 	},
 ];

@@ -6,9 +6,10 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+import { Search, Plus, Edit, Trash2 } from 'lucide-react';
 import AnimatedTechBackground from '@/components/animated-tech-background';
 import BlogPagination from './blog-pagination';
+import { useToast } from '@/hooks/use-toast';
 
 interface BlogPost {
 	id: string;
@@ -20,6 +21,7 @@ interface BlogPost {
 	category_name: string;
 	category_slug: string;
 	author_name?: string | null;
+	published: boolean;
 }
 
 interface Category {
@@ -53,6 +55,7 @@ function BlogLoadingSkeleton() {
 function BlogPageContent() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
+	const { toast } = useToast();
 
 	const [posts, setPosts] = useState<BlogPost[]>([]);
 	const [categories, setCategories] = useState<Category[]>([]);
@@ -66,6 +69,40 @@ function BlogPageContent() {
 	const [categoriesLoading, setCategoriesLoading] = useState<boolean>(true);
 	const [debounceTimeout, setDebounceTimeout] =
 		useState<NodeJS.Timeout | null>(null);
+
+	const handleDeleteBlog = async (blogId: string, blogTitle: string) => {
+		if (!confirm(`Are you sure you want to delete "${blogTitle}"?`)) {
+			return;
+		}
+
+		try {
+			const response = await fetch(`/api/blogs/manage/${blogId}`, {
+				method: 'DELETE',
+			});
+
+			if (response.ok) {
+				toast({
+					title: 'Success',
+					description: 'Blog post deleted successfully',
+				});
+				// Refresh the page to update the blog list
+				window.location.reload();
+			} else {
+				toast({
+					title: 'Error',
+					description: 'Failed to delete blog post',
+					variant: 'destructive',
+				});
+			}
+		} catch (error) {
+			console.error('Error deleting blog:', error);
+			toast({
+				title: 'Error',
+				description: 'Failed to delete blog post',
+				variant: 'destructive',
+			});
+		}
+	};
 
 	useEffect(() => {
 		const fetchCategories = async () => {
@@ -230,6 +267,16 @@ function BlogPageContent() {
 
 			<section className='section-padding z-10'>
 				<div className='container'>
+					<div className="flex justify-between items-center mb-6">
+						<div></div>
+						<Button asChild className="hover-lift hover-glow">
+							<Link href="/blogs/create">
+								<Plus className="mr-2 h-4 w-4" />
+								Add New Blog
+							</Link>
+						</Button>
+					</div>
+
 					<div className='relative w-full max-w-full mb-6 md:mb-10'>
 						<Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
 						<Input
@@ -382,6 +429,11 @@ function BlogPageContent() {
 														<span className='rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary whitespace-nowrap'>
 															{post.category_name}
 														</span>
+														{!post.published && (
+															<span className='rounded-full bg-orange-100 px-2 py-1 text-xs font-medium text-orange-700 whitespace-nowrap'>
+																Draft
+															</span>
+														)}
 														<span className='text-xs text-muted-foreground whitespace-nowrap'>
 															{new Date(
 																post.created_at
@@ -413,17 +465,37 @@ function BlogPageContent() {
 														{post.author_name ||
 															'Unknown Author'}
 													</span>
-													<Button
-														asChild
-														variant='ghost'
-														size='sm'
-													>
-														<Link
-															href={`/blogs/${post.slug}`}
+													<div className="flex items-center gap-2">
+														<Button
+															asChild
+															variant='ghost'
+															size='sm'
 														>
-															Read More
-														</Link>
-													</Button>
+															<Link
+																href={`/blogs/${post.slug}`}
+															>
+																Read More
+															</Link>
+														</Button>
+														<Button
+															asChild
+															variant='ghost'
+															size='sm'
+														>
+															<Link
+																href={`/blogs/create?edit=${post.id}`}
+															>
+																<Edit className="h-4 w-4" />
+															</Link>
+														</Button>
+														<Button
+															variant='ghost'
+															size='sm'
+															onClick={() => handleDeleteBlog(post.id, post.title)}
+														>
+															<Trash2 className="h-4 w-4" />
+														</Button>
+													</div>
 												</div>
 											</CardContent>
 										</Card>

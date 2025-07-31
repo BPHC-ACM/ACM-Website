@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { teamHeads } from '@/lib/team-heads';
+import DomainInfoSection from "@/components/domain-info-section";
+
 import AnimatedTechBackground from '@/components/animated-tech-background';
 
 export default function TeamPage() {
@@ -58,6 +60,9 @@ export default function TeamPage() {
 					</div>
 				</div>
 			</section>
+
+			{/* Domain Information Section */}
+			<DomainInfoSection />
 
 			{/* Get Involved Section */}
 			<section className='section-padding z-10 bg-muted'>

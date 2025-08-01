@@ -1,8 +1,9 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { teamHeads } from '@/lib/team-heads';
-import DomainInfoSection from "@/components/domain-info-section";
-
+import { domainInfo } from '@/lib/domain-info';
+import { domainIdToSlug } from '@/lib/domain-utils';
 import AnimatedTechBackground from '@/components/animated-tech-background';
 
 export default function TeamPage() {
@@ -62,7 +63,41 @@ export default function TeamPage() {
 			</section>
 
 			{/* Domain Information Section */}
-			<DomainInfoSection />
+			<section className="py-16 px-4 bg-muted/30">
+				<div className="max-w-7xl mx-auto">
+					<div className="text-center mb-12">
+						<h2 className="text-3xl font-bold tracking-tight mb-4">Learn More About Each Domain</h2>
+						<p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+							Explore detailed information about our key technology domains and discover the opportunities in each field.
+						</p>
+					</div>
+
+					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-items-center">
+						{domainInfo.map((domain) => {
+							const IconComponent = domain.icon
+							const slug = domainIdToSlug(domain.id)
+
+							return (
+								<Link key={domain.id} href={`/domains/${slug}`}>
+									<Card className="group cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105 border-2 hover:border-primary/20">
+										<CardContent className="p-6 text-center">
+											<div className="mb-4 flex justify-center">
+												<div className="p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
+													<IconComponent className="h-8 w-8 text-primary" />
+												</div>
+											</div>
+											<h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
+												{domain.title}
+											</h3>
+											<p className="text-sm text-muted-foreground">Click to learn more about this domain</p>
+										</CardContent>
+									</Card>
+								</Link>
+							)
+						})}
+					</div>
+				</div>
+			</section>
 
 			{/* Get Involved Section */}
 			<section className='section-padding z-10 bg-muted'>

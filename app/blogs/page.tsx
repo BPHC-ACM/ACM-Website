@@ -10,6 +10,8 @@ import { Search, Plus, Edit, Trash2 } from 'lucide-react';
 import AnimatedTechBackground from '@/components/animated-tech-background';
 import BlogPagination from './blog-pagination';
 import { useToast } from '@/hooks/use-toast';
+import PasswordDialog from '@/components/password-dialog';
+import { useBlogAuth } from '@/hooks/use-blog-auth';
 
 interface BlogPost {
 	id: string;
@@ -56,6 +58,10 @@ function BlogPageContent() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const { toast } = useToast();
+	const { isAuthenticated, authenticate } = useBlogAuth();
+	const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+	const [pendingAction, setPendingAction] = useState<'create' | 'edit' | 'delete' | null>(null);
+	const [pendingBlogData, setPendingBlogData] = useState<{ id: string; title: string } | null>(null);
 
 	const [posts, setPosts] = useState<BlogPost[]>([]);
 	const [categories, setCategories] = useState<Category[]>([]);
@@ -71,6 +77,17 @@ function BlogPageContent() {
 		useState<NodeJS.Timeout | null>(null);
 
 	const handleDeleteBlog = async (blogId: string, blogTitle: string) => {
+		if (!isAuthenticated) {
+			setPendingAction('delete');
+			setPendingBlogData({ id: blogId, title: blogTitle });
+			setShowPasswordDialog(true);
+			return;
+		}
+
+		await performDeleteBlog(blogId, blogTitle);
+	};
+
+	const performDeleteBlog = async (blogId: string, blogTitle: string) => {
 		if (!confirm(`Are you sure you want to delete "${blogTitle}"?`)) {
 			return;
 		}
@@ -102,6 +119,42 @@ function BlogPageContent() {
 				variant: 'destructive',
 			});
 		}
+	};
+
+	const handleCreateBlog = () => {
+		if (!isAuthenticated) {
+			setPendingAction('create');
+			setShowPasswordDialog(true);
+			return;
+		}
+		router.push('/blogs/create');
+	};
+
+	const handleEditBlog = (blogId: string) => {
+		if (!isAuthenticated) {
+			setPendingAction('edit');
+			setPendingBlogData({ id: blogId, title: '' });
+			setShowPasswordDialog(true);
+			return;
+		}
+		router.push(`/blogs/create?edit=${blogId}`);
+	};
+
+	const handleAuthSuccess = () => {
+		authenticate();
+		
+		// Execute pending action
+		if (pendingAction === 'create') {
+			router.push('/blogs/create');
+		} else if (pendingAction === 'edit' && pendingBlogData) {
+			router.push(`/blogs/create?edit=${pendingBlogData.id}`);
+		} else if (pendingAction === 'delete' && pendingBlogData) {
+			performDeleteBlog(pendingBlogData.id, pendingBlogData.title);
+		}
+
+		// Clear pending action
+		setPendingAction(null);
+		setPendingBlogData(null);
 	};
 
 	useEffect(() => {
@@ -269,11 +322,9 @@ function BlogPageContent() {
 				<div className='container'>
 					<div className="flex justify-between items-center mb-6">
 						<div></div>
-						<Button asChild className="hover-lift hover-glow">
-							<Link href="/blogs/create">
-								<Plus className="mr-2 h-4 w-4" />
-								Add New Blog
-							</Link>
+						<Button onClick={handleCreateBlog} className="hover-lift hover-glow">
+							<Plus className="mr-2 h-4 w-4" />
+							Add New Blog
 						</Button>
 					</div>
 
@@ -478,15 +529,11 @@ function BlogPageContent() {
 															</Link>
 														</Button>
 														<Button
-															asChild
 															variant='ghost'
 															size='sm'
+															onClick={() => handleEditBlog(post.id)}
 														>
-															<Link
-																href={`/blogs/create?edit=${post.id}`}
-															>
-																<Edit className="h-4 w-4" />
-															</Link>
+															<Edit className="h-4 w-4" />
 														</Button>
 														<Button
 															variant='ghost'
@@ -516,6 +563,14 @@ function BlogPageContent() {
 					)}
 				</div>
 			</section>
+
+			<PasswordDialog
+				open={showPasswordDialog}
+				onOpenChange={setShowPasswordDialog}
+				onSuccess={handleAuthSuccess}
+				title="Blog Management Authentication"
+				description="Please enter the password to manage blog posts."
+			/>
 		</div>
 	);
 }

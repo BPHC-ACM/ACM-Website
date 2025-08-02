@@ -13,6 +13,8 @@ import { ArrowLeft, Save, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import AnimatedTechBackground from '@/components/animated-tech-background';
+import PasswordDialog from '@/components/password-dialog';
+import { useBlogAuth } from '@/hooks/use-blog-auth';
 
 interface Category {
 	id: string;
@@ -34,6 +36,8 @@ export default function CreateEditBlogPage() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const { toast } = useToast();
+	const { isAuthenticated, isLoading: authLoading, authenticate } = useBlogAuth();
+	const [showPasswordDialog, setShowPasswordDialog] = useState(false);
 	const editId = searchParams.get('edit');
 	const isEditing = !!editId;
 
@@ -50,6 +54,21 @@ export default function CreateEditBlogPage() {
 	const [categories, setCategories] = useState<Category[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [initialLoading, setInitialLoading] = useState(isEditing);
+
+	// Check authentication on component mount
+	useEffect(() => {
+		if (!authLoading && !isAuthenticated) {
+			setShowPasswordDialog(true);
+		}
+	}, [authLoading, isAuthenticated]);
+
+	const handleAuthSuccess = () => {
+		authenticate();
+	};
+
+	const handleAuthCancel = () => {
+		router.push('/blogs');
+	};
 
 	// Generate slug from title
 	const generateSlug = (title: string) => {
@@ -182,6 +201,51 @@ export default function CreateEditBlogPage() {
 			setLoading(false);
 		}
 	};
+
+	// Show loading while checking authentication
+	if (authLoading) {
+		return (
+			<div className="flex justify-center items-center min-h-screen">
+				<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+			</div>
+		);
+	}
+
+	// Show password dialog if not authenticated
+	if (!isAuthenticated) {
+		return (
+			<div className="flex flex-col min-h-screen">
+				<section className="bg-card py-10 md:py-16">
+					<AnimatedTechBackground />
+					<div className="container relative z-10">
+						<div className="mx-auto max-w-3xl text-center">
+							<h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+								<span className="heading-gradient">
+									Authentication Required
+								</span>
+							</h1>
+							<p className="mt-4 text-lg text-muted-foreground">
+								Please authenticate to access blog management features.
+							</p>
+						</div>
+					</div>
+				</section>
+
+				<PasswordDialog
+					open={showPasswordDialog}
+					onOpenChange={(open) => {
+						setShowPasswordDialog(open);
+						if (!open) {
+							handleAuthCancel();
+						}
+					}}
+					onSuccess={handleAuthSuccess}
+					title="Blog Management Authentication"
+					description="Please enter the password to create or edit blog posts."
+				/>
+			</div>
+		);
+	}
 
 	if (initialLoading) {
 		return (

@@ -57,12 +57,12 @@ export default async function BlogPostPage({
 	}
 
 	const initials = post.author_name
-		.split(' ')
+		?.split(' ')
 		.map((n) => n[0])
 		.join('')
 		.toUpperCase();
 
-	const wordCount = post.content.split(/\s+/).length;
+	const wordCount = post.content?.split(/\s+/).length;
 	const readTime = Math.max(1, Math.ceil(wordCount / 225));
 
 	const formattedDate = new Date(post.created_at).toLocaleDateString(

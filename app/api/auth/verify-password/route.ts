@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 // In a production environment, this should be stored securely (environment variable, database, etc.)
-const BLOG_PASSWORD = process.env.BLOG_PASSWORD || 'acm2024';
+const BLOG_PASSWORD = process.env.BLOG_PASSWORD;
 
 export async function POST(request: Request) {
 	try {

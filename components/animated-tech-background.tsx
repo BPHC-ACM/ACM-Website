@@ -325,9 +325,9 @@ export const AnimatedTechBackground: React.FC = () => {
 	}, []);
 
 	return (
-		<div className='absolute inset-0 overflow-hidden'>
+		<div className='absolute inset-0 overflow-hidden pointer-events-none -z-1'>
 			<canvas ref={canvasRef} className='w-full h-full' />
-			<div className='absolute inset-0 bg-gradient-to-b from-background/0 via-background/5 to-background/70' />
+			<div className='absolute inset-0 bg-gradient-to-b from-background/0 via-background/5 to-background/70 -z-10' />
 		</div>
 	);
 };

@@ -29,14 +29,12 @@ export async function GET(request: Request) {
       author_name
       `
 		)
-		.eq('published', true)
 		.order('created_at', { ascending: false })
 		.range(offset, offset + pageSize - 1);
 
 	let countQuery = supabase
 		.from('blog_posts')
 		.select('id', { count: 'exact', head: true })
-		.eq('published', true);
 
 	if (category && category !== 'All') {
 		query = query.eq('category_slug', category.toLowerCase());

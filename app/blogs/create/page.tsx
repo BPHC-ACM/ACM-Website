@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,6 +28,22 @@ interface BlogFormData {
 }
 
 export default function CreateEditBlogPage() {
+  return (
+    <Suspense fallback={<CreateEditBlogLoadingSkeleton />}>
+      <CreateEditBlogPageContent />
+    </Suspense>
+  );
+}
+
+function CreateEditBlogLoadingSkeleton() {
+  return (
+    <div className="flex justify-center items-center min-h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+    </div>
+  );
+}
+
+function CreateEditBlogPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();

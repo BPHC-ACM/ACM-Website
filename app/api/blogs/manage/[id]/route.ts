@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { supabase } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
 
@@ -7,8 +7,6 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
     const { id } = await params;
-
-    const supabase = await createServerSupabaseClient();
 
     const { data, error } = await supabase.from('blog_posts').select('*').eq('id', id).single();
 
@@ -33,17 +31,15 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   try {
     const { id } = await params;
     const body = await request.json();
-    const { title, slug, excerpt, content, featured_image, categories, published } = body;
+    const { title, slug, excerpt, content, featured_image, categories, published, author } = body;
 
     // Basic validation
-    if (!title || !content || !categories || categories.length === 0) {
+    if (!title || !content || !categories || categories.length === 0 || !author) {
       return NextResponse.json(
-        { error: 'Title, content, and categories are required' },
+        { error: 'Title, content, categories, and author are required' },
         { status: 400 },
       );
     }
-
-    const supabase = await createServerSupabaseClient();
 
     // Check if slug already exists (excluding current post)
     const { data: existingPost } = await supabase
@@ -62,6 +58,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
     // Use the first category as the main category (since schema only supports one)
     const mainCategory = categories[0];
+    // Convert to slug format consistent with frontend title case conversion
     const categorySlug = mainCategory.toLowerCase().replace(/\s+/g, '-');
 
     const { data, error } = await supabase
@@ -72,6 +69,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         excerpt: excerpt || '',
         content,
         featured_image: featured_image || '',
+        author_name: author,
         category_name: mainCategory,
         category_slug: categorySlug,
         published: published || false,
@@ -101,8 +99,6 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   try {
     const { id } = await params;
-
-    const supabase = await createServerSupabaseClient();
 
     const { error } = await supabase.from('blog_posts').delete().eq('id', id);
 

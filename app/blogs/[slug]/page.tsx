@@ -41,7 +41,7 @@ export default async function BlogPostPage({
 }: {
 	params: { slug: string };
 }) {
-	const { slug } = params;
+	const { slug } = await params;
 
 	const supabase = await createServerSupabaseClient();
 	const { data: post, error } = await supabase

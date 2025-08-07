@@ -23,6 +23,7 @@ interface BlogFormData {
   excerpt: string;
   content: string;
   featured_image: string;
+  author: string;
   categories: string[];
   published: boolean;
 }
@@ -58,6 +59,7 @@ function CreateEditBlogPageContent() {
     excerpt: '',
     content: '',
     featured_image: '',
+    author: '',
     categories: [],
     published: false,
   });
@@ -111,6 +113,7 @@ function CreateEditBlogPageContent() {
               excerpt: data.excerpt || '',
               content: data.content || '',
               featured_image: data.featured_image || '',
+              author: data.author_name || '',
               categories: data.category_name ? [data.category_name] : [],
               published: data.published || false,
             });
@@ -152,11 +155,24 @@ function CreateEditBlogPageContent() {
   };
 
   const addTag = (tag: string) => {
-    const newTag = tag.trim().replace(/\s+/g, '-').toLowerCase();
-    if (newTag && !formData.categories.includes(newTag) && formData.categories.length < 1) {
+    const trimmedTag = tag.trim();
+    // Character limit of 50 characters
+    if (trimmedTag.length > 50) {
+      return;
+    }
+    // Convert to title case
+    const titleCaseTag = trimmedTag.replace(
+      /\w\S*/g,
+      (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(),
+    );
+    if (
+      titleCaseTag &&
+      !formData.categories.includes(titleCaseTag) &&
+      formData.categories.length < 1
+    ) {
       setFormData((prev) => ({
         ...prev,
-        categories: [...prev.categories, newTag],
+        categories: [...prev.categories, titleCaseTag],
       }));
     }
   };
@@ -169,13 +185,8 @@ function CreateEditBlogPageContent() {
   };
 
   const handlePreview = () => {
-    if (isEditing) {
-      // For editing, open the actual blog page
-      window.open(`/blogs/${formData.slug}`, '_blank');
-    } else {
-      // For new blogs, show preview modal
-      setShowPreview(true);
-    }
+    // Always show preview modal for both create and edit
+    setShowPreview(true);
   };
 
   // Simple markdown-like formatting for preview
@@ -222,12 +233,13 @@ function CreateEditBlogPageContent() {
       !formData.content.trim() ||
       !formData.excerpt.trim() ||
       !formData.featured_image.trim() ||
+      !formData.author.trim() ||
       formData.categories.length === 0
     ) {
       toast({
         title: 'Validation Error',
         description:
-          'Please fill in all required fields (title, slug, excerpt, content, featured image, and category)',
+          'Please fill in all required fields (title, slug, excerpt, content, featured image, author, and category)',
         variant: 'destructive',
       });
       return;
@@ -433,6 +445,17 @@ function CreateEditBlogPageContent() {
                     </div>
 
                     <div>
+                      <Label htmlFor="author">Author *</Label>
+                      <Input
+                        id="author"
+                        value={formData.author}
+                        onChange={(e) => handleInputChange('author', e.target.value)}
+                        placeholder="Enter author name"
+                        required
+                      />
+                    </div>
+
+                    <div>
                       <Label htmlFor="excerpt">Excerpt *</Label>
                       <Textarea
                         id="excerpt"
@@ -488,10 +511,14 @@ function CreateEditBlogPageContent() {
                         }}
                         disabled={formData.categories.length >= 1}
                         required
+                        maxLength={50}
                       />
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Enter one category for this post
-                      </p>
+                      <div className="flex justify-between items-center mt-1">
+                        <p className="text-sm text-muted-foreground">
+                          Enter one category for this post (max 50 characters)
+                        </p>
+                        <p className="text-xs text-muted-foreground">{tagInput.length}/50</p>
+                      </div>
 
                       {formData.categories.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-2">
@@ -501,7 +528,7 @@ function CreateEditBlogPageContent() {
                               variant="secondary"
                               className="flex items-center gap-1 px-2 py-1"
                             >
-                              #{tag}
+                              {tag}
                               <button
                                 type="button"
                                 onClick={() => removeTag(tag)}
@@ -588,13 +615,14 @@ function CreateEditBlogPageContent() {
               <h1 className="text-2xl font-bold mb-2">{formData.title || 'Untitled Blog Post'}</h1>
               <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                 <span>Slug: /{formData.slug || 'no-slug'}</span>
+                <span>Author: {formData.author || 'No author'}</span>
                 <span>Published: {formData.published ? 'Yes' : 'No'}</span>
                 {formData.categories.length > 0 && (
                   <div className="flex items-center gap-1">
                     <span>Category:</span>
                     {formData.categories.map((category, index) => (
                       <Badge key={index} variant="outline" className="text-xs">
-                        #{category}
+                        {category}
                       </Badge>
                     ))}
                   </div>

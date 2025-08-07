@@ -7,12 +7,12 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { title, slug, excerpt, content, featured_image, categories, published } = body;
+    const { title, slug, excerpt, content, featured_image, categories, published, author } = body;
 
     // Basic validation
-    if (!title || !content || !categories || categories.length === 0) {
+    if (!title || !content || !categories || categories.length === 0 || !author) {
       return NextResponse.json(
-        { error: 'Title, content, and categories are required' },
+        { error: 'Title, content, categories, and author are required' },
         { status: 400 },
       );
     }
@@ -35,6 +35,7 @@ export async function POST(request: Request) {
 
     // Use the first category as the main category (since schema only supports one)
     const mainCategory = categories[0];
+    // Convert to slug format consistent with frontend title case conversion
     const categorySlug = mainCategory.toLowerCase().replace(/\s+/g, '-');
 
     const { data, error } = await supabase
@@ -45,6 +46,7 @@ export async function POST(request: Request) {
         excerpt: excerpt || '',
         content,
         featured_image: featured_image || '',
+        author_name: author,
         category_name: mainCategory,
         category_slug: categorySlug,
         published: published || false,

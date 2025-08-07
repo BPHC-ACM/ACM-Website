@@ -366,7 +366,7 @@ function CreateEditBlogPageContent() {
       <section className="bg-card py-10 md:py-16">
         <AnimatedTechBackground />
         <div className="container relative z-10">
-          <div className="mx-auto max-w-3xl">
+          <div className="max-w-3xl">
             <Link
               href="/blogs"
               className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors mb-6"

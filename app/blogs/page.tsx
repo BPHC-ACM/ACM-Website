@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Search, Plus, Edit, Trash2 } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Lock, Unlock } from 'lucide-react';
 import AnimatedTechBackground from '@/components/animated-tech-background';
 import BlogPagination from './blog-pagination';
 import { useToast } from '@/hooks/use-toast';
@@ -58,7 +58,7 @@ function BlogPageContent() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const { toast } = useToast();
-	const { isAuthenticated, authenticate } = useBlogAuth();
+	const { isAuthenticated, authenticate, clearAuthentication } = useBlogAuth();
 	const [showPasswordDialog, setShowPasswordDialog] = useState(false);
 	const [pendingAction, setPendingAction] = useState<'create' | 'edit' | 'delete' | null>(null);
 	const [pendingBlogData, setPendingBlogData] = useState<{ id: string; title: string } | null>(null);
@@ -88,7 +88,7 @@ function BlogPageContent() {
 	};
 
 	const performDeleteBlog = async (blogId: string, blogTitle: string) => {
-		if (!confirm(`Are you sure you want to delete "${blogTitle}"?`)) {
+		if (!confirm(`Are you sure you want to unpublish "${blogTitle}"?`)) {
 			return;
 		}
 
@@ -100,22 +100,23 @@ function BlogPageContent() {
 			if (response.ok) {
 				toast({
 					title: 'Success',
-					description: 'Blog post deleted successfully',
+					description: 'Blog post unpublished successfully',
 				});
 				// Refresh the page to update the blog list
 				window.location.reload();
 			} else {
+				const err = await response.json().catch(() => ({}));
 				toast({
 					title: 'Error',
-					description: 'Failed to delete blog post',
+					description: err?.error || 'Failed to unpublish blog post',
 					variant: 'destructive',
 				});
 			}
 		} catch (error) {
-			console.error('Error deleting blog:', error);
+			console.error('Error unpublishing blog:', error);
 			toast({
 				title: 'Error',
-				description: 'Failed to delete blog post',
+				description: 'Failed to unpublish blog post',
 				variant: 'destructive',
 			});
 		}
@@ -142,7 +143,7 @@ function BlogPageContent() {
 
 	const handleAuthSuccess = () => {
 		authenticate();
-		
+
 		// Execute pending action
 		if (pendingAction === 'create') {
 			router.push('/blogs/create');
@@ -155,6 +156,18 @@ function BlogPageContent() {
 		// Clear pending action
 		setPendingAction(null);
 		setPendingBlogData(null);
+	};
+
+	const handleLockToggle = () => {
+		if (isAuthenticated) {
+			// Re-lock admin controls
+			clearAuthentication();
+		} else {
+			// Prompt for password to unlock
+			setPendingAction(null);
+			setPendingBlogData(null);
+			setShowPasswordDialog(true);
+		}
 	};
 
 	useEffect(() => {
@@ -302,6 +315,22 @@ function BlogPageContent() {
 		!showLoadingSpinner &&
 		(pagination.total === undefined || pagination.total > 0);
 
+	// Safely pick an image source; avoid invalid strings like "test" that cause /test 404s
+	const getImageSrc = (src?: string | null) => {
+		if (!src) return '/placeholder.svg?height=200&width=400';
+		const trimmed = src.trim();
+		// allow absolute URLs, data URLs, or public-relative paths
+		if (
+			trimmed.startsWith('http://') ||
+			trimmed.startsWith('https://') ||
+			trimmed.startsWith('data:') ||
+			trimmed.startsWith('/')
+		) {
+			return trimmed;
+		}
+		return '/placeholder.svg?height=200&width=400';
+	};
+
 	return (
 		<div className='flex flex-col'>
 			<section className='bg-card py-10 md:py-16 lg:py-24'>
@@ -321,11 +350,24 @@ function BlogPageContent() {
 			<section className='section-padding z-10'>
 				<div className='container'>
 					<div className="flex justify-between items-center mb-6">
-						<div></div>
-						<Button onClick={handleCreateBlog} className="hover-lift hover-glow">
-							<Plus className="mr-2 h-4 w-4" />
-							Add New Blog
+						<Button
+							variant={isAuthenticated ? 'default' : 'outline'}
+							size="sm"
+							onClick={handleLockToggle}
+							aria-label={isAuthenticated ? 'Lock admin controls' : 'Unlock admin controls'}
+						>
+							{isAuthenticated ? (
+								<><Unlock className="mr-2 h-4 w-4" /> Unlocked</>
+							) : (
+								<><Lock className="mr-2 h-4 w-4" /> Unlock</>
+							)}
 						</Button>
+						{isAuthenticated && (
+							<Button onClick={handleCreateBlog} className="hover-lift hover-glow">
+								<Plus className="mr-2 h-4 w-4" />
+								Add New Blog
+							</Button>
+						)}
 					</div>
 
 					<div className='relative w-full max-w-full mb-6 md:mb-10'>
@@ -413,7 +455,7 @@ function BlogPageContent() {
 												key={cat.slug}
 												variant={
 													currentCategorySlug ===
-													cat.slug
+														cat.slug
 														? 'default'
 														: 'outline'
 												}
@@ -463,10 +505,7 @@ function BlogPageContent() {
 										>
 											<div className='aspect-video relative'>
 												<Image
-													src={
-														post.featured_image ||
-														'/placeholder.svg?height=200&width=400'
-													}
+													src={getImageSrc(post.featured_image)}
 													alt={post.title}
 													fill
 													className='object-cover'
@@ -528,20 +567,26 @@ function BlogPageContent() {
 																Read More
 															</Link>
 														</Button>
-														<Button
-															variant='ghost'
-															size='sm'
-															onClick={() => handleEditBlog(post.id)}
-														>
-															<Edit className="h-4 w-4" />
-														</Button>
-														<Button
-															variant='ghost'
-															size='sm'
-															onClick={() => handleDeleteBlog(post.id, post.title)}
-														>
-															<Trash2 className="h-4 w-4" />
-														</Button>
+														{isAuthenticated && (
+															<>
+																<Button
+																	variant='ghost'
+																	size='sm'
+																	onClick={() => handleEditBlog(post.id)}
+																	aria-label="Edit blog"
+																>
+																	<Edit className="h-4 w-4" />
+																</Button>
+																<Button
+																	variant='ghost'
+																	size='sm'
+																	onClick={() => handleDeleteBlog(post.id, post.title)}
+																	aria-label="Delete blog"
+																>
+																	<Trash2 className="h-4 w-4" />
+																</Button>
+															</>
+														)}
 													</div>
 												</div>
 											</CardContent>

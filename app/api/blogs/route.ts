@@ -13,7 +13,7 @@ export async function GET(request: Request) {
 
 	const supabase = await createServerSupabaseClient();
 
-	let query = supabase
+		let query = supabase
 		.from('blog_posts')
 		.select(
 			`
@@ -28,13 +28,15 @@ export async function GET(request: Request) {
       category_slug,
       author_name
       `
-		)
+			)
+			.eq('published', true)
 		.order('created_at', { ascending: false })
 		.range(offset, offset + pageSize - 1);
 
-	let countQuery = supabase
+		let countQuery = supabase
 		.from('blog_posts')
-		.select('id', { count: 'exact', head: true })
+			.select('id', { count: 'exact', head: true })
+			.eq('published', true)
 
 	if (category && category !== 'All') {
 		query = query.eq('category_slug', category.toLowerCase());

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { createServerSupabaseClient } from '@/lib/supabase-server';
 
 export const dynamic = 'force-dynamic';
 
@@ -7,8 +7,8 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
     const { id } = await params;
-
-    const { data, error } = await supabase.from('blog_posts').select('*').eq('id', id).single();
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase.from('blog_posts').select('*').eq('id', id).single();
 
     if (error) {
       console.error('Error fetching blog post:', error);
@@ -42,7 +42,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     }
 
     // Check if slug already exists (excluding current post)
-    const { data: existingPost } = await supabase
+  const supabase = await createServerSupabaseClient();
+  const { data: existingPost } = await supabase
       .from('blog_posts')
       .select('id')
       .eq('slug', slug)
@@ -61,7 +62,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     // Convert to slug format consistent with frontend title case conversion
     const categorySlug = mainCategory.toLowerCase().replace(/\s+/g, '-');
 
-    const { data, error } = await supabase
+  const { data, error } = await supabase
       .from('blog_posts')
       .update({
         title,
@@ -99,17 +100,31 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   try {
     const { id } = await params;
-
-    const { error } = await supabase.from('blog_posts').delete().eq('id', id);
+  const supabase = await createServerSupabaseClient();
+  // Soft-delete: mark as unpublished instead of deleting the row
+    const { error } = await supabase
+      .from('blog_posts')
+      .update({ published: false, updated_at: new Date().toISOString() })
+      .eq('id', id);
 
     if (error) {
-      console.error('Error deleting blog post:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      console.error('Error unpublishing blog post:', error);
+      const msg = error.message || 'Failed to unpublish';
+      if (
+        (error as any).code === '42501' ||
+        /permission denied|RLS|row-level security/i.test(msg)
+      ) {
+        return NextResponse.json(
+          { error: 'Permission denied (RLS). Provide SUPABASE_SERVICE_ROLE_KEY or adjust policies.' },
+          { status: 403 }
+        );
+      }
+      return NextResponse.json({ error: msg }, { status: 500 });
     }
 
-    return NextResponse.json({ message: 'Blog post deleted successfully' });
+    return NextResponse.json({ message: 'Blog post unpublished successfully' });
   } catch (err) {
-    console.error('Unexpected error deleting blog post:', err);
+    console.error('Unexpected error unpublishing blog post:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -21,7 +21,7 @@ export const domainInfo: DomainInfo[] = [
     icon: Code,
     content: `# Building the Digital Face of ACM: The Web Development Team
 
-The ACM Web Development Team at BPHC is where technology meets creativity. We design, build, and maintain the platforms that define the chapter’s digital presence—creating tools that are functional, visually polished, and meaningful to the community.
+The ACM Web Development Team at BPHC is where technology meets creativity. We design, build, and maintain the platforms that define the chapter’s digital presence, creating tools that are functional, visually polished, and meaningful to the community.
 
 ---
 
@@ -30,37 +30,41 @@ The ACM Web Development Team at BPHC is where technology meets creativity. We de
 Our work spans across event platforms, community hubs, and interactive tools, all crafted with a modern tech stack and a strong sense of design.
 
 ### **1. ACM BPHC Website**  
-The central hub for our tech community, the [ACM BPHC website](https://acmbphc.in) brings together technical articles, event announcements, and project showcases in one place.  
+The central hub for our tech community brings together technical articles, event announcements, and project showcases in one place.  
 - Dynamic blog with filters and search  
 - Events portal for workshops and competitions  
 - Team showcase for leadership connections  
 - Built with **React, Next.js, and TypeScript**, styled with Tailwind, and enhanced by Framer Motion animations  
+[acmbphc.in](https://acmbphc.in)
 
 ---
 
 ### **2. Verba Maximus Website**  
-Our reimagined platform for the annual literary fest, [Verba Maximus](https://verba-maximus.netlify.app), turns scattered event information into a single, intuitive experience.  
+Our reimagined platform for the annual literary fest turns scattered event information into a single, intuitive experience.  
 - Smart filtering to discover events by interest  
 - Nature-inspired theme with calming colors and smooth animations  
 - Includes **Verble**, an in-browser Wordle-style game for fun between events  
+[verba-maximus.netlify.app](https://verba-maximus.netlify.app)
 
 ---
 
 ### **3. AskBITSians**  
-A dedicated mentorship hub connecting students with alumni, [AskBITSians](https://askbitsians.acmbphc.in) streamlines career and academic guidance.  
+A dedicated mentorship hub connecting students with alumni, streamlining career and academic guidance.  
 - Smart filters by domain, role, and company  
 - Private 1:1 chats for tailored mentorship  
 - Public forum for building a searchable knowledge base  
 - Modern UI with smooth animations to foster trust and connection  
+[askbitsians.acmbphc.in](https://askbitsians.acmbphc.in)
 
 ---
 
 ### **4. BITS CGPA Calculator** *(Web Version)*  
-Our cross-platform CGPA tracker, also available on the web, [BITS CGPA Calculator](https://cgpa-calculator-bits.vercel.app/) makes academic progress tracking seamless.  
+Our cross-platform CGPA tracker, also available on the web, makes academic progress tracking seamless.  
 - Instant computation across semesters  
 - Automatic course addition and expected vs. actual CG comparison  
 - Course sorting and customizable themes  
 - Soon to be backed by a live database for up-to-date course data  
+[cgpa-calculator-bits.vercel.app](https://cgpa-calculator-bits.vercel.app/)
 
 ---
 
@@ -77,7 +81,7 @@ We use tools and frameworks that make our work fast, reliable, and visually enga
 
 ## Why Join the Web Dev Team?
 
-Joining the ACM Web Development Team means working on **real projects used by hundreds of students**, not just coding exercises. You’ll:  
+Joining the ACM Web Development Team means working on **real projects used by hundreds of students**, not just coding exercises. You will:  
 - Learn **industry-grade tools** and workflows  
 - See your work **go live and make an impact**  
 - Collaborate with a **tight-knit, passionate team**  

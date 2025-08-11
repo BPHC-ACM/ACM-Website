@@ -15,6 +15,7 @@ interface Project {
   description: string;
   image: string;
   github_link?: string;
+  website_link?: string;
   technologies: string[];
   status: 'active' | 'completed';
 }
@@ -246,6 +247,14 @@ function ProjectCard({ project }: ProjectCardProps) {
               <a href={project.github_link} target="_blank" rel="noopener noreferrer">
                 <Github className="mr-1 h-4 w-4" />
                 View Code
+              </a>
+            </Button>
+          )}
+          {project.website_link && (
+            <Button asChild variant="outline" size="sm" className="hover-lift flex-1">
+              <a href={project.website_link} target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="mr-1 h-4 w-4" />
+                View Website
               </a>
             </Button>
           )}

@@ -16,7 +16,7 @@ interface Project {
   image: string;
   github_link?: string;
   technologies: string[];
-  status: 'active' | 'completed' | 'archived';
+  status: 'active' | 'completed';
 }
 
 export default function ProjectsPage() {
@@ -40,7 +40,7 @@ export default function ProjectsPage() {
       const data = await res.json();
       
       const validProjects = data.filter((project: any) => 
-        ['active', 'completed', 'archived'].includes(project.status)
+        ['active', 'completed'].includes(project.status)
       );
       
       setProjects(validProjects);
@@ -58,7 +58,6 @@ export default function ProjectsPage() {
 
   const activeProjects = projects.filter((project) => project.status === 'active');
   const completedProjects = projects.filter((project) => project.status === 'completed');
-  const archivedProjects = projects.filter((project) => project.status === 'archived');
 
   return (
     <div className="flex flex-col">
@@ -97,15 +96,12 @@ export default function ProjectsPage() {
             </div>
           ) : (
             <Tabs defaultValue="active" className="w-full">
-              <TabsList className="mb-8 grid w-full grid-cols-3 blue-border animate-fade-in">
+              <TabsList className="mb-8 grid w-full grid-cols-2 blue-border animate-fade-in">
                 <TabsTrigger value="active" className="transition-all hover:text-primary">
                   Active Projects ({activeProjects.length})
                 </TabsTrigger>
                 <TabsTrigger value="completed" className="transition-all hover:text-primary">
                   Completed ({completedProjects.length})
-                </TabsTrigger>
-                <TabsTrigger value="archived" className="transition-all hover:text-primary">
-                  Archived ({archivedProjects.length})
                 </TabsTrigger>
               </TabsList>
 
@@ -135,21 +131,6 @@ export default function ProjectsPage() {
                   <EmptyState
                     title="No Completed Projects Yet"
                     description="Our completed projects will appear here once they're finished."
-                  />
-                )}
-              </TabsContent>
-
-              <TabsContent value="archived" className="animate-fade-in">
-                {archivedProjects.length > 0 ? (
-                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 stagger-animation">
-                    {archivedProjects.map((project) => (
-                      <ProjectCard key={project.id} project={project} />
-                    ))}
-                  </div>
-                ) : (
-                  <EmptyState
-                    title="No Archived Projects"
-                    description="Archived projects will appear here."
                   />
                 )}
               </TabsContent>
@@ -211,8 +192,6 @@ function ProjectCard({ project }: ProjectCardProps) {
       case 'active':
         return 'bg-green-100 text-green-800 border-green-200';
       case 'completed':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'archived':
         return 'bg-gray-100 text-gray-800 border-gray-200';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';

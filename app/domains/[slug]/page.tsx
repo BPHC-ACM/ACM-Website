@@ -1,5 +1,4 @@
-import { domainInfo } from '@/lib/domain-info';
-import { slugToDomainId, domainIdToSlug, getAllDomainSlugs } from '@/lib/domain-utils';
+import { getDomainBySlug, getAllDomainSlugs } from '@/lib/domains';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -25,8 +24,7 @@ interface CodeProps extends ComponentProps<'code'> {
 
 export async function generateMetadata({ params }: DomainPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const domainId = slugToDomainId(slug);
-  const domain = domainInfo.find((d) => d.id === domainId);
+  const domain = await getDomainBySlug(slug);
 
   if (!domain) {
     return {
@@ -45,15 +43,15 @@ export async function generateMetadata({ params }: DomainPageProps): Promise<Met
 }
 
 export async function generateStaticParams() {
-  return getAllDomainSlugs().map((slug) => ({
+  const slugs = await getAllDomainSlugs();
+  return slugs.map((slug) => ({
     slug,
   }));
 }
 
 export default async function DomainPage({ params }: DomainPageProps) {
   const { slug } = await params;
-  const domainId = slugToDomainId(slug);
-  const domain = domainInfo.find((d) => d.id === domainId);
+  const domain = await getDomainBySlug(slug);
 
   if (!domain) {
     notFound();

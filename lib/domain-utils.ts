@@ -1,37 +1,44 @@
-// Domain ID to URL slug mappings
-const domainSlugMap: { [key: string]: string } = {
-	'machine-learning': 'ml',
-	'web-development': 'webdevelopment',
-	'gen ai': 'genai',
-	'mobile-development': 'appdevelopment',
+import { getAllDomainSlugs as getDomainsFromDB } from './domains';
+
+// Legacy domain ID to URL slug mappings for backward compatibility
+const legacyDomainSlugMap: { [key: string]: string } = {
+	'machine-learning': 'machine-learning',
+	'web-development': 'web-development',
+	'gen ai': 'gen-ai',
+	'app-development': 'app-development',
 	'Quant': 'quant',
 	'events': 'events',
 	'content': 'content',
 	'design': 'design'
 };
 
-// Reverse mapping for slug to domain ID
-const slugDomainMap: { [key: string]: string } = Object.fromEntries(
-	Object.entries(domainSlugMap).map(([id, slug]) => [slug, id])
-);
-
 /**
- * Convert domain ID to URL slug
+ * Convert domain ID to URL slug (legacy support)
+ * Now that we're using database, this is mainly for backwards compatibility
  */
 export function domainIdToSlug(id: string): string {
-	return domainSlugMap[id] || id.toLowerCase().replace(/\s+/g, '');
+	return legacyDomainSlugMap[id] || id.toLowerCase().replace(/\s+/g, '-');
 }
 
 /**
- * Convert URL slug to domain ID
+ * Convert URL slug to domain ID (legacy support)
+ * Since we now store slugs directly in the database, this is mainly for compatibility
  */
 export function slugToDomainId(slug: string): string {
-	return slugDomainMap[slug] || slug;
+	// Return the slug as-is since we're now using database slugs directly
+	return slug;
 }
 
 /**
  * Get all valid domain slugs for static generation
+ * This now fetches from the database
  */
-export function getAllDomainSlugs(): string[] {
-	return Object.values(domainSlugMap);
+export async function getAllDomainSlugs(): Promise<string[]> {
+	try {
+		return await getDomainsFromDB();
+	} catch (error) {
+		console.error('Failed to fetch domain slugs from database:', error);
+		// Fallback to legacy slugs if database is unavailable
+		return Object.values(legacyDomainSlugMap);
+	}
 }

@@ -116,6 +116,41 @@ export interface Database {
           registration_link?: string
         }
       }
+      domains: {
+        Row: {
+          id: string
+          created_at: string
+          updated_at: string
+          title: string
+          slug: string
+          icon_name: string
+          content: string
+          order_index: number
+          published: boolean
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+          title: string
+          slug: string
+          icon_name: string
+          content: string
+          order_index?: number
+          published?: boolean
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+          title?: string
+          slug?: string
+          icon_name?: string
+          content?: string
+          order_index?: number
+          published?: boolean
+        }
+      }
     }
     Views: {
       [_ in never]: never

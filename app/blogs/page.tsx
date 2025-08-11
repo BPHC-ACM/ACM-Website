@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Search, Plus, Edit, Trash2, Lock, Unlock } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Unlock } from 'lucide-react';
 import AnimatedTechBackground from '@/components/animated-tech-background';
 import BlogPagination from './blog-pagination';
 import { useToast } from '@/hooks/use-toast';
@@ -333,12 +333,17 @@ function BlogPageContent() {
 
 	return (
 		<div className='flex flex-col'>
-			<section className='bg-card py-10 md:py-16 lg:py-24'>
+			<section className='bg-card pt-24 pb-10 md:pt-28 md:pb-16 lg:pt-32 lg:pb-24'>
 				<AnimatedTechBackground />
 				<div className='container'>
 					<div className='mx-auto max-w-3xl text-center'>
-						<h1 className='mb-6 text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl'>
-							<span className='heading-gradient'>ACM Blog</span>
+						<h1
+							className='mb-6 text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl leading-tight md:leading-tight lg:leading-tight cursor-pointer transition-all duration-300 select-none'
+							onClick={handleLockToggle}
+						>
+							<span className={`heading-gradient transition-all duration-300 ${isAuthenticated ? 'opacity-100' : 'opacity-90 hover:opacity-100'}`}>
+								ACM Blog {isAuthenticated && <Unlock className="inline-block ml-2 h-6 w-6 md:h-7 md:w-7 lg:h-8 lg:w-8" />}
+							</span>
 						</h1>
 						<p className='mb-0 text-lg text-muted-foreground md:text-xl'>
 							Insights, tutorials, and updates from our community.
@@ -349,26 +354,14 @@ function BlogPageContent() {
 
 			<section className='section-padding z-10'>
 				<div className='container'>
-					<div className="flex justify-between items-center mb-6">
-						<Button
-							variant={isAuthenticated ? 'default' : 'outline'}
-							size="sm"
-							onClick={handleLockToggle}
-							aria-label={isAuthenticated ? 'Lock admin controls' : 'Unlock admin controls'}
-						>
-							{isAuthenticated ? (
-								<><Unlock className="mr-2 h-4 w-4" /> Unlocked</>
-							) : (
-								<><Lock className="mr-2 h-4 w-4" /> Unlock</>
-							)}
-						</Button>
-						{isAuthenticated && (
+					{isAuthenticated && (
+						<div className="flex justify-end items-center mb-6">
 							<Button onClick={handleCreateBlog} className="hover-lift hover-glow">
 								<Plus className="mr-2 h-4 w-4" />
 								Add New Blog
 							</Button>
-						)}
-					</div>
+						</div>
+					)}
 
 					<div className='relative w-full max-w-full mb-6 md:mb-10'>
 						<Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />

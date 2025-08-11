@@ -1,5 +1,4 @@
-import { domainInfo } from '@/lib/domain-info';
-import { domainIdToSlug } from '@/lib/domain-utils';
+import { getDomains } from '@/lib/domains';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
 import AnimatedTechBackground from '@/components/animated-tech-background';
@@ -14,7 +13,9 @@ export const metadata: Metadata = {
     },
 };
 
-export default function DomainsPage() {
+export default async function DomainsPage() {
+    const domains = await getDomains();
+
     return (
         <div className="flex flex-col">
             {/* Hero Section */}
@@ -39,12 +40,11 @@ export default function DomainsPage() {
             <section className="py-16 px-4 z-10">
                 <div className="max-w-7xl mx-auto">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-items-center">
-                        {domainInfo.map((domain) => {
+                        {domains.map((domain) => {
                             const IconComponent = domain.icon;
-                            const slug = domainIdToSlug(domain.id);
 
                             return (
-                                <Link key={domain.id} href={`/domains/${slug}`}>
+                                <Link key={domain.id} href={`/domains/${domain.slug}`}>
                                     <Card className="group cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105 border-2 hover:border-primary/20">
                                         <CardContent className="p-6 text-center">
                                             <div className="mb-4 flex justify-center">

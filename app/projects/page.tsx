@@ -18,6 +18,8 @@ interface Project {
   website_link?: string;
   technologies: string[];
   status: 'active' | 'completed';
+  teams: string; // Added team field
+  team_members?: string[]; // Added team members field (optional)
 }
 
 export default function ProjectsPage() {
@@ -83,7 +85,7 @@ export default function ProjectsPage() {
 
       {/* Projects Tabs Section */}
       <section className="section-padding z-10">
-        <div className="container">
+        <div className="container max-w-7xl">
           {loading ? (
             <div className="flex justify-center py-10">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -108,7 +110,7 @@ export default function ProjectsPage() {
 
               <TabsContent value="active" className="animate-fade-in">
                 {activeProjects.length > 0 ? (
-                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 stagger-animation">
+                  <div className="space-y-6 stagger-animation">
                     {activeProjects.map((project) => (
                       <ProjectCard key={project.id} project={project} />
                     ))}
@@ -123,7 +125,7 @@ export default function ProjectsPage() {
 
               <TabsContent value="completed" className="animate-fade-in">
                 {completedProjects.length > 0 ? (
-                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 stagger-animation">
+                  <div className="space-y-6 stagger-animation">
                     {completedProjects.map((project) => (
                       <ProjectCard key={project.id} project={project} />
                     ))}
@@ -193,73 +195,131 @@ function ProjectCard({ project }: ProjectCardProps) {
       case 'active':
         return 'bg-green-100 text-green-800 border-green-200';
       case 'completed':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-blue-100 text-blue-800 border-blue-200';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
-  return (
-    <Card className="overflow-hidden transition-all hover:shadow-lg hover-lift animate-fade-in h-full flex flex-col">
-      <div className="aspect-video relative">
-        <Image
-          src={project.image || '/placeholder.svg?height=200&width=400'}
-          alt={project.title}
-          fill
-          className="object-cover"
-        />
-        <div className="absolute top-3 right-3">
-          <span
-            className={`px-2 py-1 text-xs font-medium rounded-full border ${getStatusColor(
-              project.status,
-            )}`}
-          >
-            {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
-          </span>
-        </div>
-      </div>
-      <CardContent className="p-6 flex-1 flex flex-col">
-        <div className="mb-4">
-          <h3 className="mb-2 text-xl font-bold">{project.title}</h3>
-          <p className="line-clamp-3 text-muted-foreground mb-4">{project.description}</p>
-        </div>
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'active':
+        return '🟢';
+      case 'completed':
+        return '✅';
+      default:
+        return '⚪';
+    }
+  };
 
-        {/* Technologies */}
-        <div className="mb-4">
-          <div className="flex flex-wrap gap-1">
-            {project.technologies.slice(0, 3).map((tech, index) => (
-              <span key={index} className="px-2 py-1 text-xs bg-primary/10 text-primary rounded-md">
-                {tech}
+  return (
+    <Card className="overflow-hidden transition-all hover:shadow-lg hover-lift animate-fade-in">
+      <div className="flex flex-col lg:flex-row">
+        {/* Image Section */}
+        <div className="lg:w-2/5 relative">
+          <div className="aspect-video lg:aspect-[4/3] relative">
+            <Image
+              src={project.image || '/placeholder.svg?height=300&width=500'}
+              alt={project.title}
+              fill
+              className="object-cover"
+            />
+            {/* Status Badge on Image */}
+            <div className="absolute top-4 left-4">
+              <span
+                className={`inline-flex items-center gap-1 px-3 py-1 text-sm font-medium rounded-full border backdrop-blur-sm ${getStatusColor(
+                  project.status,
+                )}`}
+              >
+                <span className="text-xs">{getStatusIcon(project.status)}</span>
+                {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
               </span>
-            ))}
-            {project.technologies.length > 3 && (
-              <span className="px-2 py-1 text-xs bg-muted text-muted-foreground rounded-md">
-                +{project.technologies.length - 3} more
-              </span>
-            )}
+            </div>
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="mt-auto flex gap-2">
-          {project.github_link && (
-            <Button asChild variant="outline" size="sm" className="hover-lift flex-1">
-              <a href={project.github_link} target="_blank" rel="noopener noreferrer">
-                <Github className="mr-1 h-4 w-4" />
-                View Code
-              </a>
-            </Button>
-          )}
-          {project.website_link && (
-            <Button asChild variant="outline" size="sm" className="hover-lift flex-1">
-              <a href={project.website_link} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="mr-1 h-4 w-4" />
-                View Website
-              </a>
-            </Button>
-          )}
+        {/* Content Section */}
+        <div className="lg:w-3/5 flex flex-col">
+          <CardContent className="p-6 lg:p-8 flex-1 flex flex-col">
+            {/* Header */}
+            <div className="mb-4">
+              <div className="flex items-start justify-between mb-3">
+                <h3 className="text-2xl lg:text-3xl font-bold leading-tight">{project.title}</h3>
+              </div>
+              
+              {/* Team Information */}
+              {project.teams && (
+                <div className="flex items-center gap-2 mb-3">
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium text-primary bg-primary/10 px-2 py-1 rounded-md">
+                    {project.teams}
+                  </span>
+                </div>
+              )}
+
+              {/* Team Members (if available) */}
+              {project.team_members && project.team_members.length > 0 && (
+                <div className="mb-3">
+                  <p className="text-sm text-muted-foreground mb-1">Team Members:</p>
+                  <div className="flex flex-wrap gap-1">
+                    {project.team_members.slice(0, 5).map((member, index) => (
+                      <span key={index} className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded">
+                        {member}
+                      </span>
+                    ))}
+                    {project.team_members.length > 5 && (
+                      <span className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded">
+                        +{project.team_members.length - 5} more
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <p className="text-muted-foreground leading-relaxed">{project.description}</p>
+            </div>
+
+            {/* Technologies */}
+            <div className="mb-6">
+              <p className="text-sm font-medium mb-2">Technologies:</p>
+              <div className="flex flex-wrap gap-2">
+                {project.technologies.slice(0, 6).map((tech, index) => (
+                  <span key={index} className="px-3 py-1 text-sm bg-primary/10 text-primary rounded-full">
+                    {tech}
+                  </span>
+                ))}
+                {project.technologies.length > 6 && (
+                  <span className="px-3 py-1 text-sm bg-muted text-muted-foreground rounded-full">
+                    +{project.technologies.length - 6} more
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="mt-auto">
+              <div className="flex flex-col sm:flex-row gap-3">
+                {project.github_link && (
+                  <Button asChild variant="outline" className="hover-lift">
+                    <a href={project.github_link} target="_blank" rel="noopener noreferrer">
+                      <Github className="mr-2 h-4 w-4" />
+                      View Source Code
+                    </a>
+                  </Button>
+                )}
+                {project.website_link && (
+                  <Button asChild className="hover-lift hover-glow">
+                    <a href={project.website_link} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="mr-2 h-4 w-4" />
+                      View Website
+                    </a>
+                  </Button>
+                )}
+              </div>
+            </div>
+          </CardContent>
         </div>
-      </CardContent>
+      </div>
     </Card>
   );
 }

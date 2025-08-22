@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Github, ExternalLink, Users, Star, CloudCog } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AnimatedTechBackground from '@/components/animated-tech-background';
 
 interface Project {
@@ -17,7 +16,6 @@ interface Project {
   github_link?: string;
   website_link?: string;
   technologies: string[];
-  status: 'active' | 'completed';
   teams: string; // Added team field
   team_members?: string[]; // Added team members field (optional)
 }
@@ -42,11 +40,7 @@ export default function ProjectsPage() {
 
       const data = await res.json();
       
-      const validProjects = data.filter((project: any) => 
-        ['active', 'completed'].includes(project.status)
-      );
-      
-      setProjects(validProjects);
+      setProjects(data);
     } catch (error) {
       console.error('Failed to fetch projects:', error);
       setError('Failed to load projects. Please try again later.');
@@ -58,9 +52,6 @@ export default function ProjectsPage() {
   useEffect(() => {
     fetchProjects();
   }, []);
-
-  const activeProjects = projects.filter((project) => project.status === 'active');
-  const completedProjects = projects.filter((project) => project.status === 'completed');
 
   return (
     <div className="flex flex-col">
@@ -83,7 +74,7 @@ export default function ProjectsPage() {
         </div>
       </section>
 
-      {/* Projects Tabs Section */}
+      {/* Projects Section */}
       <section className="section-padding z-10">
         <div className="container max-w-7xl">
           {loading ? (
@@ -98,46 +89,26 @@ export default function ProjectsPage() {
               </Button>
             </div>
           ) : (
-            <Tabs defaultValue="active" className="w-full">
-              <TabsList className="mb-8 grid w-full grid-cols-2 blue-border animate-fade-in">
-                <TabsTrigger value="active" className="transition-all hover:text-primary">
-                  Active Projects ({activeProjects.length})
-                </TabsTrigger>
-                <TabsTrigger value="completed" className="transition-all hover:text-primary">
-                  Completed ({completedProjects.length})
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="active" className="animate-fade-in">
-                {activeProjects.length > 0 ? (
+            <div className="w-full">
+              {/* All Projects Section */}
+              {projects.length > 0 ? (
+                <div className="mb-12">
+                  <h2 className="text-3xl font-bold mb-6 text-center heading-gradient animate-fade-in">
+                    All Projects ({projects.length})
+                  </h2>
                   <div className="space-y-6 stagger-animation">
-                    {activeProjects.map((project) => (
+                    {projects.map((project) => (
                       <ProjectCard key={project.id} project={project} />
                     ))}
                   </div>
-                ) : (
-                  <EmptyState
-                    title="No Active Projects"
-                    description="We're currently planning new projects. Check back soon or contribute your ideas!"
-                  />
-                )}
-              </TabsContent>
-
-              <TabsContent value="completed" className="animate-fade-in">
-                {completedProjects.length > 0 ? (
-                  <div className="space-y-6 stagger-animation">
-                    {completedProjects.map((project) => (
-                      <ProjectCard key={project.id} project={project} />
-                    ))}
-                  </div>
-                ) : (
-                  <EmptyState
-                    title="No Completed Projects Yet"
-                    description="Our completed projects will appear here once they're finished."
-                  />
-                )}
-              </TabsContent>
-            </Tabs>
+                </div>
+              ) : (
+                <EmptyState
+                  title="No Projects Found"
+                  description="We're currently working on exciting new projects. Check back soon or contribute your ideas!"
+                />
+              )}
+            </div>
           )}
         </div>
       </section>
@@ -190,52 +161,19 @@ interface ProjectCardProps {
 }
 
 function ProjectCard({ project }: ProjectCardProps) {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'completed':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'active':
-        return '🟢';
-      case 'completed':
-        return '✅';
-      default:
-        return '⚪';
-    }
-  };
-
   return (
     <Card className="overflow-hidden transition-all hover:shadow-lg hover-lift animate-fade-in">
-      <div className="flex flex-col lg:flex-row">
+      <div className="flex flex-col lg:flex-row h-full">
         {/* Image Section */}
-        <div className="lg:w-2/5 relative">
-          <div className="aspect-video lg:aspect-[4/3] relative">
-            <Image
-              src={project.image || '/placeholder.svg?height=300&width=500'}
-              alt={project.title}
-              fill
-              className="object-cover"
-            />
-            {/* Status Badge on Image */}
-            <div className="absolute top-4 left-4">
-              <span
-                className={`inline-flex items-center gap-1 px-3 py-1 text-sm font-medium rounded-full border backdrop-blur-sm ${getStatusColor(
-                  project.status,
-                )}`}
-              >
-                <span className="text-xs">{getStatusIcon(project.status)}</span>
-                {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
-              </span>
-            </div>
-          </div>
+        <div className="lg:w-2/5 relative flex-shrink-0">
+          <Image
+            src={project.image || '/placeholder.svg?height=300&width=500'}
+            alt={project.title}
+            width={500}
+            height={300}
+            className="w-full h-full object-cover"
+            style={{ aspectRatio: '16/9' }}
+          />
         </div>
 
         {/* Content Section */}

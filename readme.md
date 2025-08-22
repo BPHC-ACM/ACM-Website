@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is the official website for the Association for Computing Machinery (ACM) student chapter at BITS Pilani, Hyderabad Campus. The website serves as a hub for our chapter's activities, events, and resources, providing information about our mission, team, and initiatives.
+This is the official website for the Association for Computing Machinery (ACM) student chapter at BITS Pilani, Hyderabad Campus. The website serves as a hub for our chapter's activities, events, and resources, providing information about our mission, team and initiatives.
 
 ## Features
 

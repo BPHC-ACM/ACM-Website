@@ -56,7 +56,7 @@ export default async function DomainsPage() {
                                                 {domain.title}
                                             </h3>
                                             <p className="text-sm text-muted-foreground">
-                                                Click to learn more about this domain
+                                                {domain.description}
                                             </p>
                                         </CardContent>
                                     </Card>

@@ -125,6 +125,7 @@ export interface Database {
           slug: string
           icon_name: string
           content: string
+          description: string
           order_index: number
           published: boolean
         }

@@ -44,6 +44,7 @@ const fallbackDomains: DomainWithIcon[] = [
         order_index: 1,
         published: true,
         icon: BrainCircuit,
+        description: 'Explore data-driven solutions and AI models for real-world problems.',
     },
     {
         id: '2',
@@ -55,6 +56,7 @@ const fallbackDomains: DomainWithIcon[] = [
         order_index: 2,
         published: true,
         icon: Code,
+        description: 'Build and maintain modern, scalable web applications using the latest technologies.',
     },
     {
         id: '3',
@@ -66,6 +68,7 @@ const fallbackDomains: DomainWithIcon[] = [
         order_index: 3,
         published: true,
         icon: Bot,
+        description: 'Work on generative AI models and cutting-edge artificial intelligence research.',
     },
     {
         id: '4',
@@ -77,6 +80,7 @@ const fallbackDomains: DomainWithIcon[] = [
         order_index: 4,
         published: true,
         icon: Smartphone,
+        description: 'Create mobile applications for Android and iOS platforms.',
     },
     {
         id: '5',
@@ -88,6 +92,7 @@ const fallbackDomains: DomainWithIcon[] = [
         order_index: 5,
         published: true,
         icon: ChartNoAxesGantt,
+        description: 'Apply mathematical and statistical techniques to solve complex problems.',
     },
     {
         id: '6',
@@ -99,6 +104,7 @@ const fallbackDomains: DomainWithIcon[] = [
         order_index: 6,
         published: true,
         icon: CalendarRange,
+        description: 'Organize and manage ACM events, workshops, and hackathons.',
     },
     {
         id: '7',
@@ -110,6 +116,7 @@ const fallbackDomains: DomainWithIcon[] = [
         order_index: 7,
         published: true,
         icon: PenTool,
+        description: 'Create engaging articles, blogs, and documentation for ACM initiatives.',
     },
     {
         id: '8',
@@ -121,6 +128,7 @@ const fallbackDomains: DomainWithIcon[] = [
         order_index: 8,
         published: true,
         icon: DraftingCompass,
+        description: 'Design graphics, UI/UX, and visual assets for ACM projects.',
     },
 ];
 

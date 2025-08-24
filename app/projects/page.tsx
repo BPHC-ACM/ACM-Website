@@ -29,7 +29,7 @@ export default function ProjectsPage() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const res = await fetch('/api/projects', {
         method: 'GET',
       });
@@ -39,7 +39,7 @@ export default function ProjectsPage() {
       }
 
       const data = await res.json();
-      
+
       setProjects(data);
     } catch (error) {
       console.error('Failed to fetch projects:', error);
@@ -76,7 +76,7 @@ export default function ProjectsPage() {
 
       {/* Projects Section */}
       <section className="section-padding z-10">
-        <div className="container max-w-7xl">
+        <div className="container">
           {loading ? (
             <div className="flex justify-center py-10">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -93,9 +93,6 @@ export default function ProjectsPage() {
               {/* All Projects Section */}
               {projects.length > 0 ? (
                 <div className="mb-12">
-                  <h2 className="text-3xl font-bold mb-6 text-center heading-gradient animate-fade-in">
-                    All Projects ({projects.length})
-                  </h2>
                   <div className="space-y-6 stagger-animation">
                     {projects.map((project) => (
                       <ProjectCard key={project.id} project={project} />
@@ -184,7 +181,7 @@ function ProjectCard({ project }: ProjectCardProps) {
               <div className="flex items-start justify-between mb-3">
                 <h3 className="text-2xl lg:text-3xl font-bold leading-tight">{project.title}</h3>
               </div>
-              
+
               {/* Team Information */}
               {project.teams && (
                 <div className="flex items-center gap-2 mb-3">
@@ -201,7 +198,10 @@ function ProjectCard({ project }: ProjectCardProps) {
                   <p className="text-sm text-muted-foreground mb-1">Team Members:</p>
                   <div className="flex flex-wrap gap-1">
                     {project.team_members.slice(0, 5).map((member, index) => (
-                      <span key={index} className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded">
+                      <span
+                        key={index}
+                        className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded"
+                      >
                         {member}
                       </span>
                     ))}
@@ -222,7 +222,10 @@ function ProjectCard({ project }: ProjectCardProps) {
               <p className="text-sm font-medium mb-2">Technologies:</p>
               <div className="flex flex-wrap gap-2">
                 {project.technologies.slice(0, 6).map((tech, index) => (
-                  <span key={index} className="px-3 py-1 text-sm bg-primary/10 text-primary rounded-full">
+                  <span
+                    key={index}
+                    className="px-3 py-1 text-sm bg-primary/10 text-primary rounded-full"
+                  >
                     {tech}
                   </span>
                 ))}
@@ -249,7 +252,7 @@ function ProjectCard({ project }: ProjectCardProps) {
                   <Button asChild className="hover-lift hover-glow">
                     <a href={project.website_link} target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="mr-2 h-4 w-4" />
-                      View Website
+                      Visit Website
                     </a>
                   </Button>
                 )}

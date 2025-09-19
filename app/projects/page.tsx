@@ -159,7 +159,7 @@ interface ProjectCardProps {
 
 function ProjectCard({ project }: ProjectCardProps) {
   return (
-    <Card className="overflow-hidden transition-all hover:shadow-lg hover-lift animate-fade-in">
+    <Card className="overflow-hidden transition-all hover:shadow-lg hover-lift animate-fade-in bg-white/10 backdrop-blur-md border border-white/10 shadow-lg">
       <div className="flex flex-col lg:flex-row h-full">
         {/* Image Section */}
         <div className="lg:w-2/5 relative flex-shrink-0">

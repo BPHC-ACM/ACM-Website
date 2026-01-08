@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Calendar, MapPin, X } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AnimatedTechBackground from '@/components/animated-tech-background';
+import ReactMarkdown from 'react-markdown';
 
 interface Event {
 	id: string;
@@ -18,6 +19,7 @@ interface Event {
 	speaker: string;
 	image: string;
 	registration_link: string;
+	details: string; // Markdown content for event report/details
 }
 
 export default function EventsPage() {
@@ -71,6 +73,9 @@ export default function EventsPage() {
 			(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
 		);
 
+	// Set default tab based on whether there are upcoming events
+	const defaultTab = upcomingEvents.length > 0 ? 'upcoming' : 'past';
+
 	return (
 		<div className='flex flex-col'>
 			{/* Hero Section */}
@@ -113,7 +118,7 @@ export default function EventsPage() {
 							</Button>
 						</div>
 					) : (
-						<Tabs defaultValue='upcoming' className='w-full'>
+						<Tabs defaultValue={defaultTab} className='w-full'>
 							<TabsList className='mb-8 grid w-full grid-cols-2 blue-border animate-fade-in'>
 								<TabsTrigger
 									value='upcoming'
@@ -269,7 +274,7 @@ function EventCard({ event, isPast = false, onViewDetails }: EventCardProps) {
 					variant={isPast ? 'outline' : 'default'}
 					className='hover-lift pointer-events-none'
 				>
-					{isPast ? 'View Details' : 'Register Now'}
+					{isPast ? 'View Report' : 'View Details'}
 				</Button>
 			</CardContent>
 		</Card>
@@ -344,10 +349,18 @@ function EventModal({ event, onClose }: EventModalProps) {
 					)}
 
 					<div className='mb-6'>
-						<h3 className='text-lg font-semibold mb-2'>Description</h3>
-						<p className='text-muted-foreground leading-relaxed whitespace-pre-wrap'>
-							{event.description}
-						</p>
+						<h3 className='text-lg font-semibold mb-2'>
+							{isPast ? 'Event Report' : 'Description'}
+						</h3>
+						{event.details ? (
+							<div className='prose prose-sm max-w-none dark:prose-invert text-muted-foreground'>
+								<ReactMarkdown>{event.details}</ReactMarkdown>
+							</div>
+						) : (
+							<p className='text-muted-foreground leading-relaxed whitespace-pre-wrap'>
+								{event.description}
+							</p>
+						)}
 					</div>
 
 					<div className='flex gap-4'>

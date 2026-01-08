@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Calendar, MapPin } from 'lucide-react';
+import { Calendar, MapPin, X } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AnimatedTechBackground from '@/components/animated-tech-background';
 
@@ -24,6 +24,7 @@ export default function EventsPage() {
 	const [events, setEvents] = useState<Event[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
 	useEffect(() => {
 		async function fetchEvents() {
@@ -43,6 +44,17 @@ export default function EventsPage() {
 		}
 
 		fetchEvents();
+	}, []);
+
+	// Close modal when clicking outside
+	useEffect(() => {
+		const handleEscape = (e: KeyboardEvent) => {
+			if (e.key === 'Escape') {
+				setSelectedEvent(null);
+			}
+		};
+		window.addEventListener('keydown', handleEscape);
+		return () => window.removeEventListener('keydown', handleEscape);
 	}, []);
 
 	const now = new Date();
@@ -126,6 +138,7 @@ export default function EventsPage() {
 											<EventCard
 												key={event.id}
 												event={event}
+												onViewDetails={setSelectedEvent}
 											/>
 										))}
 									</div>
@@ -152,6 +165,7 @@ export default function EventsPage() {
 												key={event.id}
 												event={event}
 												isPast
+												onViewDetails={setSelectedEvent}
 											/>
 										))}
 									</div>
@@ -200,6 +214,14 @@ export default function EventsPage() {
 					</div>
 				</div>
 			</section>
+
+			{/* Event Detail Modal */}
+			{selectedEvent && (
+				<EventModal
+					event={selectedEvent}
+					onClose={() => setSelectedEvent(null)}
+				/>
+			)}
 		</div>
 	);
 }
@@ -207,11 +229,15 @@ export default function EventsPage() {
 interface EventCardProps {
 	event: Event;
 	isPast?: boolean;
+	onViewDetails: (event: Event) => void;
 }
 
-function EventCard({ event, isPast = false }: EventCardProps) {
+function EventCard({ event, isPast = false, onViewDetails }: EventCardProps) {
 	return (
-		<Card className='overflow-hidden transition-all hover:shadow-lg hover-lift animate-fade-in'>
+		<Card 
+			className='overflow-hidden transition-all hover:shadow-lg hover-lift animate-fade-in cursor-pointer'
+			onClick={() => onViewDetails(event)}
+		>
 			<div className='aspect-video relative'>
 				<Image
 					src={event.image || '/placeholder.svg?height=200&width=400'}
@@ -239,22 +265,109 @@ function EventCard({ event, isPast = false }: EventCardProps) {
 				<p className='mb-4 line-clamp-2 text-muted-foreground'>
 					{event.description}
 				</p>
-				{!isPast ? (
-					<Button asChild className='hover-lift'>
-						<a
-							href={event.registration_link}
-							target='_blank'
-							rel='noopener noreferrer'
-						>
-							Register Now
-						</a>
-					</Button>
-				) : (
-					<Button variant='outline' disabled>
-						Event Completed
-					</Button>
-				)}
+				<Button
+					variant={isPast ? 'outline' : 'default'}
+					className='hover-lift pointer-events-none'
+				>
+					{isPast ? 'View Details' : 'Register Now'}
+				</Button>
 			</CardContent>
 		</Card>
+	);
+}
+
+interface EventModalProps {
+	event: Event;
+	onClose: () => void;
+}
+
+function EventModal({ event, onClose }: EventModalProps) {
+	const isPast = new Date(event.date) <= new Date();
+	
+	return (
+		<div
+			className='fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-fade-in'
+			onClick={onClose}
+		>
+			<div
+				className='relative max-w-4xl w-full max-h-[90vh] overflow-y-auto bg-card rounded-lg shadow-2xl animate-slide-up'
+				onClick={(e) => e.stopPropagation()}
+			>
+				{/* Close Button */}
+				<button
+					onClick={onClose}
+					className='absolute top-4 right-4 z-10 rounded-full bg-background/80 p-2 hover:bg-background transition-colors'
+					aria-label='Close modal'
+				>
+					<X className='h-5 w-5' />
+				</button>
+
+				{/* Event Image */}
+				<div className='relative aspect-video w-full'>
+					<Image
+						src={event.image || '/placeholder.svg?height=400&width=800'}
+						alt={event.title}
+						fill
+						className='object-cover rounded-t-lg'
+					/>
+				</div>
+
+				{/* Event Details */}
+				<div className='p-8'>
+					<h2 className='text-3xl font-bold mb-4 heading-gradient'>
+						{event.title}
+					</h2>
+
+					<div className='flex flex-wrap gap-4 mb-6 text-muted-foreground'>
+						<div className='flex items-center'>
+							<Calendar className='mr-2 h-5 w-5 text-primary' />
+							<span>
+								{new Date(event.date).toLocaleDateString('en-US', {
+									weekday: 'long',
+									day: 'numeric',
+									month: 'long',
+									year: 'numeric',
+								})}
+							</span>
+						</div>
+						<div className='flex items-center'>
+							<MapPin className='mr-2 h-5 w-5 text-primary' />
+							<span>{event.location}</span>
+						</div>
+					</div>
+
+					{event.speaker && (
+						<div className='mb-6'>
+							<h3 className='text-lg font-semibold mb-2'>Speaker</h3>
+							<p className='text-muted-foreground'>{event.speaker}</p>
+						</div>
+					)}
+
+					<div className='mb-6'>
+						<h3 className='text-lg font-semibold mb-2'>Description</h3>
+						<p className='text-muted-foreground leading-relaxed whitespace-pre-wrap'>
+							{event.description}
+						</p>
+					</div>
+
+					<div className='flex gap-4'>
+						<Button onClick={onClose} variant='outline'>
+							Close
+						</Button>
+						{!isPast && event.registration_link && (
+							<Button asChild className='hover-lift'>
+								<a
+									href={event.registration_link}
+									target='_blank'
+									rel='noopener noreferrer'
+								>
+									Register Now
+								</a>
+							</Button>
+						)}
+					</div>
+				</div>
+			</div>
+		</div>
 	);
 }

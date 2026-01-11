@@ -19,7 +19,7 @@ interface Event {
 	speaker: string;
 	image: string;
 	registration_link: string;
-	details: string; // Markdown content for event report/details
+	details: string;
 }
 
 export default function EventsPage() {
@@ -48,37 +48,40 @@ export default function EventsPage() {
 		fetchEvents();
 	}, []);
 
-	// Close modal when clicking outside
 	useEffect(() => {
 		const handleEscape = (e: KeyboardEvent) => {
 			if (e.key === 'Escape') {
 				setSelectedEvent(null);
 			}
 		};
-		window.addEventListener('keydown', handleEscape);
-		return () => window.removeEventListener('keydown', handleEscape);
-	}, []);
+		
+		if (selectedEvent) {
+			document.body.style.overflow = 'hidden';
+			window.addEventListener('keydown', handleEscape);
+		} else {
+			document.body.style.overflow = 'unset';
+		}
+		
+		return () => {
+			document.body.style.overflow = 'unset';
+			window.removeEventListener('keydown', handleEscape);
+		};
+	}, [selectedEvent]);
 
 	const now = new Date();
 
 	const upcomingEvents = events
 		.filter((event) => new Date(event.date) > now)
-		.sort(
-			(a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-		);
+		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
 	const pastEvents = events
 		.filter((event) => new Date(event.date) <= now)
-		.sort(
-			(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-		);
+		.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-	// Set default tab based on whether there are upcoming events
 	const defaultTab = upcomingEvents.length > 0 ? 'upcoming' : 'past';
 
 	return (
 		<div className='flex flex-col'>
-			{/* Hero Section */}
 			<section className='bg-card py-16 md:py-24'>
 				<AnimatedTechBackground />
 				<div className='container'>
@@ -92,14 +95,12 @@ export default function EventsPage() {
 							className='mb-0 text-lg text-muted-foreground md:text-xl animate-slide-up'
 							style={{ animationDelay: '0.2s' }}
 						>
-							Discover our upcoming events, workshops, and past
-							activities.
+							Discover our upcoming events, workshops, and past activities.
 						</p>
 					</div>
 				</div>
 			</section>
 
-			{/* Events Tabs Section */}
 			<section className='section-padding z-10'>
 				<div className='container'>
 					{loading ? (
@@ -120,23 +121,14 @@ export default function EventsPage() {
 					) : (
 						<Tabs defaultValue={defaultTab} className='w-full'>
 							<TabsList className='mb-8 grid w-full grid-cols-2 blue-border animate-fade-in'>
-								<TabsTrigger
-									value='upcoming'
-									className='transition-all hover:text-primary'
-								>
+								<TabsTrigger value='upcoming' className='transition-all hover:text-primary'>
 									Upcoming Events
 								</TabsTrigger>
-								<TabsTrigger
-									value='past'
-									className='transition-all hover:text-primary'
-								>
+								<TabsTrigger value='past' className='transition-all hover:text-primary'>
 									Past Events
 								</TabsTrigger>
 							</TabsList>
-							<TabsContent
-								value='upcoming'
-								className='animate-fade-in'
-							>
+							<TabsContent value='upcoming' className='animate-fade-in'>
 								{upcomingEvents.length > 0 ? (
 									<div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3 stagger-animation'>
 										{upcomingEvents.map((event) => (
@@ -153,16 +145,12 @@ export default function EventsPage() {
 											No Upcoming Events
 										</h3>
 										<p className='mb-6 text-muted-foreground'>
-											We're currently planning new events.
-											Check back soon!
+											We're currently planning new events. Check back soon!
 										</p>
 									</div>
 								)}
 							</TabsContent>
-							<TabsContent
-								value='past'
-								className='animate-fade-in'
-							>
+							<TabsContent value='past' className='animate-fade-in'>
 								{pastEvents.length > 0 ? (
 									<div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3 stagger-animation'>
 										{pastEvents.map((event) => (
@@ -180,8 +168,7 @@ export default function EventsPage() {
 											No Past Events
 										</h3>
 										<p className='text-muted-foreground'>
-											Our event history will appear here
-											once events are completed.
+											Our event history will appear here once events are completed.
 										</p>
 									</div>
 								)}
@@ -191,7 +178,6 @@ export default function EventsPage() {
 				</div>
 			</section>
 
-			{/* CTA Section */}
 			<section className='section-padding bg-muted z-10'>
 				<div className='container'>
 					<div className='mx-auto max-w-3xl text-center'>
@@ -202,9 +188,7 @@ export default function EventsPage() {
 							className='mb-8 text-muted-foreground animate-slide-up'
 							style={{ animationDelay: '0.1s' }}
 						>
-							If you're interested in hosting an event with us or
-							have ideas for workshops, we'd love to hear from
-							you.
+							If you're interested in hosting an event with us or have ideas for workshops, we'd love to hear from you.
 						</p>
 						<Button
 							asChild
@@ -220,7 +204,6 @@ export default function EventsPage() {
 				</div>
 			</section>
 
-			{/* Event Detail Modal */}
 			{selectedEvent && (
 				<EventModal
 					event={selectedEvent}
@@ -298,7 +281,6 @@ function EventModal({ event, onClose }: EventModalProps) {
 				className='relative max-w-4xl w-full max-h-[90vh] overflow-y-auto bg-card rounded-lg shadow-2xl animate-slide-up'
 				onClick={(e) => e.stopPropagation()}
 			>
-				{/* Close Button */}
 				<button
 					onClick={onClose}
 					className='absolute top-4 right-4 z-10 rounded-full bg-background/80 p-2 hover:bg-background transition-colors'
@@ -307,7 +289,6 @@ function EventModal({ event, onClose }: EventModalProps) {
 					<X className='h-5 w-5' />
 				</button>
 
-				{/* Event Image */}
 				<div className='relative aspect-video w-full'>
 					<Image
 						src={event.image || '/placeholder.svg?height=400&width=800'}
@@ -317,7 +298,6 @@ function EventModal({ event, onClose }: EventModalProps) {
 					/>
 				</div>
 
-				{/* Event Details */}
 				<div className='p-8'>
 					<h2 className='text-3xl font-bold mb-4 heading-gradient'>
 						{event.title}
